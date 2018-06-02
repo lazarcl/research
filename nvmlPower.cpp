@@ -7,6 +7,8 @@ bool pollThreadStatus = false;
 unsigned int deviceCount = 0;
 char deviceNameStr[64];
 
+const char *outputFileName;
+
 nvmlReturn_t nvmlResult;
 nvmlDevice_t nvmlDeviceID;
 nvmlPciInfo_t nvmPCIInfo;
@@ -22,8 +24,10 @@ void *powerPollingFunc(void *ptr)
 {
 	unsigned int powerLevel = 0;
 	unsigned int tempLevel = 0;
-	FILE *fp = fopen("Power_data.txt", "w+");
-	printf("created powerPollingFunc: pollThreadStatus=%d \n", (int)pollThreadStatus);
+	FILE *fp = fopen(outputFileName, "w+");
+	//save 50 spaces at start of file for totals
+	fprintf(fp, "                                                  \n");
+	fprintf(fp, "\n");
 	int i = 0;
 	while (pollThreadStatus)
 	{
@@ -59,7 +63,9 @@ void *powerPollingFunc(void *ptr)
 
 		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, 0);
 	}
-	printf("  power, temp found %d times\n", i);
+	//printf("  power, temp sampled %d times\n", i);
+	fseek(fp, 0, SEEK_SET);	
+	fprintf(fp, "number of samples, %d\n", i);
 	fclose(fp);
 	pthread_exit(0);
 }
@@ -68,7 +74,7 @@ void *powerPollingFunc(void *ptr)
 Start power measurement by spawning a pthread that polls the GPU.
 Function needs to be modified as per usage to handle errors as seen fit.
 */
-void nvmlAPIRun()
+void nvmlAPIRun(const char *outputName)
 {
 	int i;
 	// Initialize nvml.
@@ -128,6 +134,7 @@ void nvmlAPIRun()
 
 	pollThreadStatus = true;
 	
+	outputFileName = outputName;
 	const char *message = "Test";
 	int iret = pthread_create(&powerPollThread, NULL, powerPollingFunc, (void*) message);
 	if (iret)
@@ -135,6 +142,13 @@ void nvmlAPIRun()
 		fprintf(stderr,"Error - pthread_create() return code: %d\n",iret);
 		exit(0);
 	}
+}
+
+/*
+If no user doesn't specify where to save data, then save to default.
+ */
+void nvmlAPIRun() {
+	nvmlAPIRun("Power_data.txt");
 }
 
 /*

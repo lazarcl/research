@@ -49,7 +49,7 @@ void saxpyLoop(int n, float a, float *x, float *y)
 {
   int idx = blockIdx.x*blockDim.x + threadIdx.x;
   // if (i=1) nvmlPSUInfo_t::power
-  for (int i = idx; i < idx+1000 && i < n; i++) {
+  for (int i = idx; i < idx+10000 && i < n; i++) {
     y[i] = a*x[i] + y[i];
   }
 }
@@ -91,8 +91,6 @@ int main(void)
   HANDLE_ERROR( cudaEventRecord(start) );
   saxpyLoop<<<(N+255)/256, 256>>>(N, 2.0f, d_x, d_y);
   HANDLE_ERROR( cudaEventRecord(stop, 0) );
-
-  // HANDLE_ERROR( cudaDeviceSynchronize() );
 
   HANDLE_ERROR( cudaEventSynchronize(stop) );
   HANDLE_ERROR( cudaEventElapsedTime(&time, start, stop) );

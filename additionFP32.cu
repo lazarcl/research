@@ -8,40 +8,131 @@
   //nvcc additionFP32.cu -L/usr/lib64/nvidia -lnvidia-ml -lpthread -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
 
 
-__global__
-void addition1_FP32(int n, int iterateNum, float *x, float *y) {
+/*********************************************
+******************Pair #1*********************
+**********************************************/
 
-  int start = blockIdx.x*blockDim.x + threadIdx.x;
-
-  for (int i = start; i < iterateNum /*&& i < n && i >= 0*/; i++) {
-    x[i] = x[i] + y[i] + y[i-1] + y[i-2];
-  }
-
-}
-
-__global__
-void addition2_FP32(int n, int iterateNum, float *x, float *y) {
   /* Ideas:
   keep input small-ish
   loop
   don't read much data
   difference should only be additions, nothing else
   */
+
+__global__
+void addition1_FP32(int n, int iterateNum, float *x, float *y) {
+
   int start = blockIdx.x*blockDim.x + threadIdx.x;
+
+  int l = 0;
   for (int i = start; i < iterateNum /*&& i < n && i >= 0*/; i++) {
-    x[i] = x[i] + y[i] + y[i-1] + y[i-2];
+    l = (l+1) % n;
+    x[l] = x[l] + y[l] + y[l-1] + y[l-2];
+  }
+
+}
+
+__global__
+void addition2_FP32(int n, int iterateNum, float *x, float *y) {
+  int start = blockIdx.x*blockDim.x + threadIdx.x;
+  int l = 0;
+  for (int i = start; i < iterateNum /*&& i < n && i >= 0*/; i++) {
+    l = (l+1) % n;
+    x[l] = x[l] + y[l] + y[l-1] + y[l-2];
 
 
     //6 more additions?:
     //no extra lookups
-    //i-1, 1-2 already calculated, so no subtraction needed
+    //l-1, l-2 already calculated, so no subtraction needed
     //no new stores after optimization:
-    //  x[i] store will only happen once, not 3 times. 
-    x[i] = x[i] + y[i] + y[i-1] + y[i-2];
-    x[i] = x[i] + y[i] + y[i-1] + y[i-2];
+    //  x[l] store will only happen once, not 3 times. 
+    x[l] = x[l] + y[l] + y[l-1] + y[l-2];
+    x[l] = x[l] + y[l] + y[l-1] + y[l-2];
+    x[l] = x[l] + y[l] + y[l-1] + y[l-2];
+    x[l] = x[l] + y[l] + y[l-1] + y[l-2];
   }
 
 }
+
+/*********************************************
+******************Pair #2*********************
+**********************************************/
+
+
+/*
+Loop:
+  x[i] = y[i]
+---vs.---
+loop2:
+  x[i] = + y[i] + y[i] + y[i]
+
+*/
+__global__
+void addition3_FP32(int n, int iterateNum, float *x, float *y) {
+
+  int start = blockIdx.x*blockDim.x + threadIdx.x;
+
+  int l = 0;
+  for (int i = start; i < iterateNum /*&& i < n && i >= 0*/; i++) {
+    l = (l+1) % n;
+    x[l] = y[l];
+  }
+
+}
+
+__global__
+void addition4_FP32(int n, int iterateNum, float *x, float *y) {
+  int start = blockIdx.x*blockDim.x + threadIdx.x;
+  int l = 0;
+  for (int i = start; i < iterateNum /*&& i < n && i >= 0*/; i++) {
+    l = (l+1) % n;
+    x[l] = y[l] + y[l] + y[l];
+  }
+
+}
+
+/*********************************************
+******************Pair #3*********************
+**********************************************/
+
+
+__global__
+void addition5_FP32(int n, int iterateNum, float *x, float *y) {
+  int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  volatile float a = x[thread];
+  volatile float b = 1000;
+  volatile float c = 1000;
+  for (int i = 0; i < iterateNum; i++) {
+    b = a + i;
+    c = a + b;
+    a = c + a;
+
+  }
+  x[thread] = a;
+}
+
+
+__global__
+void addition6_FP32(int n, int iterateNum, float *x, float *y) {
+  int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  volatile float a = x[thread];
+  volatile float b = 1000;
+  volatile float c = 1000;
+  for (int i = 0; i < iterateNum; i++) {
+    b = a + i;
+    c = a + b;
+    a = c + a;
+    c = b + a;
+    b = c + a;
+    a = b + c;
+
+  }
+  x[thread] = a;
+}
+
+/*********************************************
+**********************************************
+**********************************************/
 
 
 __global__
@@ -79,18 +170,17 @@ void runAnalysis(const char *outputName,
   HANDLE_ERROR( cudaEventSynchronize(stop) );
   HANDLE_ERROR( cudaEventElapsedTime(&time, start, stop) );
   
-  
   nvmlAPIEnd();
 
   FILE *fp = fopen(outputName, "r+");
   if (fp == NULL) {
-    printf("Attempt writing time Elapsed in '%s' failed. Error: ", outputName);
+    printf("Attempt at writing 'time Elapsed' in '%s' failed. Error: ", outputName);
     perror("");
     printf("Terminating...");
     exit(0);
   }
-  fseek(fp, 25, SEEK_SET);
-  fprintf(fp, "timeElapsed:, %3.1f \n", time);
+  fseek(fp, 30, SEEK_SET);
+  fprintf(fp, "timeElapsed:, %3.1f\n", time);
   fclose(fp);
   printf("Algorithm finished, results saved in %s\n", outputName);
 }
@@ -105,8 +195,20 @@ int main(int argc, char* argv[])
     exit(0);
   }
 
-  int N = 1<<15;
-  int iterateNum = 100000;
+  int N = 1<<18;
+  int iterateNum = 10000000;
+
+
+
+  // int deviceId = 0;
+  // cudaError_t cudaRet;
+  // cudaDeviceProp deviceProp;
+  // cudaRet = cudaGetDeviceProperties ( &deviceProp, deviceId );
+  // if (cudaRet != cudaSuccess) {
+  //   printf("get deviceProp failed: %s\n", cudaGetErrorString(cudaRet));
+  // }
+  // int numBlocks = 360 * deviceProp.multiProcessorCount;
+
 
   float *x, *y, *d_x, *d_y;
   x = (float*)malloc(N*sizeof(float));
@@ -114,13 +216,13 @@ int main(int argc, char* argv[])
   HANDLE_ERROR( cudaMalloc(&d_x, N*sizeof(float)) ); 
   HANDLE_ERROR( cudaMalloc(&d_y, N*sizeof(float)) );
 
-  createData<<<(N+255)/255, 256>>>(N, d_x, d_y, atof(argv[1]), atof(argv[2]));
+  createData<<<(N+255)/256, 256>>>(N, d_x, d_y, atof(argv[1]), atof(argv[2]));
 
 
-  runAnalysis("Power_data_add32_Alg1.txt", addition1_FP32, N, iterateNum, d_x, d_y);
+  runAnalysis("Power_data_add32_Alg5.txt", addition5_FP32, N, iterateNum, d_x, d_y);
   HANDLE_ERROR( cudaMemcpy(x, d_x, N*sizeof(float), cudaMemcpyDeviceToHost) );
   
-  runAnalysis("Power_data_add32_Alg2.txt", addition2_FP32, N, iterateNum, d_x, d_y);
+  runAnalysis("Power_data_add32_Alg6.txt", addition6_FP32, N, iterateNum, d_x, d_y);
   HANDLE_ERROR( cudaMemcpy(x, d_x, N*sizeof(float), cudaMemcpyDeviceToHost) );
 
 

@@ -63,7 +63,6 @@ void *powerPollingFunc(void *ptr)
 
 		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, 0);
 	}
-	//printf("  power, temp sampled %d times\n", i);
 	fseek(fp, 0, SEEK_SET);	
 	fprintf(fp, "number of samples, %d\n", i);
 	fclose(fp);
@@ -130,7 +129,7 @@ void nvmlAPIRun(const char *outputName)
 	// This statement assumes that the first indexed GPU will be used.
 	// If there are multiple GPUs that can be used by the system, this needs to be done with care.
 	// Test thoroughly and ensure the correct device ID is being used.
-	nvmlResult = nvmlDeviceGetHandleByIndex(1, &nvmlDeviceID);
+	nvmlResult = nvmlDeviceGetHandleByIndex(0, &nvmlDeviceID);
 
 	pollThreadStatus = true;
 	

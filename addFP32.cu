@@ -1,5 +1,5 @@
 #include <testFramework.cu>
-#include <abstractTestClass.cu>
+#include <baseTestClass.cu>
 
 
 
@@ -131,7 +131,7 @@ void createData(int n, float *x, float *y) {
 
 
 template <class K> 
-class AdditionFP32 : AbstractTestClass {
+class AdditionFP32 : BaseTestClass {
 
 
   //references to the different addition run algs. 5/6 is best
@@ -143,10 +143,10 @@ class AdditionFP32 : AbstractTestClass {
   K alg6 = &addFP32alg6;
 
   //the device id to run tests on
-  int deviceID;
+  // int deviceID;
 
   //framework to run and sample the kernel
-  TestRunner tester;
+  // TestRunner tester;
 
   //fields to prepare for kernel call
   float *d_x, *d_y;
@@ -156,8 +156,8 @@ class AdditionFP32 : AbstractTestClass {
   int blockSize = 256;
 
 
-  AdditionFP32(int deviceID) : deviceID(deviceID) {
-    tester = TestRunner("testOutput.txt");
+  AdditionFP32() {
+    // tester = TestRunner("testOutput.txt");
   }
 
   void kernelSetup() {

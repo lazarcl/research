@@ -1,12 +1,12 @@
 
 
-class AbstractTestClass {
+class BaseTestClass {
 public:
   //the device id to run tests on
-  int deviceID;
+  // int deviceID;
 
   //framework to run and sample the kernel
-  TestRunner tester;
+  // TestRunner tester;
 
   //fields to prepare for kernel call
   int numBlocks;

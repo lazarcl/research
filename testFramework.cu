@@ -159,6 +159,22 @@ public:
   */
   bool isDataValid() {
     //TODO
+
+    //ignore first ~50 samples
+    //ignore last ~50 samples
+    //take some random samples in between that range
+    //find avg of samples
+    //iterate through and check error of each datapoint
+    //if error is too big, and it has been too big for too long,
+       //then bad data
+    //else keep checking untill it returns to normal or the error
+       //is bad for too long
+    /*
+    for (int i = 50; i < powerData.size()-50; i++) {
+      
+    }
+
+    */
     return true;
   }
 

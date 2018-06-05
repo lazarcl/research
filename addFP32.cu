@@ -1,8 +1,3 @@
-//#include <testFramework.cu>
-//#include <baseTestClass.cu>
-
-
-
 /*********************************************
 ******************Pair #1*********************
 **********************************************/
@@ -129,50 +124,38 @@ void createData(int n, float *x, float *y) {
   }
 }
 
-//class AdditionFP32 : public BaseTestClass {
 class AdditionFP32 {
 public:
-  //references to the different addition run algs. 5/6 is best
-  // K alg1 = &addFP32alg1;
-  // K alg2 = &addFP32alg2;
-  // K alg3 = &addFP32alg3;
-  // K alg4 = &addFP32alg4;
-  // K alg5 = &addFP32alg5;
-  // K alg6 = &addFP32alg6;
-
-  //the device id to run tests on
-  // int deviceID;
-
-  //framework to run and sample the kernel
-  // TestRunner tester;
 
   //fields to prepare for kernel call
   float *d_x, *d_y;
-  int n = 1<<18;
-  int iterNum = 1000000;
-  int numBlocks = (n+255)/256;
-  int blockSize = 256;
+  int n;
+  int iterNum;
+  int numBlocks;
+  int blockSize;
 
 
   AdditionFP32() {
-    // tester = TestRunner("testOutput.txt");
+    blockSize = 256;
+    iterNum = 1000000;
   }
 
-  void kernelSetup() {
+//destructor
+  ~AdditionFP32() {
+    CUDA_ERROR( cudaFree(&d_x) );
+    CUDA_ERROR( cudaFree(&d_y) );
+  }
+
+  void kernelSetup(cudaDeviceProp deviceProp) {
+    numBlocks = deviceProp.multiProcessorCount * 360;
+    n = numBlocks * blockSize;
     CUDA_ERROR( cudaMalloc(&d_x, n*sizeof(float)) ); 
     CUDA_ERROR( cudaMalloc(&d_y, n*sizeof(float)) );
-    createData<<<(n+255)/256, 256>>>(n, d_x, d_y);
+    createData<<<numBlocks, blockSize>>>(n, d_x, d_y);
   }
 
-  void runKernel(int num) {
-    switch(num) {
-      case 6 : 
-        // alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
+  void runKernel() {
         addFP32alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
-        return;
-      default:
-        printf("algorithm to test was not found\n");
-    }
   }
 
   void CUDA_ERROR(cudaError_t e) {

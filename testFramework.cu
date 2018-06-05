@@ -8,10 +8,9 @@
 #include <time.h>
 #include <unistd.h>
 #include "addFP32.cu"
-#include "baseTestClass.cpp"
 
 //run command: 
-  //nvcc testRunner.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
+  //nvcc testFramework.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
 
 template <class K>
 class TestRunner {
@@ -48,29 +47,29 @@ public:
 
   //class that holds the kernel to run
   //BaseTestClass testClass;
-  K &testClass;
+  K *testClass;
 
   /*
   constructor
     pass kernel functions and output name?
   */
-  //TestRunner(BaseTestClass t, const char *outputName) : outputName(outputName) {
-    TestRunner(K &t, const char *outputName) : outputName(outputName) {
+  TestRunner(K *t, const char *outputName) : outputName(outputName) {
     testClass = t;
+    
+    CUDA_ERROR( cudaSetDevice(deviceIDNum) );
+    CUDA_ERROR( cudaGetDeviceProperties(&deviceProp, deviceIDNum) );
+    
     nvmlResult = nvmlInit();
     if ( nvmlResult != NVML_SUCCESS )
     {
       printf("NVML Init fail: %s\n", nvmlErrorString(nvmlResult));
       exit(0);
     }
-
     nvmlResult = nvmlDeviceGetHandleByIndex(deviceIDNum, &nvmlDeviceID);
     if (nvmlResult != NVML_SUCCESS) {
       printf("failed getting device handle by index: %s\n", nvmlErrorString(nvmlResult));
       exit(0);
     }
-    cudaSetDevice(deviceID);
-    cudaGetDeviceProperties(&deviceProp, deviceID);
   }
 
   /*
@@ -131,7 +130,7 @@ public:
     bool badSampleData = true;
     int curRun = 1;
 
-    testClass.kernelSetup(deviceProp);
+    testClass->kernelSetup(deviceProp);
 
     while( (badSampleData || std::abs((int)(curTemp - prevTemp)) >= 1) 
                 && curRun <= maxTestRuns ) 
@@ -145,7 +144,7 @@ public:
 
       setupSampling();
       // runTest();
-      testClass.runKernel();
+      testClass->runKernel();
       runSampling();
 
       badSampleData = !isDataValid();
@@ -268,7 +267,7 @@ int main() {
   AdditionFP32 test = AdditionFP32();
 
   printf("creating TestRunner obj\n");
-  TestRunner tester = TestRunner<AdditionFP32>(test, "output.txt");
+  TestRunner<AdditionFP32> tester(&test, "output.txt");
   
   printf("calling getGoodSample\n");
   tester.getGoodSample();

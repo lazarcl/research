@@ -142,8 +142,8 @@ public:
 
 //destructor
   ~AdditionFP32() {
-    CUDA_ERROR( cudaFree(&d_x) );
-    CUDA_ERROR( cudaFree(&d_y) );
+    CUDA_ERROR( cudaFree(d_x) );
+    CUDA_ERROR( cudaFree(d_y) );
   }
 
   void kernelSetup(cudaDeviceProp deviceProp) {

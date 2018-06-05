@@ -238,7 +238,7 @@ public:
 
 
 int main() {
-  int iterNum = 700000;
+  int iterNum = 1000000;
   int blockSize = 256;
   printf("creating AdditionFP32_1 TestClass\n");
   AdditionFP32_1 test1(blockSize, iterNum);

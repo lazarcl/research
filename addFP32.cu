@@ -129,9 +129,9 @@ void createData(int n, float *x, float *y) {
   }
 }
 
-
-class AdditionFP32 : BaseTestClass {
-
+//class AdditionFP32 : public BaseTestClass {
+class AdditionFP32 {
+public:
   //references to the different addition run algs. 5/6 is best
   // K alg1 = &addFP32alg1;
   // K alg2 = &addFP32alg2;

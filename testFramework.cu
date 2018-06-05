@@ -44,13 +44,15 @@ public:
   float *d_x, *d_y;
 
   //class that holds the kernel to run
-  BaseTestClass testClass;
+  //BaseTestClass testClass;
+  AdditionFP32 testClass;
 
   /*
 	constructor
 		pass kernel functions and output name?
   */
-	TestRunner(BaseTestClass t, const char *outputName) : outputName(outputName) {
+	//TestRunner(BaseTestClass t, const char *outputName) : outputName(outputName) {
+  	TestRunner(AdditionFP32 t, const char *outputName) : outputName(outputName) {
 		testClass = t;
 		nvmlResult = nvmlInit();
 	  if ( nvmlResult != NVML_SUCCESS )
@@ -190,10 +192,15 @@ public:
 	void dataToFile() {
 		float elapsedT;
 		CUDA_ERROR( cudaEventElapsedTime(&elapsedT, gpuStart, gpuStop));
-		printf("elapsed time: %3.1f\n", elapsedT);
 		float timeBetweenSample = elapsedT / powerData.size();
 		
 		FILE *fp = fopen(outputName, "w+");
+		if (fp == NULL) {
+    printf("Attempt at opening '%s' failed. Error: ", outputName);
+    perror("");
+    printf("Terminating...");
+    exit(0);
+  }
 		fprintf(fp, "Power(W), Temperature(ºC), Time(ms), elapsed time(ms), number of samples\n");
 		fprintf(fp, "%.3lf, %d, %f, %3.1f, %d\n", powerData[0]/1000.0, tempData[0], timeBetweenSample, elapsedT, (int)powerData.size());
 		
@@ -251,9 +258,9 @@ public:
 
 
 int main() {
-	typedef void (*fn)(int, int, *float, *float);
 	printf("creating AdditionFP32 TestClass\n");
-	BaseTestClass test = AdditionFP32();
+	//BaseTestClass test = AdditionFP32();
+	AdditionFP32 test = AdditionFP32();
 
 	printf("creating TestRunner obj\n");
 	TestRunner tester = TestRunner(test, "output.txt");

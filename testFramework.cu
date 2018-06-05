@@ -141,6 +141,9 @@ public:
 
       prevTemp = curTemp;
       curTemp = getDeviceTemp();
+      if (std::abs((int)(curTemp-prevTemp)) >= 1) {
+        printf("    temp still changing\n");
+      }
       curRun++;
     }
 
@@ -171,27 +174,22 @@ public:
        //then bad data
     //else keep checking untill it returns to normal or the error
        //is bad for too long
-    /*
-    for (int i = 50; i < powerData.size()-50; i++) {
-      
-    }
-    */
     if ((int)powerData.size() < 2*ignoreSampleCount) {
-      printf("Only %d samples in previous run\n");
+      printf("Only %d samples in previous run\n", (int)powerData.size());
       return false;
     }
     int startPt = ignoreSampleCount;
     int endPt = (int) powerData.size() - ignoreSampleCount;
     double avg = getPowerAvg(startPt, endPt);
 
-    badStreak = 0;
+    int badStreak = 0;
     double curSample;
     for (int i = startPt; i < endPt; i++) {
       curSample = (double) powerData[i];
-      if (std::abs(curSample/avg > 0.02)) {
+      if (std::abs((curSample-avg)/avg) > 0.03) {
 
-        if (badStreak++ > 200) {
-          printf("    power samples not consistant enough\n");
+        if (badStreak++ > 250) {
+          printf("    power samples not consistant enough. Made it %d%% through data\n", 100*i/endPt);
           return false;
         }
 

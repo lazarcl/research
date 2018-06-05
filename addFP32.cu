@@ -124,7 +124,8 @@ void createData(int n, float *x, float *y) {
   }
 }
 
-class AdditionFP32 {
+
+class AdditionFP32_1 {
 public:
 
   //fields to prepare for kernel call
@@ -135,10 +136,52 @@ public:
   int blockSize;
 
 
-  AdditionFP32() {
-    blockSize = 256;
-    iterNum = 2000000;
+  AdditionFP32(int blockSize, int iterNum)
+    : iterNum(iterNum), blockSize(blockSize) 
+  { }
+
+//destructor
+  ~AdditionFP32() {
+    CUDA_ERROR( cudaFree(d_x) );
+    CUDA_ERROR( cudaFree(d_y) );
   }
+
+  void kernelSetup(cudaDeviceProp deviceProp) {
+    numBlocks = deviceProp.multiProcessorCount * 360;
+    n = numBlocks * blockSize;
+    CUDA_ERROR( cudaMalloc(&d_x, n*sizeof(float)) ); 
+    CUDA_ERROR( cudaMalloc(&d_y, n*sizeof(float)) );
+    createData<<<numBlocks, blockSize>>>(n, d_x, d_y);
+  }
+
+  void runKernel() {
+        addFP32alg5<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
+  }
+
+  void CUDA_ERROR(cudaError_t e) {
+    if (e != cudaSuccess) {
+      printf("cuda error in test class: \"%s\"\n", cudaGetErrorString(e));
+    }
+  } 
+
+};
+
+
+
+class AdditionFP32_2 {
+public:
+
+  //fields to prepare for kernel call
+  float *d_x, *d_y;
+  int n;
+  int iterNum;
+  int numBlocks;
+  int blockSize;
+
+
+  AdditionFP32(int blockSize, int iterNum)
+    : iterNum(iterNum), blockSize(blockSize) 
+  { }
 
 //destructor
   ~AdditionFP32() {
@@ -160,7 +203,7 @@ public:
 
   void CUDA_ERROR(cudaError_t e) {
     if (e != cudaSuccess) {
-      printf("cuda Error: \"%s\"\n", cudaGetErrorString(e));
+      printf("cuda error in test class: \"%s\"\n", cudaGetErrorString(e));
     }
   } 
 

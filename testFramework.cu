@@ -238,11 +238,27 @@ public:
 
 
 int main() {
-  printf("creating AdditionFP32 TestClass\n");
-  AdditionFP32 test = AdditionFP32();
+  int iterNum = 700000;
+  int blockSize = 256;
+  printf("creating AdditionFP32_1 TestClass\n");
+  AdditionFP32_1 test(blockSize, iterNum);
 
   printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP32> tester(&test, "outputAddFP32.txt");
+  TestRunner<AdditionFP32_1> tester(&test, "outputAddFP32_1.txt");
+  
+  printf("calling getGoodSample\n");
+  tester.getGoodSample();
+
+  printf("calling dataToFile\n");
+  tester.dataToFile();
+
+  printf("AdditionFP32_1 finished\n");
+
+  printf("ceating AdditionFP32_2 TestClass\n");
+  AdditionFP32_2 test(blockSize, iterNum);
+
+  printf("creating TestRunner obj\n");
+  TestRunner<AdditionFP32_2> tester(&test, "outputAddFP32_2.txt");
   
   printf("calling getGoodSample\n");
   tester.getGoodSample();

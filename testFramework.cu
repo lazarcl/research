@@ -8,6 +8,7 @@
 #include <time.h>
 #include <unistd.h>
 #include "addFP32.cu"
+#include "templateAddFP.cu"
 
 //run command: 
   //nvcc testFramework.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
@@ -163,17 +164,6 @@ public:
   return true(good enough) / false(bad samples)
   */
   bool isDataValid() {
-    //TODO
-
-    //ignore first ~50 samples
-    //ignore last ~50 samples
-    //take some random samples in between that range
-    //find avg of samples
-    //iterate through and check error of each datapoint
-    //if error is too big, and it has been too big for too long,
-       //then bad data
-    //else keep checking untill it returns to normal or the error
-       //is bad for too long
     if ((int)powerData.size() < 2*ignoreSampleCount) {
       printf("Only %d samples in previous run\n", (int)powerData.size());
       return false;
@@ -286,9 +276,38 @@ public:
 
 }; //end TestRunner
 
+template <typename T>
+void runAddFPTest(int iterNum, blockSize, const char* outputName1, 
+              const char* outputName2) 
+{
+  printf("creating AdditionFP32_1 TestClass\n");
+  AdditionFP_1<T> test1(blockSize, iterNum);
+  printf("creating TestRunner obj\n");
+  TestRunner<AdditionFP_1> tester1(&test1, outputName1);
+  printf("calling getGoodSample\n");
+  tester1.getGoodSample();
+  printf("calling dataToFile\n");
+  tester1.dataToFile();
+
+  printf("AdditionFP32_1 finished\n");
+
+  printf("ceating AdditionFP32_2 TestClass\n");
+  AdditionFP_2<T> test2(blockSize, iterNum);
+  printf("creating TestRunner obj\n");
+  TestRunner<AdditionFP_2> tester2(&test2, outputName2);
+  printf("calling getGoodSample\n");
+  tester2.getGoodSample();
+  printf("calling dataToFile\n");
+  tester2.dataToFile();
+
+  printf("AdditionFP32_2 finished\n");
+}
 
 int main() {
-  int iterNum = 1000000;
+  runAddFPTest<float>(1000000, 256, "outputAddFP32_1.txt", "outputAddFP32_2.txt");
+  runAddFPTest<double>(1000000, 256, "outputAddFP64_1.txt", "outputAddFP64_2.txt");
+  runAddFPTest<int>(1000000, 256, "outputAddInt32_1.txt", "outputAddInt32_2.txt");
+  /*int iterNum = 1000000;
   int blockSize = 256;
   printf("creating AdditionFP32_1 TestClass\n");
   AdditionFP32_1 test1(blockSize, iterNum);
@@ -314,6 +333,6 @@ int main() {
   tester2.getGoodSample();
 
   printf("calling dataToFile\n");
-  tester2.dataToFile();
+  tester2.dataToFile(); */
   return 0;
 }

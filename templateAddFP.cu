@@ -34,7 +34,7 @@ void addFPalg6(int n, int iterateNum, T *x) {
 
 template <typename T>
 __global__
-void createData(int n, T *x, T *y) {
+void createData(int n, T *x) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   T a = 1.0;
   if (i < n) {

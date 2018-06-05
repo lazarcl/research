@@ -277,13 +277,13 @@ public:
 }; //end TestRunner
 
 template <typename T>
-void runAddFPTest(int iterNum, blockSize, const char* outputName1, 
+void runAddFPTest(int iterNum, int blockSize, const char* outputName1, 
               const char* outputName2) 
 {
   printf("creating AdditionFP32_1 TestClass\n");
   AdditionFP_1<T> test1(blockSize, iterNum);
   printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP_1> tester1(&test1, outputName1);
+  TestRunner<AdditionFP_1<T>> tester1(&test1, outputName1);
   printf("calling getGoodSample\n");
   tester1.getGoodSample();
   printf("calling dataToFile\n");
@@ -294,7 +294,7 @@ void runAddFPTest(int iterNum, blockSize, const char* outputName1,
   printf("ceating AdditionFP32_2 TestClass\n");
   AdditionFP_2<T> test2(blockSize, iterNum);
   printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP_2> tester2(&test2, outputName2);
+  TestRunner<AdditionFP_2<T>> tester2(&test2, outputName2);
   printf("calling getGoodSample\n");
   tester2.getGoodSample();
   printf("calling dataToFile\n");
@@ -304,35 +304,14 @@ void runAddFPTest(int iterNum, blockSize, const char* outputName1,
 }
 
 int main() {
+  printf("---- beginning FP32 Add Testing ----\n"); 
   runAddFPTest<float>(1000000, 256, "outputAddFP32_1.txt", "outputAddFP32_2.txt");
+  printf("---- test end ----\n");
+  printf("---- beginning FP64 Add Testing ----\n");
   runAddFPTest<double>(1000000, 256, "outputAddFP64_1.txt", "outputAddFP64_2.txt");
+  printf("---- test end ----\n");
+  printf("---- beginning Int32 Add Testing ---\n");
   runAddFPTest<int>(1000000, 256, "outputAddInt32_1.txt", "outputAddInt32_2.txt");
-  /*int iterNum = 1000000;
-  int blockSize = 256;
-  printf("creating AdditionFP32_1 TestClass\n");
-  AdditionFP32_1 test1(blockSize, iterNum);
-
-  printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP32_1> tester1(&test1, "outputAddFP32_1.txt");
-  
-  printf("calling getGoodSample\n");
-  tester1.getGoodSample();
-
-  printf("calling dataToFile\n");
-  tester1.dataToFile();
-
-  printf("AdditionFP32_1 finished\n");
-
-  printf("ceating AdditionFP32_2 TestClass\n");
-  AdditionFP32_2 test2(blockSize, iterNum);
-
-  printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP32_2> tester2(&test2, "outputAddFP32_2.txt");
-  
-  printf("calling getGoodSample\n");
-  tester2.getGoodSample();
-
-  printf("calling dataToFile\n");
-  tester2.dataToFile(); */
+  printf("---- test end ----\n");
   return 0;
 }

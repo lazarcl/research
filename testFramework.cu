@@ -22,6 +22,8 @@ public:
   //max number of times to attempt getting a good sample
   const int maxTestRuns = 15;
 
+  //number of samples to igore from beg and end while analyzing data
+  const int ignoreSampleCount = 50;
 
   //device properties
   cudaDeviceProp deviceProp;
@@ -173,9 +175,43 @@ public:
     for (int i = 50; i < powerData.size()-50; i++) {
       
     }
-
     */
+    if ((int)powerData.size() < 2*ignoreSampleCount) {
+      printf("Only %d samples in previous run\n");
+      return false;
+    }
+    int startPt = ignoreSampleCount;
+    int endPt = (int) powerData.size() - ignoreSampleCount;
+    double avg = getPowerAvg(startPt, endPt);
+
+    badStreak = 0;
+    double curSample;
+    for (int i = startPt; i < endPt; i++) {
+      curSample = (double) powerData[i];
+      if (std::abs(curSample/avg > 0.02)) {
+
+        if (badStreak++ > 200) {
+          printf("    power samples not consistant enough\n");
+          return false;
+        }
+
+      } else {
+        badStreak = 0;
+      }
+    }
+
     return true;
+  }
+
+  /*
+  find the avg power value by random sampling
+  */
+  double getPowerAvg(int startPt, int endPt) {
+    double total = 0;
+    for (int i = startPt; i < endPt; i++) {
+      total += (double)powerData[i];
+    }
+    return total / (endPt - startPt);
   }
 
   /*
@@ -192,16 +228,16 @@ public:
     
     FILE *fp = fopen(outputName, "w+");
     if (fp == NULL) {
-	    printf("Attempt at opening '%s' failed. Error: ", outputName);
-	    perror("");
-	    printf("Terminating...");
-	    exit(0);
-  	}
+      printf("Attempt at opening '%s' failed. Error: ", outputName);
+      perror("");
+      printf("Terminating...");
+      exit(0);
+    }
     fprintf(fp, "Power(W), Temperature(ºC), Time(ms), elapsed time(ms), number of samples\n");
     fprintf(fp, "%.3lf, %d, %f, %3.1f, %d\n", powerData[0]/1000.0, tempData[0], timeBetweenSample, elapsedT, (int)powerData.size());
     
     for (int i = 1; i < powerData.size(); i++) {
-      fprintf(fp, "%.3lf, %d, %f\n", powerData[i]/1000.0, tempData[0], timeBetweenSample*i );
+      fprintf(fp, "%.3lf, %d, %f\n", powerData[i]/1000.0, tempData[0], timeBetweenSample*(i+1) );
     }
     fclose(fp);
   }
@@ -214,8 +250,8 @@ public:
     nvmlResult = nvmlDeviceGetCount(&deviceCount);
     if (NVML_SUCCESS != nvmlResult)
     {
-		  printf("Failed to query device count: %s\n", nvmlErrorString(nvmlResult));
-		  exit(0);
+      printf("Failed to query device count: %s\n", nvmlErrorString(nvmlResult));
+      exit(0);
     }
     printf("There are %d GPUs connected, ensure the correct one is selected\n", deviceCount);
   }
@@ -236,7 +272,7 @@ public:
   }
 
   unsigned int getPowerUseage() {
-  unsigned int powerLevel;
+    unsigned int powerLevel;
     nvmlResult = nvmlDeviceGetPowerUsage(nvmlDeviceID, &powerLevel);
     if (nvmlResult != NVML_SUCCESS) {
       printf("NVML power measurement fail: %s\n", nvmlErrorString(nvmlResult));

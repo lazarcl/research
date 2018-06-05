@@ -167,11 +167,11 @@ public:
   void runKernel(int num) {
     switch(num) {
       case 6 : 
-        addFP32alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
         // alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
+        addFP32alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
         return;
       default:
-        printf("algorithm to test not found\n");
+        printf("algorithm to test was not found\n");
     }
   }
 

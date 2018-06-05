@@ -137,7 +137,7 @@ public:
 
   AdditionFP32() {
     blockSize = 256;
-    iterNum = 1000000;
+    iterNum = 2000000;
   }
 
 //destructor

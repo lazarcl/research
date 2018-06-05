@@ -17,7 +17,11 @@ class TestRunner {
 public:
 
   //int deviceIDNum: GPU device to do all work/sampling on
-  int deviceIDNum = 0;
+  const int deviceIDNum = 0;
+
+  //max number of times to attempt getting a good sample
+  const int maxTestRuns = 15;
+
 
   //device properties
   cudaDeviceProp deviceProp;
@@ -25,13 +29,9 @@ public:
   //desired filename for output
   const char *outputName; 
 
-  //max number of times to run the test in a row
-  int maxTestRuns = 1;
-
   //hold data from samples in vectors
   std::vector<float> powerData;
   std::vector<int> tempData;
-
 
   //the deviceID in nvml format
   nvmlDevice_t nvmlDeviceID;
@@ -46,13 +46,8 @@ public:
   float *d_x, *d_y;
 
   //class that holds the kernel to run
-  //BaseTestClass testClass;
   K *testClass;
 
-  /*
-  constructor
-    pass kernel functions and output name?
-  */
   TestRunner(K *t, const char *outputName) : outputName(outputName) {
     testClass = t;
     
@@ -101,9 +96,7 @@ public:
     CUDA_ERROR( cudaEventCreate(&kernelFinished) );
     CUDA_ERROR( cudaEventRecord(kernelFinished) ); 
 
-    //TODO: may need to change stream above or just use gpuStart
     while (cudaEventQuery(kernelFinished) != cudaSuccess) {
-    // while (cudaEventQuery(kernelFinished) != cudaSuccess) {
       powerLevel = getPowerUseage();
       tempLevel = getDeviceTemp();
       powerData.push_back(powerLevel);
@@ -132,18 +125,13 @@ public:
 
     testClass->kernelSetup(deviceProp);
 
-    while( (badSampleData || std::abs((int)(curTemp - prevTemp)) >= 1) 
-                && curRun <= maxTestRuns ) 
-    {
+    while( badSampleData || std::abs((int)(curTemp - prevTemp)) >= 1) { 
+      if (curRun > maxTestRuns ) {
+        break;
+      {
       printf("  beginning test run %d\n", curRun);
       
-      // int n = 1<<18;
-      // CUDA_ERROR( cudaMalloc(&d_x, n*sizeof(float)) ); 
-      // CUDA_ERROR( cudaMalloc(&d_y, n*sizeof(float)) );
-      // createData<<<(n+255)/256, 256>>>(n, d_x, d_y);
-
       setupSampling();
-      // runTest();
       testClass->runKernel();
       runSampling();
 
@@ -160,18 +148,6 @@ public:
       printf("  badSampleData: %d\n", badSampleData);
     }
   }
-
-  /*
-  run test on given kernel
-    don't worry about sampling, just test setup/run/cleanup
-    called by getGoodSample
-  */
-  /*void runTest() {
-    //TODO: generalize function
-    int n = 1<<18; // == exactly blockCount * threads/block
-    int iterateNum = 1500000;
-    addition6_FP32<<<(n+255)/255, 256>>>(n,iterateNum, d_x, d_y);
-  }*/
 
   /*
   analyze test's sampling
@@ -263,11 +239,10 @@ public:
 
 int main() {
   printf("creating AdditionFP32 TestClass\n");
-  //BaseTestClass test = AdditionFP32();
   AdditionFP32 test = AdditionFP32();
 
   printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP32> tester(&test, "output.txt");
+  TestRunner<AdditionFP32> tester(&test, "outputAddFP32.txt");
   
   printf("calling getGoodSample\n");
   tester.getGoodSample();

@@ -253,7 +253,7 @@ public:
 int main() {
 	typedef void (*fn)(int, int, *float, *float);
 	printf("creating AdditionFP32 TestClass\n");
-	BaseTestClass test = AdditionFP32<fn>();
+	BaseTestClass test = AdditionFP32();
 
 	printf("creating TestRunner obj\n");
 	TestRunner tester = TestRunner(test, "output.txt");

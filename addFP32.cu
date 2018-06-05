@@ -132,14 +132,13 @@ void createData(int n, float *x, float *y) {
 
 class AdditionFP32 : BaseTestClass {
 
-
   //references to the different addition run algs. 5/6 is best
-  K alg1 = &addFP32alg1;
-  K alg2 = &addFP32alg2;
-  K alg3 = &addFP32alg3;
-  K alg4 = &addFP32alg4;
-  K alg5 = &addFP32alg5;
-  K alg6 = &addFP32alg6;
+  // K alg1 = &addFP32alg1;
+  // K alg2 = &addFP32alg2;
+  // K alg3 = &addFP32alg3;
+  // K alg4 = &addFP32alg4;
+  // K alg5 = &addFP32alg5;
+  // K alg6 = &addFP32alg6;
 
   //the device id to run tests on
   // int deviceID;
@@ -168,8 +167,11 @@ class AdditionFP32 : BaseTestClass {
   void runKernel(int num) {
     switch(num) {
       case 6 : 
-        alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
-        break;
+        addFP32alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
+        // alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
+        return;
+      default:
+        printf("algorithm to test not found\n");
     }
   }
 

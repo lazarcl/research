@@ -1,5 +1,5 @@
-#include <testFramework.cu>
-#include <baseTestClass.cu>
+//#include <testFramework.cu>
+//#include <baseTestClass.cu>
 
 
 
@@ -130,7 +130,6 @@ void createData(int n, float *x, float *y) {
 }
 
 
-template <class K> 
 class AdditionFP32 : BaseTestClass {
 
 
@@ -169,7 +168,7 @@ class AdditionFP32 : BaseTestClass {
   void runKernel(int num) {
     switch(num) {
       case 6 : 
-        alg6<<<numBlocks, blockSize>>>(n,d_x,d_y);
+        alg6<<<numBlocks, blockSize>>>(n, iterNum, d_x, d_y);
         break;
     }
   }

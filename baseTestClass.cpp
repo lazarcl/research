@@ -1,5 +1,4 @@
 
-
 class BaseTestClass {
 public:
   //the device id to run tests on
@@ -13,7 +12,7 @@ public:
   int blockSize;
 
 	virtual void kernelSetup();
-	virtual void runKernel();
+	virtual void runKernel(int);
 
-}
+};
 

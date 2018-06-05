@@ -7,8 +7,8 @@
 #include <cuda_runtime.h>
 #include <time.h>
 #include <unistd.h>
-#include <addFP32.cu>
-#include <baseTestClass.cu>
+#include "addFP32.cu"
+#include "baseTestClass.cpp"
 
 //run command: 
   //nvcc testRunner.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
@@ -44,13 +44,13 @@ public:
   float *d_x, *d_y;
 
   //class that holds the kernel to run
-  AbstractTestClass testClass;
+  BaseTestClass testClass;
 
   /*
 	constructor
 		pass kernel functions and output name?
   */
-	TestRunner(AbstractTestClass t, const char *outputName) : outputName(outputName) {
+	TestRunner(BaseTestClass t, const char *outputName) : outputName(outputName) {
 		testClass = t;
 		nvmlResult = nvmlInit();
 	  if ( nvmlResult != NVML_SUCCESS )
@@ -160,12 +160,12 @@ public:
 	  don't worry about sampling, just test setup/run/cleanup
 	  called by getGoodSample
 	*/
-	void runTest() {
+	/*void runTest() {
 		//TODO: generalize function
 	  int n = 1<<18; // == exactly blockCount * threads/block
 	  int iterateNum = 1500000;
 		addition6_FP32<<<(n+255)/255, 256>>>(n,iterateNum, d_x, d_y);
-	}
+	}*/
 
 	/*
 	analyze test's sampling
@@ -251,16 +251,17 @@ public:
 
 
 int main() {
+	typedef void (*fn)(int, int, *float, *float);
 	printf("creating AdditionFP32 TestClass\n");
-	baseTestClass test = AdditionFP32();
+	BaseTestClass test = AdditionFP32<fn>();
 
 	printf("creating TestRunner obj\n");
-	TestRunner tester = TestRunner(test, output.txt);
+	TestRunner tester = TestRunner(test, "output.txt");
 	
 	printf("calling getGoodSample\n");
-	test.getGoodSample();
+	tester.getGoodSample();
 
 	printf("calling dataToFile\n");
-	test.dataToFile();
+	tester.dataToFile();
 	return 0;
 }

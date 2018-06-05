@@ -128,7 +128,7 @@ public:
     while( badSampleData || std::abs((int)(curTemp - prevTemp)) >= 1) { 
       if (curRun > maxTestRuns ) {
         break;
-      {
+      }
       printf("  beginning test run %d\n", curRun);
       
       setupSampling();
@@ -159,7 +159,7 @@ public:
   */
   bool isDataValid() {
     //TODO
-    return false;
+    return true;
   }
 
   /*
@@ -241,29 +241,29 @@ int main() {
   int iterNum = 700000;
   int blockSize = 256;
   printf("creating AdditionFP32_1 TestClass\n");
-  AdditionFP32_1 test(blockSize, iterNum);
+  AdditionFP32_1 test1(blockSize, iterNum);
 
   printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP32_1> tester(&test, "outputAddFP32_1.txt");
+  TestRunner<AdditionFP32_1> tester1(&test1, "outputAddFP32_1.txt");
   
   printf("calling getGoodSample\n");
-  tester.getGoodSample();
+  tester1.getGoodSample();
 
   printf("calling dataToFile\n");
-  tester.dataToFile();
+  tester1.dataToFile();
 
   printf("AdditionFP32_1 finished\n");
 
   printf("ceating AdditionFP32_2 TestClass\n");
-  AdditionFP32_2 test(blockSize, iterNum);
+  AdditionFP32_2 test2(blockSize, iterNum);
 
   printf("creating TestRunner obj\n");
-  TestRunner<AdditionFP32_2> tester(&test, "outputAddFP32_2.txt");
+  TestRunner<AdditionFP32_2> tester2(&test2, "outputAddFP32_2.txt");
   
   printf("calling getGoodSample\n");
-  tester.getGoodSample();
+  tester2.getGoodSample();
 
   printf("calling dataToFile\n");
-  tester.dataToFile();
+  tester2.dataToFile();
   return 0;
 }

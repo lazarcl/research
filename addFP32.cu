@@ -136,12 +136,11 @@ public:
   int blockSize;
 
 
-  AdditionFP32(int blockSize, int iterNum)
+  AdditionFP32_1(int blockSize, int iterNum)
     : iterNum(iterNum), blockSize(blockSize) 
   { }
 
-//destructor
-  ~AdditionFP32() {
+  ~AdditionFP32_1() {
     CUDA_ERROR( cudaFree(d_x) );
     CUDA_ERROR( cudaFree(d_y) );
   }
@@ -179,12 +178,11 @@ public:
   int blockSize;
 
 
-  AdditionFP32(int blockSize, int iterNum)
+  AdditionFP32_2(int blockSize, int iterNum)
     : iterNum(iterNum), blockSize(blockSize) 
   { }
 
-//destructor
-  ~AdditionFP32() {
+  ~AdditionFP32_2() {
     CUDA_ERROR( cudaFree(d_x) );
     CUDA_ERROR( cudaFree(d_y) );
   }

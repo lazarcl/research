@@ -204,25 +204,28 @@ public:
     }
   } 
 
-}
+};
 
 template <typename T>
-class AddAlg3Test : public AddBase {
-  using AddBase<T>::AddBase;
-
+class AddAlg3Test : public AddBase<T> {
+  //using AddBase<T>::AddBase;
+  AddAlg3Test(int blockSize, int iterNum) : AddBase<T>(blockSize, iterNum) 
+  {}
   void runKernel() {
-      addAlg3<T><<<numBlocks, blockSize>>>(n, iterNum, d_x);
+      addAlg3<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
-}
+};
 
 template <typename T>
-class AddAlg3Test : public AddBase {
-  using AddBase<T>::AddBase;
+class AddAlg4Test : public AddBase<T> {
+  //using AddBase<T>::AddBase(int, int);
+  AddAlg4Test(int blockSize, int iterNum) : AddBase<T>(blockSize, iterNum) 
+  {}
 
   void runKernel() {
-      addAlg4<T><<<numBlocks, blockSize>>>(n, iterNum, d_x);
+      addAlg4<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
-}
+};
 
 
 

@@ -5,7 +5,7 @@
 // only verified with following flag:
 //   --maxrregcount 15
 
-
+/*
 template <typename T>
 __global__
 void addAlg1(int n, int iterateNum, T *x) {
@@ -37,7 +37,7 @@ void addAlg2(int n, int iterateNum, T *x) {
   }
   x[thread] = a;
 }
-
+*/
 
 //algs 3 and 4 work for FP32, FP64, and Int without register limiting
 
@@ -91,6 +91,7 @@ void createData(int n, T *x) {
   }
 }
 
+/*
 template <typename T>
 class AdditionFP_1 {
 public:
@@ -169,7 +170,7 @@ public:
   } 
 
 };
-
+*/
 
 template <typename T>
 class AddBase {
@@ -196,7 +197,7 @@ public:
     createData<T><<<numBlocks, blockSize>>>(n, d_x);
   }
 
-  virtual void runKernel();
+  void runKernel();
 
   void CUDA_ERROR(cudaError_t e) {
     if (e != cudaSuccess) {
@@ -208,6 +209,7 @@ public:
 
 template <typename T>
 class AddAlg3Test : public AddBase<T> {
+public:
   //using AddBase<T>::AddBase;
   AddAlg3Test(int blockSize, int iterNum) : AddBase<T>(blockSize, iterNum) 
   {}
@@ -218,6 +220,7 @@ class AddAlg3Test : public AddBase<T> {
 
 template <typename T>
 class AddAlg4Test : public AddBase<T> {
+public:
   //using AddBase<T>::AddBase(int, int);
   AddAlg4Test(int blockSize, int iterNum) : AddBase<T>(blockSize, iterNum) 
   {}
@@ -226,8 +229,6 @@ class AddAlg4Test : public AddBase<T> {
       addAlg4<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };
-
-
 
 
 

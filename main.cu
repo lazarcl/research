@@ -11,16 +11,16 @@ void runAddTest(int iterNum, int blockSize, const char* outputName1,
               const char* outputName2) 
 {
   printf("Starting Alg1\n");
-  AdditionFP_1<T> test1(blockSize, iterNum);
-  TestRunner<AdditionFP_1<T>> tester1(&test1, outputName1);
+  AddAlg3Test<T> test1(blockSize, iterNum);
+  TestRunner<AddAlg3Test<T>> tester1(&test1, outputName1);
   tester1.getGoodSample();
   tester1.dataToFile();
 
   printf("Alg 1 finished\n");
 
   printf("Starting Alg2\n");
-  AdditionFP_2<T> test2(blockSize, iterNum);
-  TestRunner<AdditionFP_2<T>> tester2(&test2, outputName2);
+  AddAlg4Test<T> test2(blockSize, iterNum);
+  TestRunner<AddAlg4Test<T>> tester2(&test2, outputName2);
   tester2.getGoodSample();
   tester2.dataToFile();
 

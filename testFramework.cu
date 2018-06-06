@@ -276,8 +276,10 @@ public:
 
 }; //end TestRunner
 
+
+/*
 template <typename T>
-void runAddFPTest(int iterNum, int blockSize, const char* outputName1, 
+void runAddTest(int iterNum, int blockSize, const char* outputName1, 
               const char* outputName2) 
 {
   printf("Starting Alg1\n");
@@ -299,15 +301,16 @@ void runAddFPTest(int iterNum, int blockSize, const char* outputName1,
 
 int main() {
   printf("---- beginning FP32 Add Testing ----\n"); 
-  runAddFPTest<float>(6000000, 256, "data/outputAddFP32_1.txt", "data/outputAddFP32_2.txt");
+  runAddTest<float>(1000000, 256, "data/outputAddFP32_1.txt", "data/outputAddFP32_2.txt");
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 Add Testing ----\n");
-  runAddFPTest<double>(6000000, 256, "data/outputAddFP64_1.txt", "data/outputAddFP64_2.txt");
+  runAddTest<double>(1000000, 256, "data/outputAddFP64_1.txt", "data/outputAddFP64_2.txt");
   printf("---- test end ----\n");
 
   printf("---- beginning Int32 Add Testing ---\n");
-  runAddFPTest<int>(6000000, 256, "data/outputAddInt32_1.txt", "data/outputAddInt32_2.txt");
+  runAddTest<int>(1000000, 256, "data/outputAddInt32_1.txt", "data/outputAddInt32_2.txt");
   printf("---- test end ----\n");
   return 0;
 }
+*/

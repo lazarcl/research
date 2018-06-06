@@ -8,7 +8,7 @@
 /*
 template <typename T>
 __global__
-void addAlg1(int n, int iterateNum, T *x) {
+void addAlg3_old(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b, c;
@@ -22,7 +22,7 @@ void addAlg1(int n, int iterateNum, T *x) {
 
 template <typename T>
 __global__
-void addAlg2(int n, int iterateNum, T *x) {
+void addAlg4_old(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b = 1000;
@@ -43,7 +43,7 @@ void addAlg2(int n, int iterateNum, T *x) {
 
 template <typename T>
 __global__
-void addAlg3(int n, int iterateNum, T *x) {
+void addAlg1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b = 2, c = 2;
@@ -61,7 +61,7 @@ void addAlg3(int n, int iterateNum, T *x) {
 
 template <typename T>
 __global__
-void addAlg4(int n, int iterateNum, T *x) {
+void addAlg2(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b = 2, c = 2;
@@ -120,7 +120,7 @@ public:
   }
 
   void runKernel() {
-        addAlg3<T><<<numBlocks, blockSize>>>(n, iterNum, d_x);
+        addAlg1<T><<<numBlocks, blockSize>>>(n, iterNum, d_x);
   }
 
   void CUDA_ERROR(cudaError_t e) {
@@ -160,7 +160,7 @@ public:
   }
 
   void runKernel() {
-        addAlg4<T><<<numBlocks, blockSize>>>(n, iterNum, d_x);
+        addAlg2<T><<<numBlocks, blockSize>>>(n, iterNum, d_x);
   }
 
   void CUDA_ERROR(cudaError_t e) {
@@ -173,7 +173,7 @@ public:
 */
 
 template <typename T>
-class AddBase {
+class ArithmeticTestBase {
 public: 
 
   T *d_x;
@@ -182,11 +182,11 @@ public:
   int numBlocks;
   int blockSize;
 
-  AddBase(int blockSize, int iterNum)
+  ArithmeticTestBase(int blockSize, int iterNum)
     : iterNum(iterNum), blockSize(blockSize) 
   { }
 
-  ~AddBase() {
+  ~ArithmeticTestBase() {
     CUDA_ERROR( cudaFree(d_x) );
   }
 
@@ -208,25 +208,23 @@ public:
 };
 
 template <typename T>
-class AddAlg3Test : public AddBase<T> {
+class AddAlg1Test : public ArithmeticTestBase<T> {
 public:
-  //using AddBase<T>::AddBase;
-  AddAlg3Test(int blockSize, int iterNum) : AddBase<T>(blockSize, iterNum) 
+  AddAlg1Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
   {}
   void runKernel() {
-      addAlg3<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+      addAlg1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };
 
 template <typename T>
-class AddAlg4Test : public AddBase<T> {
+class AddAlg2Test : public ArithmeticTestBase<T> {
 public:
-  //using AddBase<T>::AddBase(int, int);
-  AddAlg4Test(int blockSize, int iterNum) : AddBase<T>(blockSize, iterNum) 
+  AddAlg2Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
   {}
 
   void runKernel() {
-      addAlg4<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+      addAlg2<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };
 

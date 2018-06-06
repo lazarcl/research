@@ -7,7 +7,6 @@
 #include <cuda_runtime.h>
 #include <time.h>
 #include <unistd.h>
-#include "addFP32.cu"
 #include "templateAddFP.cu"
 
 //run command: 
@@ -306,13 +305,15 @@ void runAddFPTest(int iterNum, int blockSize, const char* outputName1,
 
 int main() {
   printf("---- beginning FP32 Add Testing ----\n"); 
-  runAddFPTest<float>(1000000, 256, "data/outputAddFP32_1.txt", "data/outputAddFP32_2.txt");
+  runAddFPTest<float>(6000000, 256, "data/outputAddFP32_1.txt", "data/outputAddFP32_2.txt");
   printf("---- test end ----\n");
+
   printf("---- beginning FP64 Add Testing ----\n");
-  runAddFPTest<double>(1000000, 256, "data/outputAddFP64_1.txt", "data/outputAddFP64_2.txt");
+  runAddFPTest<double>(6000000, 256, "data/outputAddFP64_1.txt", "data/outputAddFP64_2.txt");
   printf("---- test end ----\n");
+
   printf("---- beginning Int32 Add Testing ---\n");
-  runAddFPTest<int>(1000000, 256, "data/outputAddInt32_1.txt", "data/outputAddInt32_2.txt");
+  runAddFPTest<int>(6000000, 256, "data/outputAddInt32_1.txt", "data/outputAddInt32_2.txt");
   printf("---- test end ----\n");
   return 0;
 }

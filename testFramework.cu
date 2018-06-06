@@ -133,17 +133,18 @@ public:
         break;
       }
       printf("  beginning test run %d\n", curRun);
-      
+      //take temp measurement again here?
       setupSampling();
       testClass->runKernel();
       runSampling();
 
-      badSampleData = !isDataValid();
-
       prevTemp = curTemp;
       curTemp = getDeviceTemp();
+
       if (std::abs((int)(curTemp-prevTemp)) >= 1) {
         printf("    temp still changing\n");
+      } else {
+        badSampleData = !isDataValid();
       }
       curRun++;
     }
@@ -305,13 +306,13 @@ void runAddFPTest(int iterNum, int blockSize, const char* outputName1,
 
 int main() {
   printf("---- beginning FP32 Add Testing ----\n"); 
-  runAddFPTest<float>(1000000, 256, "outputAddFP32_1.txt", "outputAddFP32_2.txt");
+  runAddFPTest<float>(1000000, 256, "data/outputAddFP32_1.txt", "data/outputAddFP32_2.txt");
   printf("---- test end ----\n");
   printf("---- beginning FP64 Add Testing ----\n");
-  runAddFPTest<double>(1000000, 256, "outputAddFP64_1.txt", "outputAddFP64_2.txt");
+  runAddFPTest<double>(1000000, 256, "data/outputAddFP64_1.txt", "data/outputAddFP64_2.txt");
   printf("---- test end ----\n");
   printf("---- beginning Int32 Add Testing ---\n");
-  runAddFPTest<int>(1000000, 256, "outputAddInt32_1.txt", "outputAddInt32_2.txt");
+  runAddFPTest<int>(1000000, 256, "data/outputAddInt32_1.txt", "data/outputAddInt32_2.txt");
   printf("---- test end ----\n");
   return 0;
 }

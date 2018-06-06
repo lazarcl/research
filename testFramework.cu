@@ -280,27 +280,21 @@ template <typename T>
 void runAddFPTest(int iterNum, int blockSize, const char* outputName1, 
               const char* outputName2) 
 {
-  printf("creating AdditionFP32_1 TestClass\n");
+  printf("Starting Alg1\n");
   AdditionFP_1<T> test1(blockSize, iterNum);
-  printf("creating TestRunner obj\n");
   TestRunner<AdditionFP_1<T>> tester1(&test1, outputName1);
-  printf("calling getGoodSample\n");
   tester1.getGoodSample();
-  printf("calling dataToFile\n");
   tester1.dataToFile();
 
-  printf("AdditionFP32_1 finished\n");
+  printf("Alg 1 finished\n");
 
-  printf("ceating AdditionFP32_2 TestClass\n");
+  printf("Starting Alg2\n");
   AdditionFP_2<T> test2(blockSize, iterNum);
-  printf("creating TestRunner obj\n");
   TestRunner<AdditionFP_2<T>> tester2(&test2, outputName2);
-  printf("calling getGoodSample\n");
   tester2.getGoodSample();
-  printf("calling dataToFile\n");
   tester2.dataToFile();
 
-  printf("AdditionFP32_2 finished\n");
+  printf("Alg 2 finished\n");
 }
 
 int main() {

@@ -1,4 +1,5 @@
 #include "testFramework.cu"
+#include "arithmeticTests.cu"
 
 
 /*run command
@@ -10,21 +11,21 @@ template <typename T>
 void runAddTest(int iterNum, int blockSize, const char* outputName1, 
               const char* outputName2) 
 {
-  printf("Starting Alg1\n");
-  AddAlg1Test<T> test1(blockSize, iterNum);
-  TestRunner<AddAlg3Test<T>> tester1(&test1, outputName1);
+  printf("Starting Kernel1\n");
+  AddKernel1Test<T> test1(blockSize, iterNum);
+  TestRunner<AddKernel3Test<T>> tester1(&test1, outputName1);
   tester1.getGoodSample();
   tester1.dataToFile();
 
-  printf("Alg 1 finished\n");
+  printf("Kernel 1 finished\n");
 
-  printf("Starting Alg2\n");
-  AddAlg2Test<T> test2(blockSize, iterNum);
-  TestRunner<AddAlg4Test<T>> tester2(&test2, outputName2);
+  printf("Starting Kernel2\n");
+  AddKernel2Test<T> test2(blockSize, iterNum);
+  TestRunner<AddKernel4Test<T>> tester2(&test2, outputName2);
   tester2.getGoodSample();
   tester2.dataToFile();
 
-  printf("Alg 2 finished\n");
+  printf("Kernel 2 finished\n");
 }
 
 

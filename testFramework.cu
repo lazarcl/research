@@ -120,7 +120,7 @@ public:
   
   void getGoodSample() {
     unsigned int prevTemp = 0;
-    unsigned int curTemp = 0;
+    unsigned int curTemp = getDeviceTemp();
     bool badSampleData = true;
     int curRun = 1;
 

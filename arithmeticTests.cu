@@ -3,7 +3,7 @@
 //  without register limiting
 
 
-//------------ MULTIPLICATION KERNELS ---------
+//------------ ADDITION KERNELS ---------
 template <typename T>
 __global__
 void addKernel1(int n, int iterateNum, T *x) {
@@ -46,7 +46,7 @@ void addKernel2(int n, int iterateNum, T *x) {
 //------------ MULTIPLICATION KERNELS ---------
 template <typename T>
 __global__
-void addKernel1(int n, int iterateNum, T *x) {
+void multKernel1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b = 2, c = 2;
@@ -64,7 +64,7 @@ void addKernel1(int n, int iterateNum, T *x) {
 
 template <typename T>
 __global__
-void addKernel2(int n, int iterateNum, T *x) {
+void multKernel2(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b = 2, c = 2;

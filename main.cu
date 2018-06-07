@@ -72,8 +72,9 @@ void runFMATest(int iterNum, int blockSize, const char* outputName1,
 
 
 int main() {
-  int addIter = 5000000;
   int blockSize = 256;
+  
+  int addIter = 5000000;
   printf("---- beginning FP32 Add Testing ----\n"); 
   runAddTest<float>(multIter, blockSize, "data/outputAddFP32_1.txt", "data/outputAddFP32_2.txt");
   printf("---- test end ----\n");

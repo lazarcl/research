@@ -151,9 +151,13 @@ public:
   int iterNum;
   int numBlocks;
   int blockSize;
+  int numBlockScale;
 
   ArithmeticTestBase(int blockSize, int iterNum)
-    : iterNum(iterNum), blockSize(blockSize) 
+    : iterNum(iterNum), blockSize(blockSize), numBlockScale(360)
+  { }
+  ArithmeticTestBase(int blockSize, int iterNum, int numBlockScale)
+    : iterNum(iterNum), blockSize(blockSize), numBlockScale(numBlockScale)
   { }
 
   ~ArithmeticTestBase() {
@@ -161,7 +165,7 @@ public:
   }
 
   void kernelSetup(cudaDeviceProp deviceProp) {
-    numBlocks = deviceProp.multiProcessorCount * 360;
+    numBlocks = deviceProp.multiProcessorCount * numBlockScale;
     n = numBlocks * blockSize;
     CUDA_ERROR( cudaMalloc(&d_x, n*sizeof(T)) ); 
     createData<T><<<numBlocks, blockSize>>>(n, d_x);
@@ -182,8 +186,13 @@ public:
 template <typename T>
 class AddKernel1Test : public ArithmeticTestBase<T> {
 public:
-  AddKernel1Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
+  AddKernel1Test(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
   {}
+  AddKernel1Test(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {}
+
   void runKernel() {
       addKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
@@ -192,7 +201,11 @@ public:
 template <typename T>
 class AddKernel2Test : public ArithmeticTestBase<T> {
 public:
-  AddKernel2Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
+  AddKernel2Test(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {}
+  AddKernel2Test(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
   {}
 
   void runKernel() {
@@ -205,8 +218,13 @@ public:
 template <typename T>
 class MultKernel1Test : public ArithmeticTestBase<T> {
 public:
-  MultKernel1Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
+  MultKernel1Test(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
   {}
+  MultKernel1Test(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {}
+
   void runKernel() {
       multKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
@@ -215,7 +233,11 @@ public:
 template <typename T>
 class MultKernel2Test : public ArithmeticTestBase<T> {
 public:
-  MultKernel2Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
+  MultKernel2Test(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {}
+  MultKernel2Test(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
   {}
 
   void runKernel() {
@@ -228,8 +250,13 @@ public:
 template <typename T>
 class FmaKernel1Test : public ArithmeticTestBase<T> {
 public:
-  FmaKernel1Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
+  FmaKernel1Test(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
   {}
+  FmaKernel1Test(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {}
+
   void runKernel() {
       fmaKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
@@ -238,7 +265,11 @@ public:
 template <typename T>
 class FmaKernel2Test : public ArithmeticTestBase<T> {
 public:
-  FmaKernel2Test(int blockSize, int iterNum) : ArithmeticTestBase<T>(blockSize, iterNum) 
+  FmaKernel2Test(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {}
+  FmaKernel2Test(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
   {}
 
   void runKernel() {

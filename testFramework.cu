@@ -24,6 +24,9 @@ public:
   //number of samples to igore from beg and end while analyzing data
   const int ignoreSampleCount = 50;
 
+  //acceptable data error percentage in analysis
+  float acceptableError;
+
   //device properties
   cudaDeviceProp deviceProp;
 
@@ -49,7 +52,8 @@ public:
   //class that holds the kernel to run
   K *testClass;
 
-  TestRunner(K *t, const char *outputName) : outputName(outputName) {
+  TestRunner(K *t, const char *outputName, float acceptableError=0.03) 
+          : outputName(outputName), acceptableError(acceptableError) {
     testClass = t;
     
     CUDA_ERROR( cudaSetDevice(deviceIDNum) );
@@ -175,7 +179,7 @@ public:
     double curSample;
     for (int i = startPt; i < endPt; i++) {
       curSample = (double) powerData[i];
-      if (std::abs((curSample-avg)/avg) > 0.03) {
+      if (std::abs((curSample-avg)/avg) > acceptableError) {
 
         if (badStreak++ > 250) {
           printf("    power samples not consistant enough. Made it %d%% through data\n", 100*i/endPt);

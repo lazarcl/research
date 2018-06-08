@@ -22,11 +22,11 @@ void runAddTest(int iterNum, int blockSize, int blockSizeScalar,
 
 int main() {
   int blockSize = 256;
-  int addIter = 90000000;
+  int addIter = 200000000;
   float acceptableError = 1000; //set large so it has no affect 
   
   printf("---- beginning runs of the 2nd approach to base power measuring ----\n"); 
-  for (int blckScalr = 3; blckScalr >= 1; blckScalr--) {
+  for (int blckScalr = 1; blckScalr <= 8; blckScalr++) {
     // char outName[100];   // array to hold the result.
     // strcpy(result,one); // copy string one into the result.
     // strcat(result,two); // append string two to the result.

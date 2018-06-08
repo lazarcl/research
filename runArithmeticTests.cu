@@ -3,7 +3,7 @@
 
 
 /*run command
-nvcc main.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
+nvcc runArithmeticTests.cu -lnvidia-ml
 */
 
 

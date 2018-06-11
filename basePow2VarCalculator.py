@@ -162,15 +162,11 @@ class BasePow2VarCalculator(object):
 		return self.runTimes
 
 
-folderPaths = ["data/basePow2/", "data/basePow2_1", "data/basePow2_2", "data/basePow2_3", "data/basePow2_4"]
-obj = BasePow2VarCalculator(folderPaths, [3,4,5])
-# a, b = obj.calcGroupedSamples()
-# print(str(a))
-# print(str(b))
-obj.calcEnergy()
-obj.printBasePowers()
-# obj.findBasePowers()
-# obj.printBasePowers()
+if __name__ == "__main__":
+	folderPaths = ["data/basePow2/", "data/basePow2_1", "data/basePow2_2", "data/basePow2_3", "data/basePow2_4", "data/basePow2_5"]
+	obj = BasePow2VarCalculator(folderPaths, [3,4,5])
+	obj.calcEnergy()
+	obj.printBasePowers()
 
 
 

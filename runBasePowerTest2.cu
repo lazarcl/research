@@ -48,7 +48,7 @@ int main() {
 
     //if foobar is a string obj. get const char* with: foobar.c_str()
     std::string pathName = folderPath + std::string("/outputBlockScalar_");
-    std::string fileType = ".txt";
+    std::string fileType = ".csv";
     std::string numStr = std::to_string(blckScalr);
     const char *outName= (pathName + numStr + fileType).c_str();
     printf("---- beginning run #%d ----\n", blckScalr); 

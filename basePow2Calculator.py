@@ -14,7 +14,7 @@ class BasePow2Calculator(object):
 		#path to folder where data to examine is held
 		self.pathToData = pathToData
 		if pathToData[-1] != "/":
-			pathToData+="/"
+			self.pathToData+="/"
 
 		#list of ints representing the run numbers
 		self.runIDs = runIDs
@@ -32,7 +32,7 @@ class BasePow2Calculator(object):
 		self.runEnergy = {}
 
 		#when calculating avgs, how many samples to skip at beg and end of data
-		self.rampUpSize = 50
+		self.rampUpSize = 100
 
 		#array where results are stored as tuples: (runJ, runK, BP)
 		self.results = []
@@ -64,7 +64,7 @@ class BasePow2Calculator(object):
 			self.runAverages[runID] = total/len(runData[self.rampUpSize:-self.rampUpSize]) 
 
 	# calculate all the energy used during the test's kernel run
-	def getTotalEnergy(self):
+	def findTotalEnergy(self):
 		self.loadData()
 		self.findAverages()
 		for runID in self.runIDs:
@@ -72,7 +72,7 @@ class BasePow2Calculator(object):
 
 	#find base powers between each run and store as a tuple: (run1ID, run2ID, BP)
 	def findBasePowers(self):
-		self.getTotalEnergy()
+		self.findTotalEnergy()
 
 		for (j, k) in list(itertools.combinations(self.runIDs, 2)):
 			numerator = k*self.runEnergy[j] - j*self.runEnergy[k]
@@ -93,9 +93,9 @@ class BasePow2Calculator(object):
 		return self.runTimes
 
 
-# obj = BasePow2Calculator("data/basePow2/", [3,4,5])
-# obj.findBasePowers()
-# obj.printBasePowers()
+obj = BasePow2Calculator("data/basePow2/", [3,4,5])
+obj.findBasePowers()
+obj.printBasePowers()
 
 
 

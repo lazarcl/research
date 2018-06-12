@@ -4,7 +4,7 @@ import itertools
 import statistics
 
 
-class BasePow2VarCalculator(object):
+class BasePowVarCalculator(object):
 	"""
 	Calculate the base power from data collected. Find variance between different runs
 	of the same tests. Inputs is the paths to the folders where the data to process
@@ -12,7 +12,7 @@ class BasePow2VarCalculator(object):
 	All result files should end with '<test_number>.csv'
 	"""
 	def __init__(self, pathsToData, runIDs):
-		super(BasePow2VarCalculator, self).__init__()
+		super(BasePowVarCalculator, self).__init__()
 
 		#path to folder where data to examine is held
 		self.pathsToData = pathsToData
@@ -23,17 +23,10 @@ class BasePow2VarCalculator(object):
 		#list of ints representing the run numbers
 		self.runIDs = runIDs
 
-		#dict to hold avg power value for each run. key=runID, value=avg power value
-		self.runAverages = {}
-
-		# self.runTimes = {}
-
-		self.runEnergy = {}
-
 		#when calculating avgs, how many samples to skip at beg and end of data
 		self.rampUpSize = 50
 
-		#array where results are stored as tuples: (runJ, runK, BP)
+		#array where results are stored as tuples: (runJ, runK, BP, variance)
 		self.results = []
 
 	#find relevant file names and load into data dict. return (data,time) tuple
@@ -123,7 +116,7 @@ class BasePow2VarCalculator(object):
 		return energyCombined, timesCombined
 
 
-	def calcEnergy(self):
+	def calcAppr2Energy(self):
 		self.runEnergys, self.runTimes = self.calcGroupedSamples()
 
 		for (j, k) in list(itertools.combinations(self.runIDs, 2)):
@@ -152,20 +145,12 @@ class BasePow2VarCalculator(object):
 	def printBasePowers(self):
 		print([(a,b,round(c,2), round(d,2)) for a,b,c,d in self.results])
 
-	def getAvgs(self):
-		return self.runAverages
-
-	def getEnergy(self):
-		return self.runEnergy
-
-	def getTimes(self):
-		return self.runTimes
 
 
 if __name__ == "__main__":
 	folderPaths = ["data/basePow2/", "data/basePow2_1", "data/basePow2_2", "data/basePow2_3", "data/basePow2_4", "data/basePow2_5"]
-	obj = BasePow2VarCalculator(folderPaths, [3,4,5])
-	obj.calcEnergy()
+	obj = BasePowVarCalculator(folderPaths, [3,4,5])
+	obj.calcAppr2Energy()
 	obj.printBasePowers()
 
 

@@ -75,40 +75,41 @@ int main() {
   int blockSize = 256;
   
   int addIter = 2000000;
+  
   printf("---- beginning FP32 Add Testing ----\n"); 
-  runAddTest<float>(addIter, blockSize, "data/outputAddFP32_1.txt", "data/outputAddFP32_2.txt");
+  runAddTest<float>(addIter, blockSize, "data/arithmeticTests/outputAddFP32_1.csv", "data/arithmeticTests/outputAddFP32_2.csv");
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 Add Testing ----\n");
-  runAddTest<double>(addIter/3, blockSize, "data/outputAddFP64_1.txt", "data/outputAddFP64_2.txt");
+  runAddTest<double>(addIter/3, blockSize, "data/arithmeticTests/outputAddFP64_1.csv", "data/arithmeticTests/outputAddFP64_2.csv");
   printf("---- test end ----\n");
 
   printf("---- beginning Int32 Add Testing ---\n");
-  runAddTest<int>(addIter, blockSize, "data/outputAddInt32_1.txt", "data/outputAddInt32_2.txt");
+  runAddTest<int>(addIter, blockSize, "data/arithmeticTests/outputAddInt32_1.csv", "data/arithmeticTests/outputAddInt32_2.csv");
   printf("---- test end ----\n");
 
   printf("\n");
   int multIter = 2000000;
   printf("---- beginning FP32 Mult Testing ----\n"); 
-  runMultTest<float>(multIter, blockSize, "data/outputMultFP32_1.txt", "data/outputMultFP32_2.txt");
+  runMultTest<float>(multIter, blockSize, "data/arithmeticTests/outputMultFP32_1.csv", "data/arithmeticTests/outputMultFP32_2.csv");
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 Mult Testing ----\n");
-  runMultTest<double>(multIter/3, blockSize, "data/outputMultFP64_1.txt", "data/outputMultFP64_2.txt");
+  runMultTest<double>(multIter/3, blockSize, "data/arithmeticTests/outputMultFP64_1.csv", "data/arithmeticTests/outputMultFP64_2.csv");
   printf("---- test end ----\n");
 
   printf("---- beginning Int32 Mult Testing ---\n");
-  runMultTest<int>(multIter, blockSize, "data/outputMultInt32_1.txt", "data/outputMultInt32_2.txt");
+  runMultTest<int>(multIter, blockSize, "data/arithmeticTests/outputMultInt32_1.csv", "data/arithmeticTests/outputMultInt32_2.csv");
   printf("---- test end ----\n");
 
   printf("\n");
   int fmaIter = 800000;
   printf("---- beginning FP32 FMA Testing ----\n"); 
-  runFMATest<float>(fmaIter*2, blockSize, "data/outputFMAFP32_1.txt", "data/outputFMAFP32_2.txt");
+  runFMATest<float>(fmaIter*2, blockSize, "data/arithmeticTests/outputFMAFP32_1.csv", "data/arithmeticTests/outputFMAFP32_2.csv");
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 FMA Testing ----\n");
-  runFMATest<double>(fmaIter, blockSize, "data/outputFMAFP64_1.txt", "data/outputFMAFP64_2.txt");
+  runFMATest<double>(fmaIter, blockSize, "data/arithmeticTests/outputFMAFP64_1.csv", "data/arithmeticTests/outputFMAFP64_2.csv");
   printf("---- test end ----\n");
 
   return 0;

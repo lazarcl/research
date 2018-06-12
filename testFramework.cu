@@ -130,11 +130,12 @@ public:
 
     testClass->kernelSetup(deviceProp);
 
-    while( badSampleData || std::abs((int)(curTemp - prevTemp)) >= 1) { 
-      if (curRun > maxTestRuns ) {
+    while( badSampleData || std::abs((int)(curTemp - prevTemp)) >= 1) {  
+     if (curRun > maxTestRuns ) {
         break;
       }
       printf("  beginning test run %d\n", curRun);
+      fflush(stdout);
       //take temp measurement again here?
       setupSampling();
       testClass->runKernel();

@@ -1,5 +1,6 @@
 import subprocess
 import pathlib
+import sys
 
 
 '''
@@ -25,16 +26,27 @@ tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"
 
 #make sure all directories in givenlist exist. If not, create them
 def makeDirs(dirList):
+  print("creating save directories...", end='')
   for path in dirList:
-    pathlib.Path(path).mkdir(parents=True, exist_ok=True) 
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+  print("DONE")
 
 #run command and print the subprocesses output in real time
 #return the exit status of the subprocess
 def runCommandPrintOutput(command):
-  popen = subprocess.Popen(command, stdout=subprocess.PIPE)
+  popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
 
-  for line in iter(popen.stdout.readline, b''):
-    print(line)
+  while True:
+      out = popen.stdout.read(1)
+      if popen.poll() is not None:
+          break
+      if out != '':
+          sys.stdout.write(out.decode("utf-8"))
+          sys.stdout.flush()
+
+  
+#  for line in iter(popen.stdout.readline, b''):
+#    print(line)
   popen.stdout.close()
   popen.wait()
 
@@ -43,28 +55,34 @@ def runCommandPrintOutput(command):
 #given list of files to compile, ensure they all compile with no output
 #name the executabe outputs according to testExecutableNames dictionary
 def compileAll(testFiles):
+  print("compiling tests...")
   for test in testFiles:
-    print("compiling", test, " ...")
+    print("  compiling", test + "...", end='')
     outName = testExecutableNames[test]
     exitStatus = runCommandPrintOutput( ("nvcc", test, "-lnvidia-ml", "-o", outName) )
     if exitStatus != 0:
-      print(test, "didn't compile cleanly. Quitting before any runs for debug")
+      print(test, "didn't compile cleanly. Quitting for debug")
       exit(1)
+    print("DONE")
+  print("DONE compiling")
 
 #given executable name and storage path, run the executable
 #handle unsucessful exit by retrying. 
 #If still unsucessful: return 1 
 #if successful: return 0
 def runExec(execName, storagePath):
-  command = ("./"+execName+" "+storagePath)
+  command = ("./"+execName, storagePath)
+  print("")
+  print("BEGINNING TEST: '" + str(command) + "'")
   exitStatus = runCommandPrintOutput(command)
-  if exitStatus != 1:
+  if exitStatus != 0:
     print(execName, "at", storagePath, "unsucessful. Retrying...")
-    command = ("./"+execName+" "+storagePath)
     exitStatus = runCommandPrintOutput(command)
     if exitStatus != 0:
       print(execName, "at", storagePath, "failed for the seccond time")
       return 1
+  print("END TEST: '" + str(command) + "'")
+  print("")
   return 0
 
 #given list of storage paths, run each test once for each storagePath
@@ -91,6 +109,8 @@ if __name__ == "__main__":
   testFile = ["runArithmeticTests.cu"]
   compileAll(testFile)
 
+#  command = ("./arithmeticTest.out", dirList[0])
+#  runCommand(command)
   runExec(testExecutableNames[testFile[0]], dirList[0])
 
 

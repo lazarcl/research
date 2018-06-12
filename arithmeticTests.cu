@@ -184,6 +184,38 @@ public:
 
 //------------ ADDITION TEST CLASSES ---------
 template <typename T>
+class AddKernel1TestSetSharedMem : public ArithmeticTestBase<T> {
+public:
+
+  unsigned int sharedMemRequest = NULL;
+  float sharedMemScale = NULL; 
+
+  AddKernel1TestSetSharedMem(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {}
+  AddKernel1TestSetSharedMem(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {}
+
+  //in addition to normal setup, figure out how much shared memory to request
+  void kernelSetup(cudaDeviceProp deviceProp) {
+    ArithmeticTestBase<T>(kernelSetup);
+
+    sharedMemRequest = (unsigned int) (deviceProp.sharedMemPerBlock*sharedMemScale);
+  }
+
+  void setSharedMem(float newScale) {
+    sharedMemScale = newScale;
+  }
+
+  void runKernel() {
+      addKernel1<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>
+                      (this->n, this->iterNum, this->d_x);
+  }
+};
+
+
+template <typename T>
 class AddKernel1Test : public ArithmeticTestBase<T> {
 public:
   AddKernel1Test(int blockSize, int iterNum) 

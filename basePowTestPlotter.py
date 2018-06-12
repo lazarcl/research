@@ -29,7 +29,7 @@ def getPowerFromFile(filePath):
 
 #name of test to make graph for
 #  ex: FMAFP32, FMAFP64, AddInt32, MultFP32...
-def makeFigure(testPathTups):
+def makeFigure(testPathTups, supTitle, subTitle):
 	powerLists = []
 	for i in range(len(testPathTups)):
 		powerLists.append(getPowerFromFile(testPathTups[i][0]))
@@ -44,8 +44,8 @@ def makeFigure(testPathTups):
 
 	pylab.xlabel('time(ms)')
 	pylab.ylabel('power(W)')
-	pylab.suptitle("Base Power 2nd Approach Runs")
-	pylab.title("Linearly changing number of blocks per run", fontsize=8)
+	pylab.suptitle(supTitle)
+	pylab.title(subTitle, fontsize=8)
 
 	pylab.legend(loc="lower right")
 	pylab.ylim(0, MAX_Y)
@@ -72,16 +72,40 @@ def saveFigureList(figs, filePath):
 	pp.close()
 
 
+def createTestPathTuples(paths, folderPath):
+	pathTups = []
+	for i in range(len(paths)):
+		name = paths[i].replace(folderPath+"output", "").replace(".csv", "")
+		pathTups.append( (paths[i], name) )
+	return pathTups
 
 
+def makeBasePow2Graph(folderPath):
+	if folderPath[-1] != "/":
+		folderPath+="/"
 
-testPathTups = glob.glob("data/basePow2/*.csv")
-for i in range(len(testPathTups)):
-	name = testPathTups[i].replace("data/basePow2/output", "").replace(".csv", "")
-	testPathTups[i] = (testPathTups[i], name)
+	supTitle = "Base Power 2nd Approach Run"
+	subTitle = "Linearly changing number of blocks per run"
+	paths = glob.glob(folderPath+"*.csv")
 
-fig = makeFigure(testPathTups)
-fig.savefig("data/basePow2/graphResultsBasePow2.pdf", dpi=SAVE_DPI)
+	pathTuples = createTestPathTuples(paths, folderPath)
+	fig = makeFigure(pathTuples, supTitle, subTitle)
+	fig.savefig(folderPath+"resultsGraphBP2.pdf", dpi=SAVE_DPI)
+
+def makeBasePow1Graph(folderPath):
+	if folderPath[-1] != "/":
+		folderPath+="/"
+
+	supTitle = "Base Power 1st Approach Run"
+	subTitle = "Changing number of concurrent blocks per SM"
+	paths = glob.glob(folderPath+"*.csv")
+
+	pathTuples = createTestPathTuples(paths, folderPath)
+	fig = makeFigure(pathTuples, supTitle, subTitle)
+	fig.savefig(folderPath+"resultsGraphBP1.pdf", dpi=SAVE_DPI)
+
+
+# makeBasePow2Graph()
 
 
 

@@ -30,7 +30,7 @@ class BasePowVarCalculator(object):
 		self.results = []
 
 	#find relevant file names and load into data dict. return (data,time) tuple
-	#return data in 
+	#return power data in 
 		#dict that hold the data in arrays. Key=runID, value=power data array
 	#return time in 
 		#dict to hold the elapsed time for each run. key=runID, value=total time in sec
@@ -42,7 +42,8 @@ class BasePowVarCalculator(object):
 			fileName = glob.glob(dataPath+"*"+str(runID)+".csv")
 
 			if len(fileName) == 0:
-				print("run '"+str(runID)+"' not found in path '"+dataPath)
+				print("run '"+str(runID)+"' not found in path '"+dataPath+"'. Ignoring for calculations")
+				self.runID.remove(runID)
 				continue
 
 			colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
@@ -61,10 +62,6 @@ class BasePowVarCalculator(object):
 		runAverages = {}
 		for runID, runData in dataDict.items():
 			runAverages[runID] = statistics.mean(runData[self.rampUpSize:-self.rampUpSize]) 
-			# total = 0
-			# for i in runData[self.rampUpSize:-self.rampUpSize]: #ignore ramp up/down
-			# 	total += i
-			# runAverages[runID] = total/len(runData[self.rampUpSize:-self.rampUpSize]) 
 		return runAverages
 
 			
@@ -116,7 +113,7 @@ class BasePowVarCalculator(object):
 		return energyCombined, timesCombined
 
 
-	def calcAppr2Energy(self):
+	def calcBasePow(self):
 		self.runEnergys, self.runTimes = self.calcGroupedSamples()
 
 		for (j, k) in list(itertools.combinations(self.runIDs, 2)):
@@ -131,26 +128,16 @@ class BasePowVarCalculator(object):
 			self.results.append( (j, k, abs(mean), var) )
 
 
-	#find base powers between each run and store as a tuple: (run1ID, run2ID, BP)
-	# def findBasePowers(self):
-	# 	energyDict = self.getTotalEnergy()
-
-	# 	for pathIdx, runEnergy in energyDict.items():
-	# 		for (j, k) in list(itertools.combinations(self.runIDs, 2)):
-	# 			numerator = k*runEnergy[j] - j*runEnergy[k]
-	# 			denom = k*self.runTimes[j] - j*self.runTimes[k]
-	# 			self.results.append( (j, k, abs(numerator/denom)) )
-
-
 	def printBasePowers(self):
 		print([(a,b,round(c,2), round(d,2)) for a,b,c,d in self.results])
 
 
 
 if __name__ == "__main__":
-	folderPaths = ["data/basePow2/", "data/basePow2_1", "data/basePow2_2", "data/basePow2_3", "data/basePow2_4", "data/basePow2_5"]
+	# folderPaths = ["data/basePow2/", "data/basePow2_1", "data/basePow2_2", "data/basePow2_3", "data/basePow2_4", "data/basePow2_5"]
+	folderPaths = ["data/basePow1/", "data/basePow1_1", "data/basePow1_2", "data/basePow1_3", "data/basePow1_4"]
 	obj = BasePowVarCalculator(folderPaths, [3,4,5])
-	obj.calcAppr2Energy()
+	obj.calcBasePow()
 	obj.printBasePowers()
 
 

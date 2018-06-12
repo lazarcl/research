@@ -3,6 +3,26 @@
 //  without register limiting
 
 
+//------------ EXPERIMENT VOLATILE KERNEL FOR BASEPOWER 2 ---------
+template <typename T>
+__global__
+void addKernel1Volatile(int n, int iterateNum, T *x) {
+  int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  T a = x[thread];
+  volatile T b = 2;
+  volatile T c = 2;
+  for (int i = 0; i < iterateNum; i++) {
+    b = a + i;
+    c = a + b;
+    a = c + a;
+    c = b + a;
+    b = c + a;
+    a = b + c;
+  }
+  x[thread] = a;
+}
+
+
 //------------ ADDITION KERNELS ---------
 template <typename T>
 __global__
@@ -181,8 +201,7 @@ public:
 
 };
 
-
-//------------ ADDITION TEST CLASSES ---------
+//------------ TEST CLASS FOR BASE POWER MEASUREMENT APPR 1 ---------
 template <typename T>
 class AddKernel1TestSetSharedMem : public ArithmeticTestBase<T> {
 public:
@@ -214,7 +233,24 @@ public:
   }
 };
 
+//------------ TEST CASE FOR BASE POWER APPR 2 ---------
+template <typename T>
+class AddKernel1TestVolatile : public ArithmeticTestBase<T> {
+public:
+  AddKernel1TestVolatile(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {}
+  AddKernel1TestVolatile(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {}
 
+  void runKernel() {
+      addKernel1Volatile<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+  }
+};
+
+
+//------------ ADDITION TEST CLASSES ---------
 template <typename T>
 class AddKernel1Test : public ArithmeticTestBase<T> {
 public:

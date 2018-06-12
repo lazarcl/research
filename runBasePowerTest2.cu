@@ -20,6 +20,16 @@ void runAddTest(int iterNum, int blockSize, int blockSizeScalar,
   tester1.dataToFile();
 }
 
+template <typename T>
+void runAddTestVolatile(int iterNum, int blockSize, int blockSizeScalar, 
+            const char* outputName, float acceptableError) 
+{
+  AddKernel1TestVolatile<T> test1(blockSize, iterNum, blockSizeScalar);
+  TestRunner<AddKernel1TestVolatile<T>> tester1(&test1, outputName, acceptableError);
+  tester1.getGoodSample();
+  tester1.dataToFile();
+}
+
 
 int main() {
   int blockSize = 256;
@@ -52,7 +62,7 @@ int main() {
     std::string numStr = std::to_string(blckScalr);
     const char *outName= (pathName + numStr + fileType).c_str();
     printf("---- beginning run #%d ----\n", blckScalr); 
-    runAddTest<float>(addIter, blockSize, blckScalr,  
+    runAddTestVolatile<float>(addIter, blockSize, blckScalr,  
                        (pathName + numStr + fileType).c_str(), acceptableError);
     printf("---- test end ----\n");
 

@@ -105,7 +105,9 @@ def makeBasePow1Graph(folderPath):
 	fig.savefig(folderPath+"resultsGraphBP1.pdf", dpi=SAVE_DPI)
 
 
-# makeBasePow2Graph()
+
+if __name__ == "__main__":
+	makeBasePow2Graph("data/basePow2_6/")
 
 
 

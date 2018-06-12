@@ -1,5 +1,6 @@
 #include "testFramework.cu"
 #include "arithmeticTests.cu"
+#include <sys/stat.h>
 
 
 /*run command
@@ -70,46 +71,95 @@ void runFMATest(int iterNum, int blockSize, const char* outputName1,
   printf("Kernel 2 finished\n");
 }
 
+std::string setupStoragePath(int argc, char *argv[]) {
+  std::string storagePath;
+  if (argc > 2) {
+    printf("Too many arguments for %s. Expected max of 1 optional argument: storagePath\n", argv[0]);
+  } else if (argc == 2) {
+    storagePath = std::string(argv[1]);
+    if (storagePath.back() != '/') {
+      storagePath += std::string("/");
+    } 
+  } else if (argc == 1) {
+    storagePath = std::string("data/arithmeticTests/");
+  }
 
-int main() {
+  struct stat sb;
+  printf("storing data at: '%s'\n", storagePath.c_str());
+  if (stat(pathname, &sb) != 0) {
+    printf("Storage Path directory: '%s', does not exist\n", storagePath.c_str());
+    if ( 0 == mkdir(storagePath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) ) {
+      printf("Storage path directory '%s' created\n", storagePath);
+    } else {
+      printf("Storeage path not resolved, exiting as unsucessful\n");
+      exit(1);
+    }
+  }
+
+  return storagePath;
+
+}
+
+//optional argument to specify storage directory. Default is 'data/arithmeticTests'
+int main(int argc, char *argv[]) {
+
+  std::string storagePath = setupStoragePath(argc, argv);
+
   int blockSize = 256;
   
   int addIter = 2000000;
-  
+  std::string out1;
+  std::string out2;
   printf("---- beginning FP32 Add Testing ----\n"); 
-  runAddTest<float>(addIter, blockSize, "data/arithmeticTests/outputAddFP32_1.csv", "data/arithmeticTests/outputAddFP32_2.csv");
+  out1 = storagePath + std::string("outputAddFP32_1.csv");
+  out2 = storagePath + std::string("outputAddFP32_2.csv");
+  runAddTest<float>(addIter, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 Add Testing ----\n");
-  runAddTest<double>(addIter/3, blockSize, "data/arithmeticTests/outputAddFP64_1.csv", "data/arithmeticTests/outputAddFP64_2.csv");
+  out1 = storagePath + std::string("outputAddFP64_1.csv");
+  out2 = storagePath + std::string("outputAddFP64_2.csv");
+  runAddTest<double>(addIter/3, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning Int32 Add Testing ---\n");
-  runAddTest<int>(addIter, blockSize, "data/arithmeticTests/outputAddInt32_1.csv", "data/arithmeticTests/outputAddInt32_2.csv");
+  out1 = storagePath + std::string("outputAddInt32_1.csv");
+  out2 = storagePath + std::string("outputAddInt32_2.csv");
+  runAddTest<int>(addIter, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   printf("\n");
   int multIter = 2000000;
   printf("---- beginning FP32 Mult Testing ----\n"); 
-  runMultTest<float>(multIter, blockSize, "data/arithmeticTests/outputMultFP32_1.csv", "data/arithmeticTests/outputMultFP32_2.csv");
+  out1 = storagePath + std::string("outputMultFP32_1.csv");
+  out2 = storagePath + std::string("outputMultFP32_2.csv");
+  runMultTest<float>(multIter, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 Mult Testing ----\n");
-  runMultTest<double>(multIter/3, blockSize, "data/arithmeticTests/outputMultFP64_1.csv", "data/arithmeticTests/outputMultFP64_2.csv");
+  out1 = storagePath + std::string("outputMultFP64_1.csv");
+  out2 = storagePath + std::string("outputMultFP64_2.csv");
+  runMultTest<double>(multIter/3, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning Int32 Mult Testing ---\n");
-  runMultTest<int>(multIter, blockSize, "data/arithmeticTests/outputMultInt32_1.csv", "data/arithmeticTests/outputMultInt32_2.csv");
+  out1 = storagePath + std::string("outputMultInt32_1.csv");
+  out2 = storagePath + std::string("outputMultInt32_2.csv");
+  runMultTest<int>(multIter, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   printf("\n");
   int fmaIter = 800000;
   printf("---- beginning FP32 FMA Testing ----\n"); 
-  runFMATest<float>(fmaIter*2, blockSize, "data/arithmeticTests/outputFMAFP32_1.csv", "data/arithmeticTests/outputFMAFP32_2.csv");
+  out1 = storagePath + std::string("outputFMAFP32_1.csv");
+  out2 = storagePath + std::string("outputFMAFP32_2.csv");
+  runFMATest<float>(fmaIter*2, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 FMA Testing ----\n");
-  runFMATest<double>(fmaIter, blockSize, "data/arithmeticTests/outputFMAFP64_1.csv", "data/arithmeticTests/outputFMAFP64_2.csv");
+  out1 = storagePath + std::string("outputFMAFP64_1.csv");
+  out2 = storagePath + std::string("outputFMAFP64_2.csv");
+  runFMATest<double>(fmaIter, blockSize, out1.std::c_str(), out2.std::c_str());
   printf("---- test end ----\n");
 
   return 0;

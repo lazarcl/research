@@ -11,11 +11,11 @@ nvcc runBasePowerTest1.cu -lnvidia-ml
 
 
 template <typename T>
-void runSharedMemAddTest(int iterNum, int blockSize, int blckPerSM, 
+void runSharedMemAddTest(int iterNum, int blockSize, int memRatio, 
             const char* outputName, float acceptableError) 
 {
   AddKernel1TestSetSharedMem<T> test1(blockSize, iterNum);
-  test1.setSharedMem(blckPerSM);
+  test1.setSharedMem(memRatio);
   TestRunner<AddKernel1TestSetSharedMem<T>> tester1(&test1, outputName, acceptableError);
   tester1.getGoodSample();
   tester1.dataToFile();
@@ -24,7 +24,7 @@ void runSharedMemAddTest(int iterNum, int blockSize, int blckPerSM,
 
 int main() {
   int blockSize = 256;
-  int addIter = 200000000;
+  int addIter = 4000000;
   float acceptableError = 1000; //set large so it has no affect 
   
   //don't overwrite data. make a new directory
@@ -41,7 +41,7 @@ int main() {
   }
 
   printf("---- beginning runs of the 1st approach to base power measuring. Storing at '%s' ----\n", folderPath.c_str()); 
-  for (int blckPerSM = 1, ; blckPerSM <= 8; blckPerSM++) {
+  for (int blckPerSM = 1; blckPerSM <= 8; blckPerSM++) {
 
     //what percent of shared mem for each thread to request
     float memRatio = 1/(float)blckPerSM - 0.02;
@@ -52,7 +52,7 @@ int main() {
     std::string numStr = std::to_string(blckPerSM);
 
     printf("---- beginning run #%d ----\n", blckPerSM); 
-    runSharedMemAddTest<float>(addIter, blockSize, blckPerSM,  
+    runSharedMemAddTest<float>(addIter, blockSize, memRatio,  
                        (pathName + numStr + fileType).c_str(), acceptableError);
     printf("---- test end ----\n");
 

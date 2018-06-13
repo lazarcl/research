@@ -21,6 +21,7 @@ testExecutableNames = {"runArithmeticTests.cu":"arithmeticTest.out", \
                        "runBasePowerTest2.cu":"basePowerTest2.out"}
 
 
+
 #make sure all directories in givenlist exist. If not, create them
 def makeDirs(dirList):
   print("creating save directories...", end='')
@@ -36,14 +37,15 @@ def runCommandPrintOutput(command):
   tStart = time.time()
   while True:
       out = popen.stdout.read(1)
-      if time.time() - tStart > 5:
+      if time.time() - tStart > 2:
+        popen.terminate()
+        popen.wait()
         break
       if popen.poll() is not None:
           break
       if out != '':
           sys.stdout.write(out.decode("utf-8"))
           sys.stdout.flush()
-
 
   
 #  for line in iter(popen.stdout.readline, b''):
@@ -60,7 +62,7 @@ def compileAll(testFiles):
   for test in testFiles:
     print("  compiling", test + "...", end='')
     outName = testExecutableNames[test]
-    exitStatus = runCommandPrintOutput( ("nvcc", test, "-lnvidia-ml", "-o", outName) )
+    exitStatus = runCommandPrintOutput( ("nvcc", test, "testHelpers.cpp", "-lnvidia-ml", "-o", outName) )
     if exitStatus != 0:
       print(test, "didn't compile cleanly. Quitting for debug")
       exit(1)

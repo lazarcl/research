@@ -2,6 +2,7 @@
 #include "arithmeticTests.cu"
 #include <string> 
 #include <sys/stat.h>
+#include "testHelpers.h"
 
 
 
@@ -31,23 +32,12 @@ void runAddTestVolatile(int iterNum, int blockSize, int blockSizeScalar,
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
   int blockSize = 256;
   int addIter = 200000000;
   float acceptableError = 1000; //set large so it has no affect 
   
-  //don't overwrite data. make a new directory
-  std::string basePath = "data/basePow2";
-  std::string folderPath = basePath;
-  int i = 1;
-  while ( -1 == mkdir(folderPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) ) {
-    folderPath = basePath + std::string("_") + std::to_string(i);
-    i++;
-    if (i > 30) {
-        printf("Error creating a directory for runBasePowerTest2.cu results \n");
-        exit(1);
-    }
-  }
+  std::string folderPath = setupStoragePath(argc, argv);
 
   printf("---- beginning runs of the 2nd approach to base power measuring. Storing at '%s' ----\n", folderPath.c_str()); 
   for (int blckScalr = 1; blckScalr <= 8; blckScalr++) {

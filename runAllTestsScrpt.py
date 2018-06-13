@@ -1,6 +1,7 @@
 import subprocess
 import pathlib
 import sys
+import time
 
 
 '''
@@ -19,10 +20,6 @@ testExecutableNames = {"runArithmeticTests.cu":"arithmeticTest.out", \
                        "runBasePowerTest1.cu":"basePowerTest1.out", \
                        "runBasePowerTest2.cu":"basePowerTest2.out"}
 
-# what folders should each set of runs be saved to
-listOfRunPaths = ["run1/", "run2/", "run3/"]
-
-tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
 
 #make sure all directories in givenlist exist. If not, create them
 def makeDirs(dirList):
@@ -36,13 +33,17 @@ def makeDirs(dirList):
 def runCommandPrintOutput(command):
   popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
 
+  tStart = time.time()
   while True:
       out = popen.stdout.read(1)
+      if time.time() - tStart > 5:
+        break
       if popen.poll() is not None:
           break
       if out != '':
           sys.stdout.write(out.decode("utf-8"))
           sys.stdout.flush()
+
 
   
 #  for line in iter(popen.stdout.readline, b''):
@@ -86,9 +87,10 @@ def runExec(execName, storagePath):
   return 0
 
 #given list of storage paths, run each test once for each storagePath
-def runTestsForDirs(storagePaths):
+def runTestsForDirs(testFiles, storagePaths):
   for path in storagePaths:
-    for testFile, testExec in testExecutableNames.items():
+    for test in testFiles:
+      testExec = testExecutableNames[test]
       exitStatus = runExec(testExec, path)
       if exitStatus != 0:
         print("Quitting because", testExec, "failed twice")
@@ -103,15 +105,18 @@ def runCommand(command):
 
 
 if __name__ == "__main__":
+
+
   dirList = ["testRuns/run1", "testRuns/run2"]
   makeDirs(dirList)
 
-  testFile = ["runArithmeticTests.cu"]
-  compileAll(testFile)
-
+  tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
+  compileAll(tests)
+ 
+  runTestsForDirs(tests, dirList)
 #  command = ("./arithmeticTest.out", dirList[0])
 #  runCommand(command)
-  runExec(testExecutableNames[testFile[0]], dirList[0])
+  # runExec(testExecutableNames[tests[0]], dirList[0])
 
 
 

@@ -34,13 +34,13 @@ def makeDirs(dirList):
 def runCommandPrintOutput(command):
   popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
 
-  tStart = time.time()
+  #tStart = time.time()
   while True:
       out = popen.stdout.read(1)
-      if time.time() - tStart > 2:
-        popen.terminate()
-        popen.wait()
-        break
+      #if time.time() - tStart > 2:
+      #  popen.terminate()
+      #  popen.wait()
+      #  break
       if popen.poll() is not None:
           break
       if out != '':
@@ -55,18 +55,12 @@ def runCommandPrintOutput(command):
 
   return popen.returncode
 
-#given list of files to compile, ensure they all compile with no output
-#name the executabe outputs according to testExecutableNames dictionary
-def compileAll(testFiles):
+def runMakefile():
   print("compiling tests...")
-  for test in testFiles:
-    print("  compiling", test + "...", end='')
-    outName = testExecutableNames[test]
-    exitStatus = runCommandPrintOutput( ("nvcc", test, "testHelpers.cpp", "-lnvidia-ml", "-o", outName) )
-    if exitStatus != 0:
-      print(test, "didn't compile cleanly. Quitting for debug")
-      exit(1)
-    print("DONE")
+  exitStatus = runCommandPrintOutput( ("make") )
+  if exitStatus != 0:
+    print(test, "didn't compile cleanly. Quitting for debug")
+    exit(1)
   print("DONE compiling")
 
 #given executable name and storage path, run the executable
@@ -113,8 +107,9 @@ if __name__ == "__main__":
   makeDirs(dirList)
 
   tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
-  compileAll(tests)
- 
+  #compileAll(tests)
+  runMakefile()
+
   runTestsForDirs(tests, dirList)
 #  command = ("./arithmeticTest.out", dirList[0])
 #  runCommand(command)

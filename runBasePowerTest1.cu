@@ -25,7 +25,7 @@ void runSharedMemAddTest(int iterNum, int blockSize, int memRatio,
 
 int main(int argc, char *argv[]) {
   int blockSize = 256;
-  int addIter = 4000000;
+  int addIter = 2000000;
   float acceptableError = 1000; //set large so it has no affect 
   
   std::string folderPath = setupStoragePath(argc, argv);

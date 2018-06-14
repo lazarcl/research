@@ -34,7 +34,7 @@ void runAddTestVolatile(int iterNum, int blockSize, int blockSizeScalar,
 
 int main(int argc, char *argv[]) {
   int blockSize = 256;
-  int addIter = 200000000;
+  int addIter = 40000000;
   float acceptableError = 1000; //set large so it has no affect 
   
   std::string folderPath = setupStoragePath(argc, argv);

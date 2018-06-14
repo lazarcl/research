@@ -57,11 +57,12 @@ def makeFigure(testPathTups, supTitle, subTitle):
 
 #input: list of test strings to make graphs for
 #  ex: ["FMAFP32", "AddInt32"]
+#desired graphs title and subtitle
 #output: list of plots. One plot per input element
-def getListOfPlots(listOfTests):
+def getListOfPlots(listOfTests, supTitle, subTitle):
   plots = []
   for test in listOfTests:
-    plots.append(makeFigure(test))
+    plots.append(makeFigure(test, supTitle, subTitle))
   return plots
 
 #given a file name to save to, and a list of figures, save to one pdf

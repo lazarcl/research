@@ -109,17 +109,13 @@ def runCommand(command):
 if __name__ == "__main__":
 
 
-  dirList = ["testRuns/run1", "testRuns/run2"]
+  dirList = ["testRuns/run1", "testRuns/run2", "testRuns/run3", "testRuns/run4", "testRuns/run5"]
   makeDirs(dirList)
 
   tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
-  #compileAll(tests)
   runMakefile()
 
   runTestsForDirs(tests, dirList)
-#  command = ("./arithmeticTest.out", dirList[0])
-#  runCommand(command)
-  # runExec(testExecutableNames[tests[0]], dirList[0])
 
 
 

@@ -64,7 +64,7 @@ public:
       printf("Could not find or set device. Check settings in 'config.cpp'\n");
       exit(1);
     }
-    printf("Device initialized to nvml slot: %d, and cuda name: '%s'\n", config_t.deviceID, config_t.deviceName);
+    printf("  Device initialized to nvml slot: %d, and cuda name: '%s'\n", config_t.deviceID, config_t.deviceName);
     
 
     nvmlResult = nvmlInit();

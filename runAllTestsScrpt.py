@@ -34,13 +34,8 @@ def makeDirs(dirList):
 def runCommandPrintOutput(command):
   popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
 
-  #tStart = time.time()
   while True:
       out = popen.stdout.read(1)
-      #if time.time() - tStart > 2:
-      #  popen.terminate()
-      #  popen.wait()
-      #  break
       if popen.poll() is not None:
           break
       if out != '':
@@ -65,8 +60,7 @@ def runMakefile():
 
 #given executable name and storage path, run the executable
 #handle unsucessful exit by retrying. 
-#If still unsucessful: return 1 
-#if successful: return 0
+#return number of failed attempts
 def runExec(execName, storagePath):
   command = ("./"+execName, storagePath)
   print("")
@@ -77,20 +71,32 @@ def runExec(execName, storagePath):
     exitStatus = runCommandPrintOutput(command)
     if exitStatus != 0:
       print(execName, "at", storagePath, "failed for the seccond time")
-      return 1
+      return 2
+    return 1
   print("END TEST: '" + str(command) + "'")
   print("")
   return 0
 
 #given list of storage paths, run each test once for each storagePath
 def runTestsForDirs(testFiles, storagePaths):
+  failedRuns = []
   for path in storagePaths:
     for test in testFiles:
       testExec = testExecutableNames[test]
       exitStatus = runExec(testExec, path)
-      if exitStatus != 0:
-        print("Quitting because", testExec, "failed twice")
-        exit(1)
+      if exitStatus == 1:
+        print("ERROR:", testExec, "failed to run once, but recovered")
+      elif exitStatus == 2:
+        print("ERROR:", testExec, "failed to run twice and didnt recover")
+        failedRuns.append( (testExec, path) )
+
+  print("All runs finished:")
+  if len(failedRuns) == 0:
+    print("  all runs sucessfully passed")
+  elif len(failedRuns) > 0:
+    print("  the following runs failed")
+    for run in failedRuns:
+      print("    " + run[0], "storing at path: '" + run[1] + "'")
 
 #run the given command and return the processes output
 def runCommand(command):

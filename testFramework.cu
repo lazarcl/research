@@ -7,6 +7,8 @@
 #include <cuda_runtime.h>
 #include <time.h>
 #include <unistd.h>
+#include <string>
+#include "config.cpp"
 
 //run command: 
   //nvcc testFramework.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
@@ -15,14 +17,15 @@ template <class K>
 class TestRunner {
 public:
 
-  //int deviceIDNum: GPU device to do all work/sampling on
-  const int deviceIDNum = 0;
 
   //max number of times to attempt getting a good sample
   const int maxTestRuns = 15;
 
   //number of samples to igore from beg and end while analyzing data
   const int ignoreSampleCount = 50;
+  
+  //int deviceIDNum: GPU device to do all work/sampling on
+  int deviceIDNum;
 
   //acceptable data error percentage in analysis
   float acceptableError;
@@ -52,25 +55,50 @@ public:
   //class that holds the kernel to run
   K *testClass;
 
-  TestRunner(K *t, const char *outputName, float acceptableError=0.03) 
+  TestRunner(K *tester, const char *outputName, float acceptableError=0.03) 
           : outputName(outputName), acceptableError(acceptableError) {
-    testClass = t;
     
-    CUDA_ERROR( cudaSetDevice(deviceIDNum) );
-    CUDA_ERROR( cudaGetDeviceProperties(&deviceProp, deviceIDNum) );
+    testClass = tester;
+
+    if (!setDevice()) {
+      printf("Could not find or set device. Check settings in 'config.cpp'\n");
+      exit(1);
+    }
+    printf("Device initialized to nvml slot: %d, and cuda name: '%s'\n", config_t.deviceID, config_t.deviceName);
     
+
     nvmlResult = nvmlInit();
     if ( nvmlResult != NVML_SUCCESS )
     {
       printf("NVML Init fail: %s\n", nvmlErrorString(nvmlResult));
-      exit(0);
+      exit(1);
     }
+
     nvmlResult = nvmlDeviceGetHandleByIndex(deviceIDNum, &nvmlDeviceID);
     if (nvmlResult != NVML_SUCCESS) {
       printf("failed getting device handle by index: %s\n", nvmlErrorString(nvmlResult));
-      exit(0);
+      exit(1);
     }
   }
+
+bool setDevice() {
+  deviceIDNum = config_t.deviceID;
+  std::string desiredDeviceName = config_t.deviceName;
+
+  int devicesCount;
+  cudaGetDeviceCount(&devicesCount);
+  for(int deviceIndex = 0; deviceIndex < devicesCount; ++deviceIndex)
+  {
+      //cudaDeviceProp deviceProperties;
+      cudaGetDeviceProperties(&deviceProp, deviceIndex);
+      if (std::string(deviceProp.name) == desiredDeviceName)
+      {
+          cudaSetDevice(deviceIndex);
+          return true;
+      }
+  }
+  return false;
+}
 
   /*
   start measurement of device's power/temp

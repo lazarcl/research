@@ -80,7 +80,7 @@ def saveFigureList(figs, filePath):
 
 if __name__ == "__main__":
   testNames = ["AddFP32", "AddFP64", "AddInt32", "FMAFP32", "FMAFP64", "MultFP32", "MultFP64", "MultInt32"]
-  folderPaths = glob.glob("testRuns/*/")
+  folderPaths = glob.glob("testRuns/run*/")
 
   if len(folderPaths) == 0:
     print("Can't plot arithmetic data. No folders in './testRuns/'")
@@ -95,7 +95,7 @@ if __name__ == "__main__":
       print("Arithmeic test graph not made. No figures plotted")
       exit(1)
     else:
-      print("saving "+len(figs)+" arithmetic test graphs")
+      print("saving "+str(len(figs))+" arithmetic test graphs")
     savePath = folderPath + "arithmeticGraphs.pdf"
     saveFigureList(figs, savePath)
 

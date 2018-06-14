@@ -99,7 +99,7 @@ def makeBasePow1Graph(folderPath):
 
   supTitle = "Base Power 1st Approach Run"
   subTitle = "Changing number of concurrent blocks per SM"
-  paths = glob.glob(folderPath+"outputBlcksPerSM_*.csv")
+  paths = glob.glob(folderPath+"outputBlksPerSM_*.csv")
 
   pathTuples = createTestPathTuples(paths, folderPath)
   fig = makeFigure(pathTuples, supTitle, subTitle)
@@ -111,7 +111,7 @@ if __name__ == "__main__":
   for folderPath in glob.glob("testRuns/run*/"):
     makeBasePow2Graph(folderPath)
   for folderPath in glob.glob("testRuns/run*/"):
-    makeBasePow2Graph(folderPath)
+    makeBasePow1Graph(folderPath)
 
 
 

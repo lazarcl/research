@@ -1,3 +1,4 @@
+#Template for the makefile. Add includes and libraries to LIBS as neccisarry
 LIBS=-lnvidia-ml
 FRAMEWORKFILES=arithmeticTests.cu testFramework.cu
 HELPERFILES=testHelpers.cpp

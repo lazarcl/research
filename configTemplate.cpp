@@ -1,5 +1,5 @@
 
-
+//Template for test config file. Update as neccisarry and save as 'config.cpp'
 
 
 //config struct for tests.
@@ -8,9 +8,9 @@
 struct {
 	//id of the device to poll power data of.
 	//find by looking at GPU id's from 'nvidia-smi' command
-  int deviceID = 1;
+  int deviceID = 0;
 
   //name of the graphics card to run kernels on.
   //look up with 'nvidia-smi' command
-  const char *deviceName = "Quadro P6000";
+  const char *deviceName = "Tesla K20c";
 } config_t;

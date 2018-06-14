@@ -54,7 +54,7 @@ def runMakefile():
   print("compiling tests...")
   exitStatus = runCommandPrintOutput( ("make") )
   if exitStatus != 0:
-    print(test, "didn't compile cleanly. Quitting for debug")
+    print("didn't compile cleanly. Quitting for debug")
     exit(1)
   print("DONE compiling")
 

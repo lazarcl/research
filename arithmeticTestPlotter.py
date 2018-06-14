@@ -12,7 +12,7 @@ http://www.randalolson.com/2014/06/28/how-to-make-beautiful-data-visualizations-
 ##constants
 SAVE_DPI = 1000
 LINE_WIDTH = 0.4
-MAX_Y = 80
+MAX_Y = 160
 
 
 #given filepath, return list of power data as FPs

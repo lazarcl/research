@@ -1,7 +1,9 @@
 import pylab
-import pandas
+# import pandas
 from matplotlib.backends.backend_pdf import PdfPages
 import glob
+import csv
+import os
 
 '''
 helpful styling guide:
@@ -9,109 +11,150 @@ helpful styling guide:
 http://www.randalolson.com/2014/06/28/how-to-make-beautiful-data-visualizations-in-python-with-matplotlib/
 '''
 
-##constants
-SAVE_DPI = 1000
-LINE_WIDTH = 0.4
-MAX_Y = 70
-
-colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', "tab:grey"]
+class BasePowTestPlotter:
 
 
+  def __init__(self, saveDir, dataDirs):
+    self.saveDir = saveDir
+    self.dataDirs = dataDirs
 
-#given filepath, return list of power data as FPs
-def getPowerFromFile(filePath):
-  colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-  data = pandas.read_csv(filePath, names=colnames, encoding='utf-8')
+    if saveDir[-1] != "/":
+      self.saveDir+="/"
+    for i in range(len(self.dataDirs)):
+      if dataDirs[i][-1] != "/":
+        self.dataDirs[i]+="/"
 
-  power = data.power.tolist()[1:]
-  power = [float(power[i]) for i in range(len(power))]
-  return power
+    ##constants
+    self.SAVE_DPI = 1000
+    self.LINE_WIDTH = 0.4
+    self.MAX_Y = 160
+    self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', "tab:grey"]
 
-#name of test to make graph for
-#  ex: FMAFP32, FMAFP64, AddInt32, MultFP32...
-def makeFigure(testPathTups, supTitle, subTitle):
-  powerLists = []
-  for i in range(len(testPathTups)):
-    powerLists.append(getPowerFromFile(testPathTups[i][0]))
 
-  f = pylab.figure()
-  ax = pylab.subplot(111)    
-  ax.spines["top"].set_visible(False)    
-  ax.spines["right"].set_visible(False)    
+  #LARGE SPEEDUP if use pandas library instead of csv
+  #given filepath, return list of power data as FPs
+  # def getPowerFromFile(self, filePath):
+  #   colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
+  #   data = pandas.read_csv(filePath, names=colnames, encoding='utf-8')
+
+  #   power = data.power.tolist()[1:]
+  #   power = [float(power[i]) for i in range(len(power))]
+  #   return power
+
+
+  #given filepath, return list of power data as FPs.
+  #use CSV libarary
+  def getPowerFromFile_CSVLib(self, filePath):
+    data = []
+    with open(filePath, 'r') as f:
+      reader = csv.reader(f)
+      next(reader) #skip header row
+      for row in reader:
+        data.append(float(row[0]))
+    return data
+
+  #name of test to make graph for
+  #  ex: FMAFP32, FMAFP64, AddInt32, MultFP32...
+  def makeFigure(self, testPaths, supTitle, subTitle):
+    powerLists = []
+    for path in testPaths:
+      powerLists.append(self.getPowerFromFile_CSVLib(path))
+
+    fig = pylab.figure()
+    ax = pylab.subplot(111)    
+    ax.spines["top"].set_visible(False)    
+    ax.spines["right"].set_visible(False)    
+    
+    for i in range(len(powerLists)):
+      pylab.plot(range(len(powerLists[i])), powerLists[i], self.colors[i], label="workload of "+str(i+1)+"x", lw=self.LINE_WIDTH)
+
+    pylab.xlabel('time(ms)')
+    pylab.ylabel('power(W)')
+    pylab.suptitle(supTitle)
+    pylab.title(subTitle, fontsize=6)
+
+    pylab.legend(loc="lower right")
+    pylab.ylim(0, self.MAX_Y)
+
+    #display path to folder of graph's dataset
+    dataPath = testPaths[0][:testPaths[0].rindex('/')+1]
+    pylab.text(0, 5, dataPath, fontsize=4)    
+
+
+    return fig
+
+  #input: list of test strings to make graphs for
+  #  ex: ["FMAFP32", "AddInt32"]
+  #desired graphs title and subtitle
+  #output: list of plots. One plot per input element
+  def getListOfPlots(self, listsOfPaths, supTitle, subTitle):
+    plots = []
+    for paths in listsOfPaths:
+      plots.append(self.makeFigure(paths, supTitle, subTitle))
+    return plots
+
+  #given a file name to save to, and a list of figures, save to one pdf
+  def savePlotList(self, figs, filePath):
+    pp = PdfPages(filePath)
+    for fig in figs:
+      pp.savefig(fig, dpi=self.SAVE_DPI)
+    pp.close()
+
+
+  def createTestPathTuples(self, paths):
+    pathTups = []
+    for i in range(len(paths)):
+      name = paths[i].replace(paths+"output", "").replace(".csv", "")
+      pathTups.append( (paths[i], name) )
+    return pathTups
+
+
+  def makeBasePowGraphsGeneral(self, supTitle, subTitle, generalFileName, saveAs):
+
+    listsOfDataFiles = []
+    for dataFolder in self.dataDirs:
+      paths = glob.glob(dataFolder+generalFileName)
+      listsOfDataFiles.append(paths)
+
+    plots = self.getListOfPlots(listsOfDataFiles, supTitle, subTitle)
+    self.savePlotList(plots, self.saveDir+saveAs)
   
-  for i in range(len(powerLists)):
-    pylab.plot(range(len(powerLists[i])), powerLists[i], colors[i], label="workload of "+str(i+1)+"x", lw=LINE_WIDTH)
 
-  pylab.xlabel('time(ms)')
-  pylab.ylabel('power(W)')
-  pylab.suptitle(supTitle)
-  pylab.title(subTitle, fontsize=8)
+  def makeBasePow1Graphs(self):
+    generalFileName = "outputBlksPerSM_*.csv"
+    saveAs = "resultsGraphBP1.pdf"
+    supTitle = "Base Power 1st Approach Run"
+    subTitle = "Changing number of concurrent blocks per SM"
 
-  pylab.legend(loc="lower right")
-  pylab.ylim(0, MAX_Y)
-
-  #save to seperate file
-  # f.savefig("data/"+ testStr + ".pdf", bbox_inches='tight')
-
-  return f
-
-#input: list of test strings to make graphs for
-#  ex: ["FMAFP32", "AddInt32"]
-#desired graphs title and subtitle
-#output: list of plots. One plot per input element
-def getListOfPlots(listOfTests, supTitle, subTitle):
-  plots = []
-  for test in listOfTests:
-    plots.append(makeFigure(test, supTitle, subTitle))
-  return plots
-
-#given a file name to save to, and a list of figures, save to one pdf
-def saveFigureList(figs, filePath):
-  pp = PdfPages(filePath)
-  for fig in figs:
-    pp.savefig(fig, dpi=SAVE_DPI)
-  pp.close()
+    self.makeBasePowGraphsGeneral(supTitle, subTitle, generalFileName, saveAs)
 
 
-def createTestPathTuples(paths, folderPath):
-  pathTups = []
-  for i in range(len(paths)):
-    name = paths[i].replace(folderPath+"output", "").replace(".csv", "")
-    pathTups.append( (paths[i], name) )
-  return pathTups
+  def makeBasePow2Graphs(self):
+    generalFileName = "outputBlockScalar_*.csv"
+    saveAs = "resultsGraphBP2.pdf"
+    supTitle = "Base Power 2nd Approach Run"
+    subTitle = "Linearly changing number of blocks per run"
 
+    self.makeBasePowGraphsGeneral(supTitle, subTitle, generalFileName, saveAs)
 
-def makeBasePow2Graph(folderPath):
-  if folderPath[-1] != "/":
-    folderPath+="/"
-
-  supTitle = "Base Power 2nd Approach Run"
-  subTitle = "Linearly changing number of blocks per run"
-  paths = glob.glob(folderPath+"outputBlockScalar_*.csv")
-
-  pathTuples = createTestPathTuples(paths, folderPath)
-  fig = makeFigure(pathTuples, supTitle, subTitle)
-  fig.savefig(folderPath+"resultsGraphBP2.pdf", dpi=SAVE_DPI)
-
-def makeBasePow1Graph(folderPath):
-  if folderPath[-1] != "/":
-    folderPath+="/"
-
-  supTitle = "Base Power 1st Approach Run"
-  subTitle = "Changing number of concurrent blocks per SM"
-  paths = glob.glob(folderPath+"outputBlksPerSM_*.csv")
-
-  pathTuples = createTestPathTuples(paths, folderPath)
-  fig = makeFigure(pathTuples, supTitle, subTitle)
-  fig.savefig(folderPath+"resultsGraphBP1.pdf", dpi=SAVE_DPI)
 
 
 
 if __name__ == "__main__":
-  for folderPath in glob.glob("testRuns/run*/"):
-    makeBasePow2Graph(folderPath)
-  for folderPath in glob.glob("testRuns/run*/"):
-    makeBasePow1Graph(folderPath)
+
+  saveDir = "testRuns/k20_analysis/"
+
+  dataDirs = glob.glob("testRuns/run*/")
+
+  obj = BasePowTestPlotter(saveDir, dataDirs)
+  obj.makeBasePow2Graphs()
+  obj.makeBasePow1Graphs()
+    
+  
+
+
+
+
 
 
 

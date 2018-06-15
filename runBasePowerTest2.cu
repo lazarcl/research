@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     std::string numStr = std::to_string(blckScalr);
     const char *outName= (pathName + numStr + fileType).c_str();
     printf("---- beginning run #%d ----\n", blckScalr); 
-    runAddTestVolatile<float>(addIter, blockSize, blckScalr,  
+    runAddTest<float>(addIter, blockSize, blckScalr,  
                        (pathName + numStr + fileType).c_str(), acceptableError);
     printf("---- test end ----\n");
 

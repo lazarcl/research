@@ -3,6 +3,7 @@
 #include <string> 
 #include <sys/stat.h>
 #include "testHelpers.h"
+#include "config.cpp"
 
 
 
@@ -25,7 +26,7 @@ void runSharedMemAddTest(int iterNum, int blockSize, int memRatio,
 
 int main(int argc, char *argv[]) {
   int blockSize = 256;
-  int addIter = 2000000;
+  int addIter = config_t.basePow1_iter;
   float acceptableError = 1000; //set large so it has no affect 
   
   std::string folderPath = setupStoragePath(argc, argv);

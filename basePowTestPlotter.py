@@ -77,9 +77,11 @@ class BasePowTestPlotter:
     pylab.ylim(0, self.MAX_Y)
 
     #display path to folder of graph's dataset
-    dataPath = testPaths[0][:testPaths[0].rindex('/')+1]
-    pylab.text(0, 5, dataPath, fontsize=4)    
-
+    try:
+      dataPath = testPaths[0][:testPaths[0].rindex('/')+1]
+      pylab.text(0, 5, dataPath, fontsize=4)    
+    except IndexError:
+      pass
 
     return fig
 
@@ -142,9 +144,9 @@ class BasePowTestPlotter:
 
 if __name__ == "__main__":
 
-  saveDir = "testRuns/k20_analysis/"
+  saveDir = "testRuns/p6000_analysis/"
 
-  dataDirs = glob.glob("testRuns/run*/")
+  dataDirs = glob.glob("testRuns/run*_P6000/")
 
   obj = BasePowTestPlotter(saveDir, dataDirs)
   obj.makeBasePow2Graphs()

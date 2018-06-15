@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <string>
 #include "testHelpers.h"
+#include "config.cpp"
 
 /*run command
 nvcc runArithmeticTests.cu -lnvidia-ml
@@ -34,19 +35,19 @@ int main(int argc, char *argv[]) {
   printf("---- beginning FP32 Add Testing ----\n"); 
   out1 = storagePath + std::string("outputAddFP32_1.csv");
   out2 = storagePath + std::string("outputAddFP32_2.csv");
-  runAddTest<float>(addIter, blockSize, out1.c_str(), out2.c_str());
+  runAddTest<float>(config_t.AddFP32_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 Add Testing ----\n");
   out1 = storagePath + std::string("outputAddFP64_1.csv");
   out2 = storagePath + std::string("outputAddFP64_2.csv");
-  runAddTest<double>(addIter/3, blockSize, out1.c_str(), out2.c_str());
+  runAddTest<double>(config_t.AddFP64_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning Int32 Add Testing ---\n");
   out1 = storagePath + std::string("outputAddInt32_1.csv");
   out2 = storagePath + std::string("outputAddInt32_2.csv");
-  runAddTest<int>(addIter, blockSize, out1.c_str(), out2.c_str());
+  runAddTest<int>(config_t.AddInt32_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   printf("\n");
@@ -54,19 +55,19 @@ int main(int argc, char *argv[]) {
   printf("---- beginning FP32 Mult Testing ----\n"); 
   out1 = storagePath + std::string("outputMultFP32_1.csv");
   out2 = storagePath + std::string("outputMultFP32_2.csv");
-  runMultTest<float>(multIter, blockSize, out1.c_str(), out2.c_str());
+  runMultTest<float>(config_t.MultFP32_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 Mult Testing ----\n");
   out1 = storagePath + std::string("outputMultFP64_1.csv");
   out2 = storagePath + std::string("outputMultFP64_2.csv");
-  runMultTest<double>(multIter/3, blockSize, out1.c_str(), out2.c_str());
+  runMultTest<double>(config_t.MultFP64_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning Int32 Mult Testing ---\n");
   out1 = storagePath + std::string("outputMultInt32_1.csv");
   out2 = storagePath + std::string("outputMultInt32_2.csv");
-  runMultTest<int>(multIter, blockSize, out1.c_str(), out2.c_str());
+  runMultTest<int>(config_t.MultInt32_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   printf("\n");
@@ -74,13 +75,13 @@ int main(int argc, char *argv[]) {
   printf("---- beginning FP32 FMA Testing ----\n"); 
   out1 = storagePath + std::string("outputFMAFP32_1.csv");
   out2 = storagePath + std::string("outputFMAFP32_2.csv");
-  runFMATest<float>(fmaIter*2, blockSize, out1.c_str(), out2.c_str());
+  runFMATest<float>(config_t.FMAFP32_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   printf("---- beginning FP64 FMA Testing ----\n");
   out1 = storagePath + std::string("outputFMAFP64_1.csv");
   out2 = storagePath + std::string("outputFMAFP64_2.csv");
-  runFMATest<double>(fmaIter, blockSize, out1.c_str(), out2.c_str());
+  runFMATest<double>(config_t.FMAFP64_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
 
   return 0;

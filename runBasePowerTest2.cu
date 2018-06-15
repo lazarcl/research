@@ -3,6 +3,7 @@
 #include <string> 
 #include <sys/stat.h>
 #include "testHelpers.h"
+#include "config.cpp"
 
 
 
@@ -34,7 +35,7 @@ void runAddTestVolatile(int iterNum, int blockSize, int blockSizeScalar,
 
 int main(int argc, char *argv[]) {
   int blockSize = 256;
-  int addIter = 40000000;
+  int addIter = config_t.basePow2_iter;
   float acceptableError = 1000; //set large so it has no affect 
   
   std::string folderPath = setupStoragePath(argc, argv);

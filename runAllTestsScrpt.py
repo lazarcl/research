@@ -108,13 +108,18 @@ def runCommand(command):
 
 if __name__ == "__main__":
 
+  basePath = "testRuns/p6000_second_run/basePow2_non_volatile/"
 
-  dirList = ["testRuns/run1", "testRuns/run2", "testRuns/run3", "testRuns/run4", "testRuns/run5"]
+  #dir is a list of directorys. 
+  # Each directory gets its own run of the specified data
+  # ex: if dirList.size == 5, then complete all tests 5 times
+  dirList = [basePath + "run" + str(i) for i in range(1,6)]
   makeDirs(dirList)
 
-  tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
   runMakefile()
 
+  # tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
+  tests = ["runBasePowerTest2.cu"]
   runTestsForDirs(tests, dirList)
 
 

@@ -1,5 +1,5 @@
 import pylab
-# import pandas
+import pandas
 from matplotlib.backends.backend_pdf import PdfPages
 import glob
 import csv
@@ -31,34 +31,22 @@ class BasePowTestPlotter:
     self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', "tab:grey"]
 
 
-  #LARGE SPEEDUP if use pandas library instead of csv
   #given filepath, return list of power data as FPs
-  # def getPowerFromFile(self, filePath):
-  #   colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-  #   data = pandas.read_csv(filePath, names=colnames, encoding='utf-8')
+  def getPowerFromFile(self, filePath):
+    colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
+    data = pandas.read_csv(filePath, names=colnames, encoding='utf-8')
 
-  #   power = data.power.tolist()[1:]
-  #   power = [float(power[i]) for i in range(len(power))]
-  #   return power
+    power = data.power.tolist()[1:]
+    power = [float(power[i]) for i in range(len(power))]
+    return power
 
-
-  #given filepath, return list of power data as FPs.
-  #use CSV libarary
-  def getPowerFromFile_CSVLib(self, filePath):
-    data = []
-    with open(filePath, 'r') as f:
-      reader = csv.reader(f)
-      next(reader) #skip header row
-      for row in reader:
-        data.append(float(row[0]))
-    return data
 
   #name of test to make graph for
   #  ex: FMAFP32, FMAFP64, AddInt32, MultFP32...
   def makeFigure(self, testPaths, supTitle, subTitle):
     powerLists = []
     for path in testPaths:
-      powerLists.append(self.getPowerFromFile_CSVLib(path))
+      powerLists.append(self.getPowerFromFile(path))
 
     fig = pylab.figure()
     ax = pylab.subplot(111)    
@@ -144,9 +132,12 @@ class BasePowTestPlotter:
 
 if __name__ == "__main__":
 
-  saveDir = "testRuns/p6000_analysis/"
+  basePath = "testRuns/k20_second_set/"
+  saveDir = basePath + "analysis/"
 
-  dataDirs = glob.glob("testRuns/run*_P6000/")
+  dataDirs = glob.glob(basePath + "run*/")
+  if len(dataDirs) == 0:
+    print("Can't plot arithmetic data. No data folders in", basePath, "found" )
 
   obj = BasePowTestPlotter(saveDir, dataDirs)
   obj.makeBasePow2Graphs()

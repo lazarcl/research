@@ -151,24 +151,47 @@ class BasePowVarCalculator(object):
   def printBasePowers(self):
     print([(a,b,round(c,2), round(d,2)) for a,b,c,d in self.results])
 
+  def getBasePowers(self):
+    return [(a,b,round(c,2), round(d,2)) for a,b,c,d in self.results]
+
+
+#savePath: path/to/file that results should be saved in
+#results are lists of data
+def writeBasePowers(basePow1Results, basePow2Results, savePath):
+  with open(savePath, 'w') as f:
+
+    f.write("Base Power 1 Results:\n")
+    for result in basePow1Results:
+      f.write("  "+str(result)+"\n")
+    f.write("\n")
+
+    f.write("Base Power 2 Results:\n")
+    for result in basePow2Results:
+      f.write("  "+str(result)+"\n")
+
+  # f.close()
 
 
 if __name__ == "__main__":
   # folderPaths = ["data/basePow2/", "data/basePow2_1", "data/basePow2_2", "data/basePow2_3", "data/basePow2_4", "data/basePow2_5"]
   # folderPaths = ["data/basePow1/", "data/basePow1_1", "data/basePow1_2", "data/basePow1_3", "data/basePow1_4"]
-  folderPaths = glob.glob("testRuns/run*/")
+  basePath = "testRuns/k20_second_set/"
+  dataFolderPaths = glob.glob(basePath + "run*/")
+  savePath = basePath + "analysis/basePowerResults.txt"
   print("Calculating base power from approach 1")
-  obj = BasePowVarCalculator(folderPaths, [3,4,5], "outputBlksPerSM_")
+  obj = BasePowVarCalculator(dataFolderPaths, [3,4,5], "outputBlksPerSM_")
   obj.calcBasePow()
-  print("Results for basePow 1:")
-  obj.printBasePowers()
+  # print("Results for basePow 1:")
+  # obj.printBasePowers()
 
   print("\nCalculating base power from approach 2")
-  obj2 = BasePowVarCalculator(folderPaths, [3,4,5], "outputBlockScalar_")
+  obj2 = BasePowVarCalculator(dataFolderPaths, [3,4,5], "outputBlockScalar_")
   obj2.calcBasePow()
-  print("Results for basePow 2:")
-  obj2.printBasePowers()
+  # print("Results for basePow 2:")
+  # obj2.printBasePowers()
 
+  print("Writing base power energy results to:", savePath)
+  writeBasePowers(obj.getBasePowers(), obj2.getBasePowers(), savePath)
 
 
 

@@ -3,7 +3,6 @@
 #include <sys/stat.h>
 #include <string>
 #include "testHelpers.h"
-#include "config.cpp"
 
 /*run command
 nvcc runArithmeticTests.cu -lnvidia-ml
@@ -29,7 +28,6 @@ int main(int argc, char *argv[]) {
 
   int blockSize = 256;
   
-  int addIter = 2000000;
   std::string out1;
   std::string out2;
   printf("---- beginning FP32 Add Testing ----\n"); 
@@ -51,7 +49,6 @@ int main(int argc, char *argv[]) {
   printf("---- test end ----\n");
 
   printf("\n");
-  int multIter = 2000000;
   printf("---- beginning FP32 Mult Testing ----\n"); 
   out1 = storagePath + std::string("outputMultFP32_1.csv");
   out2 = storagePath + std::string("outputMultFP32_2.csv");
@@ -71,7 +68,6 @@ int main(int argc, char *argv[]) {
   printf("---- test end ----\n");
 
   printf("\n");
-  int fmaIter = 800000;
   printf("---- beginning FP32 FMA Testing ----\n"); 
   out1 = storagePath + std::string("outputFMAFP32_1.csv");
   out2 = storagePath + std::string("outputFMAFP32_2.csv");

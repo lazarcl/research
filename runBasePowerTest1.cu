@@ -3,7 +3,6 @@
 #include <string> 
 #include <sys/stat.h>
 #include "testHelpers.h"
-#include "config.cpp"
 
 
 

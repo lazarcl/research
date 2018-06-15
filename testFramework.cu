@@ -10,6 +10,7 @@
 #include <string>
 #include "config.cpp"
 
+
 //run command: 
   //nvcc testFramework.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
 

@@ -23,6 +23,25 @@ void addKernel1Volatile(int n, int iterateNum, T *x) {
 }
 
 
+//------------ BASEPOW1: SET SHARED MEMORY KERNEL ---------
+template <typename T>
+__global__
+void addKernel1_DynamicSharedMem(int n, int iterateNum, T *x) {
+  extern __shared__ int s[];
+  int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  T a = x[thread];
+  T b = 2, c = 2;
+  for (int i = 0; i < iterateNum; i++) {
+    b = a + i;
+    c = a + b;
+    a = c + a;
+    c = b + a;
+    b = c + a;
+    a = b + c;
+  }
+  x[thread] = a;
+}
+
 //------------ ADDITION KERNELS ---------
 template <typename T>
 __global__
@@ -228,7 +247,7 @@ public:
   }
 
   void runKernel() {
-      addKernel1<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>
+      addKernel1_DynamicSharedMem<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>
                       (this->n, this->iterNum, this->d_x);
   }
 };

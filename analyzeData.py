@@ -1,7 +1,9 @@
 from testScripts.arithmeticTestPlotter import *
 from testScripts.basePowTestPlotter import *
 from testScripts.basePowVarCalculator import *
+from testScripts.getRuntimes import *
 import pathlib
+import os
 
 
 def calculateBasePower(rootPath, saveDir, dataDirs):
@@ -40,10 +42,21 @@ def graphArithmetic(rootPath, saveDir, dataDirs):
 
 
 if __name__ == "__main__":
-
   rootPath = "testRuns/p6000_second_set/"
   saveDir = rootPath + "analysis/"
   dataDirs = glob.glob(rootPath + "run*/")
+
+
+  arithOutputNames = ['outputAddFP32_1.csv', 'outputAddFP64_1.csv', 'outputAddInt32_1.csv', \
+      'outputFMAFP32_1.csv', 'outputFMAFP64_1.csv', 'outputMultFP32_1.csv', \
+      'outputMultFP64_1.csv', 'outputMultInt32_1.csv', 'outputAddFP32_2.csv', \
+      'outputAddFP64_2.csv', 'outputAddInt32_2.csv', 'outputFMAFP32_2.csv', \
+      'outputFMAFP64_2.csv', 'outputMultFP32_2.csv', 'outputMultFP64_2.csv', \
+      'outputMultInt32_2.csv']
+  
+  runtimes = TestSpreadCalculator(arithOutputNames, rootPath)
+  runtimes.findRuntimeSpreadForAllTests()
+
 
   pathlib.Path(saveDir).mkdir(parents=True, exist_ok=True) 
 

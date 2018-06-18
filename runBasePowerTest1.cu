@@ -16,6 +16,7 @@ void runSharedMemAddTest(int iterNum, int blockSize, int memRatio,
             const char* outputName, float acceptableError) 
 {
   AddKernel1TestSetSharedMem<T> test1(blockSize, iterNum);
+  printf("  memRatio set to %f", memRatio);
   test1.setSharedMem(memRatio);
   TestRunner<AddKernel1TestSetSharedMem<T>> tester1(&test1, outputName, acceptableError);
   tester1.getGoodSample();
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]) {
   for (int blckPerSM = 1; blckPerSM <= 8; blckPerSM++) {
 
     //what percent of shared mem for each thread to request
-    float memRatio = 1/(float)blckPerSM - 0.02;
+    float memRatio = ((float)1)/((float)blckPerSM) - 0.02f;
 
     //if foobar is a string obj. get const char* with: foobar.c_str()
     std::string pathName = folderPath + std::string("/outputBlksPerSM_");

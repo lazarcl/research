@@ -175,23 +175,21 @@ def writeBasePowers(basePow1Results, basePow2Results, savePath):
 if __name__ == "__main__":
   # folderPaths = ["data/basePow2/", "data/basePow2_1", "data/basePow2_2", "data/basePow2_3", "data/basePow2_4", "data/basePow2_5"]
   # folderPaths = ["data/basePow1/", "data/basePow1_1", "data/basePow1_2", "data/basePow1_3", "data/basePow1_4"]
-  basePath = "testRuns/k20_second_set/"
+  basePath = "testRuns/k20_sharedMemFix/"
   dataFolderPaths = glob.glob(basePath + "run*/")
   savePath = basePath + "analysis/basePowerResults.txt"
   print("Calculating base power from approach 1")
-  obj = BasePowVarCalculator(dataFolderPaths, [3,4,5], "outputBlksPerSM_")
+  obj = BasePowVarCalculator(dataFolderPaths, [1,2,3,4], "outputBlksPerSM_")
   obj.calcBasePow()
-  # print("Results for basePow 1:")
-  # obj.printBasePowers()
+  print("Results for basePow 1:")
+  obj.printBasePowers()
 
-  print("\nCalculating base power from approach 2")
-  obj2 = BasePowVarCalculator(dataFolderPaths, [3,4,5], "outputBlockScalar_")
-  obj2.calcBasePow()
-  # print("Results for basePow 2:")
-  # obj2.printBasePowers()
+  # print("\nCalculating base power from approach 2")
+  # obj2 = BasePowVarCalculator(dataFolderPaths, [3,4,5], "outputBlockScalar_")
+  # obj2.calcBasePow()
 
-  print("Writing base power energy results to:", savePath)
-  writeBasePowers(obj.getBasePowers(), obj2.getBasePowers(), savePath)
+  # print("Writing base power energy results to:", savePath)
+  # writeBasePowers(obj.getBasePowers(), obj2.getBasePowers(), savePath)
 
 
 

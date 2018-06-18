@@ -27,14 +27,14 @@ class BasePowTestPlotter:
     ##constants
     self.SAVE_DPI = 1000
     self.LINE_WIDTH = 0.4
-    self.MAX_Y = 160
+    self.MAX_Y = 80 #160
     self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', "tab:grey"]
 
 
   #given filepath, return list of power data as FPs
   def getPowerFromFile(self, filePath):
     colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-    data = pandas.read_csv(filePath, names=colnames, encoding='utf-8')
+    data = pandas.read_csv(filePath, low_memory=False, names=colnames, encoding='utf-8')
 
     power = data.power.tolist()[1:]
     power = [float(power[i]) for i in range(len(power))]
@@ -132,7 +132,7 @@ class BasePowTestPlotter:
 
 if __name__ == "__main__":
 
-  basePath = "testRuns/k20_second_set/"
+  basePath = "testRuns/k20_sharedMemFix/"
   saveDir = basePath + "analysis/"
 
   dataDirs = glob.glob(basePath + "run*/")
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     print("Can't plot arithmetic data. No data folders in", basePath, "found" )
 
   obj = BasePowTestPlotter(saveDir, dataDirs)
-  obj.makeBasePow2Graphs()
+  # obj.makeBasePow2Graphs()
   obj.makeBasePow1Graphs()
     
   

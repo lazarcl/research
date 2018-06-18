@@ -24,8 +24,6 @@
 
 	\end{tabular}
 
-
-
 '''
 
 ''' Breakdown of steps:
@@ -45,3 +43,4 @@
 
 	feed all into table
 '''
+

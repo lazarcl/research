@@ -12,7 +12,7 @@ nvcc runBasePowerTest1.cu -lnvidia-ml
 
 
 template <typename T>
-void runSharedMemAddTest(int iterNum, int blockSize, int memRatio, 
+void runSharedMemAddTest(int iterNum, int blockSize, float memRatio, 
             const char* outputName, float acceptableError) 
 {
   AddKernel1TestSetSharedMem<T> test1(blockSize, iterNum);
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   for (int blckPerSM = 1; blckPerSM <= 8; blckPerSM++) {
 
     //what percent of shared mem for each thread to request
-    float memRatio = ((float)1)/((float)blckPerSM) - 0.02f;
+    float memRatio = 1.0f/((float)blckPerSM) - 0.02f;
 
     //if foobar is a string obj. get const char* with: foobar.c_str()
     std::string pathName = folderPath + std::string("/outputBlksPerSM_");

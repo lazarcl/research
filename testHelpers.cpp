@@ -19,7 +19,7 @@ std::string makeNewPath(char *argv[]) {
         exit(1);
     }
   }
-  return folderPath;
+  return folderPath + std::string("/");
 }
 
 std::string setupStoragePath(int argc, char *argv[]) {

@@ -220,7 +220,7 @@ public:
   //return the number of operations that are executed in the kernel's loop
   //for the specified number of operations.
   //Ex: 6 operations per iteration * 1000000 iterations = 6000000 operations
-  int getTotalOperationCount() {
+  int getOpsPerThread() {
     return opsPerIteration * iterNum;
   }
 
@@ -244,10 +244,10 @@ public:
 
   AddKernel1TestSetSharedMem(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 6;}
   AddKernel1TestSetSharedMem(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 6;}
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {
@@ -272,10 +272,10 @@ class AddKernel1TestVolatile : public ArithmeticTestBase<T> {
 public:
   AddKernel1TestVolatile(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 6;}
   AddKernel1TestVolatile(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 6;}
 
   void runKernel() {
       addKernel1Volatile<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -287,13 +287,13 @@ public:
 template <typename T>
 class AddKernel1Test : public ArithmeticTestBase<T> {
 public:
-  opsPerIteration = 6;
+  //this->opsPerIteration = 6;
   AddKernel1Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 6;}
   AddKernel1Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 6;}
 
   void runKernel() {
       addKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -305,10 +305,10 @@ class AddKernel2Test : public ArithmeticTestBase<T> {
 public:
   AddKernel2Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 9;}
   AddKernel2Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 9;}
 
   void runKernel() {
       addKernel2<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -322,10 +322,10 @@ class MultKernel1Test : public ArithmeticTestBase<T> {
 public:
   MultKernel1Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 6;}
   MultKernel1Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 6;}
 
   void runKernel() {
       multKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -337,10 +337,10 @@ class MultKernel2Test : public ArithmeticTestBase<T> {
 public:
   MultKernel2Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 9;}
   MultKernel2Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 9;}
 
   void runKernel() {
       multKernel2<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -354,10 +354,10 @@ class FmaKernel1Test : public ArithmeticTestBase<T> {
 public:
   FmaKernel1Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 9;}
   FmaKernel1Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 9;}
 
   void runKernel() {
       fmaKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -369,10 +369,10 @@ class FmaKernel2Test : public ArithmeticTestBase<T> {
 public:
   FmaKernel2Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {}
+  {this->opsPerIteration = 12;}
   FmaKernel2Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {}
+  {this->opsPerIteration = 12;}
 
   void runKernel() {
       fmaKernel2<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);

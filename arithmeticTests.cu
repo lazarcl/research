@@ -90,12 +90,12 @@ void multKernel1(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a + i;
-    c = a + b;
-    a = c + a;
-    c = b + a;
-    b = c + a;
-    a = b + c;
+    b = a * i;
+    c = a * b;
+    a = c * a;
+    c = b * a;
+    b = c * a;
+    a = b * c;
   }
   x[thread] = a;
 }
@@ -108,15 +108,15 @@ void multKernel2(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a + i;
-    c = a + b;
-    a = c + a;
-    c = b + a;
-    b = c + a;
-    a = b + c;
-    c = b + a;
-    b = c + a;
-    a = b + c;
+    b = a * i;
+    c = a * b;
+    a = c * a;
+    c = b * a;
+    b = c * a;
+    a = b * c;
+    c = b * a;
+    b = c * a;
+    a = b * c;
   }
   x[thread] = a;
 }

@@ -191,13 +191,14 @@ public:
   int numBlocks;
   int blockSize;
   int numBlockScale;
+  int opsPerIteration; //number of operations in one iteration. Not including loop calculations
 
   ArithmeticTestBase(int blockSize, int iterNum)
     : iterNum(iterNum), blockSize(blockSize), numBlockScale(360)
-  { }
+  { opsPerIteration = 0;}
   ArithmeticTestBase(int blockSize, int iterNum, int numBlockScale)
     : iterNum(iterNum), blockSize(blockSize), numBlockScale(numBlockScale)
-  { }
+  { opsPerIteration = 0;}
 
   ~ArithmeticTestBase() {
     CUDA_ERROR( cudaFree(d_x) );
@@ -208,6 +209,19 @@ public:
     n = numBlocks * blockSize;
     CUDA_ERROR( cudaMalloc(&d_x, n*sizeof(T)) ); 
     createData<T><<<numBlocks, blockSize>>>(n, d_x);
+  }
+
+  //get the number of threads launched in the kernel. Must be 
+  //called after kernelSetup() or the neccisary fields may not be initialized
+  int getNumThreads() {
+    return numBlocks * blockSize;
+  }
+
+  //return the number of operations that are executed in the kernel's loop
+  //for the specified number of operations.
+  //Ex: 6 operations per iteration * 1000000 iterations = 6000000 operations
+  int getTotalOperationCount() {
+    return opsPerIteration * iterNum;
   }
 
   void runKernel();
@@ -273,6 +287,7 @@ public:
 template <typename T>
 class AddKernel1Test : public ArithmeticTestBase<T> {
 public:
+  opsPerIteration = 6;
   AddKernel1Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
   {}

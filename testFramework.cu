@@ -254,8 +254,11 @@ bool setDevice() {
       printf("Terminating...");
       exit(0);
     }
-    fprintf(fp, "Power(W), Temperature(ºC), Time(ms), elapsed time(ms), number of samples\n");
-    fprintf(fp, "%.3lf, %d, %f, %3.1f, %d\n", powerData[0]/1000.0, tempData[0], timeBetweenSample, elapsedT, (int)powerData.size());
+    fprintf(fp, "Power(W), Temperature(ºC), Time(ms), elapsed time(ms), 
+              number of samples, totalOperationsAmt, numberOfThreads\n");
+    fprintf(fp, "%.3lf, %d, %f, %3.1f, %d\n", powerData[0]/1000.0, tempData[0], 
+            timeBetweenSample, elapsedT, (int)powerData.size(), 
+            testClass->getTotalOperationsCount(), testClass->getNumThreads());
     
     for (int i = 1; i < powerData.size(); i++) {
       fprintf(fp, "%.3lf, %d, %f\n", powerData[i]/1000.0, tempData[0], timeBetweenSample*(i+1) );

@@ -2,6 +2,8 @@ import pylab
 import pandas
 from matplotlib.backends.backend_pdf import PdfPages
 import glob
+import testScripts.dataLoader as dataLoader
+
 
 '''
 helpful styling guide:
@@ -16,11 +18,11 @@ class ArithmeticTestPlotter:
   #dataDirs: list of paths to the directories where source data is stored
   #testNames: list of the test names to make graphs for.
     #Names must be the '*' part of 'output*_1.csv' and 'output*_2.csv' for data matching
-  def __init__(self, rootPath, savePath, dataDirs, pdfName, testNames):
+  def __init__(self, rootPath, savePath, dataDirs, pdfName, testNames, graphHeight=160):
     ##constants
     self.SAVE_DPI = 1000
     self.LINE_WIDTH = 0.4
-    self.MAX_Y = 160
+    self.MAX_Y = graphHeight
 
     self.rootPath = rootPath
     self.savePath = savePath
@@ -37,20 +39,13 @@ class ArithmeticTestPlotter:
         self.dataDirs[i]+="/"
 
 
-  #given filepath, return list of power data as FPs
-  def getPowerFromFile(self, filePath):
-    colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-    data = pandas.read_csv(filePath, names=colnames, encoding='utf-8')
-
-    power = data.power.tolist()[1:]
-    power = [float(power[i]) for i in range(len(power))]
-    return power
-
   #Load the data for given files and return graphed figure
   #  ex: FMAFP32, FMAFP64, AddInt32, MultFP32...
   def makeFigure(self, file1, file2, testName):
-    power1 = self.getPowerFromFile(file1)
-    power2 = self.getPowerFromFile(file2)
+    # power1, time1 = self.getPowerAndTimeFromFile(file1)
+    # power2, time2 = self.getPowerAndTimeFromFile(file2)
+    power1, time1 = dataLoader.getPowerAndTimeFromFile(file1)
+    power2, time2 = dataLoader.getPowerAndTimeFromFile(file2)
 
     f = pylab.figure()
     ax = pylab.subplot(111)    
@@ -59,8 +54,8 @@ class ArithmeticTestPlotter:
     ax.spines["right"].set_visible(False)    
     # ax.spines["left"].set_visible(False)    
 
-    pylab.plot(range(len(power1)), power1, "-b", label="Control Kernel", lw=self.LINE_WIDTH)
-    pylab.plot(range(len(power2)), power2, "-r", label="Test Kernel", lw=self.LINE_WIDTH)
+    pylab.plot(time1, power1, "-b", label="Control Kernel", lw=self.LINE_WIDTH)
+    pylab.plot(time2, power2, "-r", label="Test Kernel", lw=self.LINE_WIDTH)
 
 
     pylab.xlabel('time(ms)')
@@ -93,7 +88,7 @@ class ArithmeticTestPlotter:
   def graphAndSaveData(self):
     for i in range(len(self.dataDirs)):
       plotList = self.getListOfPlots(self.dataDirs[i])
-      self.saveFigures(plotList, i)
+      self.saveFigures(plotList, i+1)
       for fig in plotList:
         pylab.close(fig)
 

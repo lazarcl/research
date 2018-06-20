@@ -51,8 +51,9 @@ class BasePowVarCalculator(object):
         continue
 
       try:
-        colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-        fileData = pandas.read_csv(fileName[0], names=colnames, encoding='utf-8')
+        # colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
+        colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
+        fileData = pandas.read_csv(fileName[0], low_memory=False, names=colnames, encoding='utf-8')
         power = fileData.power.tolist()[1:]
         power = [float(power[i]) for i in range(len(power))]
         runTimes[runID] = float(fileData.totalT.tolist()[1]) / 1000

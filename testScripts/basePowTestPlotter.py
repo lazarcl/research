@@ -4,6 +4,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 import glob
 import csv
 import os
+import testScripts.dataLoader as dataLoader
+
 
 '''
 helpful styling guide:
@@ -14,7 +16,7 @@ http://www.randalolson.com/2014/06/28/how-to-make-beautiful-data-visualizations-
 class BasePowTestPlotter:
 
 
-  def __init__(self, saveDir, dataDirs):
+  def __init__(self, saveDir, dataDirs, graphHeight=160):
     self.saveDir = saveDir
     self.dataDirs = dataDirs
 
@@ -27,18 +29,8 @@ class BasePowTestPlotter:
     ##constants
     self.SAVE_DPI = 1000
     self.LINE_WIDTH = 0.4
-    self.MAX_Y = 80 #160
+    self.MAX_Y = graphHeight
     self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', "tab:grey"]
-
-
-  #given filepath, return list of power data as FPs
-  def getPowerFromFile(self, filePath):
-    colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-    data = pandas.read_csv(filePath, low_memory=False, names=colnames, encoding='utf-8')
-
-    power = data.power.tolist()[1:]
-    power = [float(power[i]) for i in range(len(power))]
-    return power
 
 
   #name of test to make graph for
@@ -46,7 +38,8 @@ class BasePowTestPlotter:
   def makeFigure(self, testPaths, supTitle, subTitle):
     powerLists = []
     for path in testPaths:
-      powerLists.append(self.getPowerFromFile(path))
+      #append (powerData, timeData)
+      powerLists.append(dataLoader.getPowerAndTimeFromFile(path))
 
     fig = pylab.figure()
     ax = pylab.subplot(111)    
@@ -54,7 +47,7 @@ class BasePowTestPlotter:
     ax.spines["right"].set_visible(False)    
     
     for i in range(len(powerLists)):
-      pylab.plot(range(len(powerLists[i])), powerLists[i], self.colors[i], label="workload of "+str(i+1)+"x", lw=self.LINE_WIDTH)
+      pylab.plot(powerLists[i][1], powerLists[i][0], self.colors[i], label="workload of "+str(i+1)+"x", lw=self.LINE_WIDTH)
 
     pylab.xlabel('time(ms)')
     pylab.ylabel('power(W)')
@@ -132,10 +125,10 @@ class BasePowTestPlotter:
 
 if __name__ == "__main__":
 
-  basePath = "testRuns/k20_sharedMemFix/"
+  basePath = "testRuns/p6000_second_set/"
   saveDir = basePath + "analysis/"
 
-  dataDirs = glob.glob(basePath + "run*/")
+  dataDirs = glob.glob(basePath + "run1/")
   if len(dataDirs) == 0:
     print("Can't plot arithmetic data. No data folders in", basePath, "found" )
 

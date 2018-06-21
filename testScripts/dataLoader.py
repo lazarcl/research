@@ -1,4 +1,5 @@
 import pandas
+import testScripts.analysisConfig as analysisConfig
 
 #functions to load data from output files for analysis
 
@@ -28,20 +29,22 @@ def getTimesFromPandas(data):
 #get elapsed time of given run's data in seconds
 #elapsed time expeted to be in 4th column 2nd row (starting at 1)
 def getRuntimeFromFile(path):
-  colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
-  data = loadFile(path, colnames)
+  data = loadFile(path, analysisConfig.arithColumnNames)
   if data is None:
     return None
 
   return float(data.totalT[1]) / 1000
 
-
+def getTotalTimeFromFile(filePath):
+  data = loadFile(filePath, analysisConfig.arithColumnNames)
+  if data is None:
+    return None
+  return float(data.totalT.tolist()[1])
 
 #return numOfOps, numOfThreads from file. Caller's responsibility to error check
 #returns None, None if file not found, returns nan,nan if fields not filled
 def getOpAndThreadCountFromFile(filePath):
-  colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
-  data = loadFile(filePath, colnames)
+  data = loadFile(filePath, analysisConfig.arithColumnNames)
   if data is None:
     return None, None
 
@@ -51,9 +54,7 @@ def getOpAndThreadCountFromFile(filePath):
   return numOfOps, numOfThreads
 
 def getPowsFromFile(filePath):
-  colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
-
-  data = loadFile(filePath, colnames)
+  data = loadFile(filePath, analysisConfig.arithColumnNames)
   if data is None:
     return None
 
@@ -61,10 +62,7 @@ def getPowsFromFile(filePath):
 
 #given filepath, return list of power data as FPs
 def getPowerAndTimeFromFile(filePath):
-  # colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-  colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
-
-  data = loadFile(filePath, colnames)
+  data = loadFile(filePath, analysisConfig.arithColumnNames)
   if data is None:
     return None
 

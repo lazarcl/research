@@ -108,7 +108,7 @@ def runCommand(command):
 
 if __name__ == "__main__":
 
-  basePath = "testRuns/p6000_second_run/basePow2_non_volatile/"
+  basePath = "testRuns/p6000_second_run/"
 
   #dir is a list of directorys. 
   # Each directory gets its own run of the specified data

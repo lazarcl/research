@@ -2,6 +2,8 @@ import glob
 import pandas
 import itertools
 import statistics
+import testScripts.analysisConfig as analysisConfig
+import testScripts.dataLoader as dataLoader
 
 
 class BasePowVarCalculator(object):
@@ -11,12 +13,12 @@ class BasePowVarCalculator(object):
   is stored, and the runs that should be examined.
   All result files should end with '<test_number>.csv'
   """
-  def __init__(self, pathsToData, runIDs, runName):
+  def __init__(self, pathsToData, runIDs, testName):
     super(BasePowVarCalculator, self).__init__()
 
     #generic name of the data files to load. leave out index
     # ex: 'outputBlksPerSM_' to get 'outputBlksPerSM_1.csv'
-    self.runName = runName
+    self.testName = testName
  
     #path to folder where data to examine is held
     self.pathsToData = pathsToData
@@ -24,7 +26,7 @@ class BasePowVarCalculator(object):
       if self.pathsToData[i][-1] != "/":
         self.pathsToData[i]+="/"
 
-    #list of ints representing the run numbers
+    #list of ints representing the run numbers to inspect
     self.runIDs = runIDs
 
     #when calculating avgs, how many samples to skip at beg and end of data
@@ -43,26 +45,21 @@ class BasePowVarCalculator(object):
     runTimes = {}
     dataPath = self.pathsToData[folderIdx]
     for runID in self.runIDs:
-      fileName = glob.glob(dataPath+self.runName+str(runID)+".csv")
-
+      fileName = glob.glob(dataPath+self.testName+str(runID)+".csv")
       if len(fileName) == 0:
         print("run '"+str(runID)+"' not found in path '"+dataPath+"'. Ignoring for calculations")
         self.runIDs.remove(runID)
         continue
 
-      try:
-        # colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples']
-        colnames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
-        fileData = pandas.read_csv(fileName[0], low_memory=False, names=colnames, encoding='utf-8')
-        power = fileData.power.tolist()[1:]
-        power = [float(power[i]) for i in range(len(power))]
-        runTimes[runID] = float(fileData.totalT.tolist()[1]) / 1000
-        data[runID] = power
-      except FileNotFoundError as err:
-        print(str(err).replace("File b", ''), "ignoring test and continuing...")
+      #only one file with given name can exist, so just use fileName[0]
+      power = dataLoader.getPowsFromFile(fileName[0])
+      runtime = dataLoader.getTotalTimeFromFile(fileName[0]) / 1000
+      if power is None or runtime is None:
         self.runIDs.remove(runID)
+      else:
+        data[runID] = power
+        runTimes[runID] = runtime
         
-
     return data, runTimes
 
 

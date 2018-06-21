@@ -11,15 +11,15 @@ import math
 
 
 def calculateBasePower(rootPath, saveDir, dataDirs):
-  savePath = saveDir + "basePowerResults.txt"
+  savePath = saveDir + analysisConfig.basePowerAnalysisFilename
   print("Calculating base power from approach 1")
-  obj = BasePowVarCalculator(dataDirs, [1,2,3,4], "outputBlksPerSM_")
+  obj = BasePowVarCalculator(dataDirs, [1,2,3,4], analysisConfig.basePower1GenericName)
   obj.calcBasePow()
   # print("Results for basePow 1:")
   # obj.printBasePowers()
 
   print("Calculating base power from approach 2")
-  obj2 = BasePowVarCalculator(dataDirs, [2,3,4], "outputBlockScalar_")
+  obj2 = BasePowVarCalculator(dataDirs, [2,3,4], analysisConfig.basePower2GenericName)
   obj2.calcBasePow()
   # print("Results for basePow 2:")
   # obj2.printBasePowers()
@@ -35,8 +35,9 @@ def graphBasePower(rootPath, saveDir, dataDirs):
 
 
 def graphArithmetic(rootPath, saveDir, dataDirs):
-  testNames = ["AddFP32", "AddFP64", "AddInt32", "FMAFP32", "FMAFP64", "MultFP32", "MultFP64", "MultInt32"]
-  pdfName = "arithmeticGraphs_"
+  # testNames = ["AddFP32", "AddFP64", "AddInt32", "FMAFP32", "FMAFP64", "MultFP32", "MultFP64", "MultInt32"]
+  testNames = analysisConfig.arithTestNames
+  pdfName = analysisConfig.arithGenericGraphPdfName
 
   if len(dataDirs) == 0:
     print("Can't plot arithmetic data. No data folders found in", rootPath)
@@ -52,15 +53,15 @@ def graphArithmetic(rootPath, saveDir, dataDirs):
 #Return: TestSpreadCalculator object to grab result dictionaries from
 def arithmeticTestSpreads(rootPath, ignoreDirectories=[]):
 
-  arithOutputNames = ['outputAddFP32_1.csv', 'outputAddFP64_1.csv', 'outputAddInt32_1.csv', \
-      'outputFMAFP32_1.csv', 'outputFMAFP64_1.csv', 'outputMultFP32_1.csv', \
-      'outputMultFP64_1.csv', 'outputMultInt32_1.csv', 'outputAddFP32_2.csv', \
-      'outputAddFP64_2.csv', 'outputAddInt32_2.csv', 'outputFMAFP32_2.csv', \
-      'outputFMAFP64_2.csv', 'outputMultFP32_2.csv', 'outputMultFP64_2.csv', \
-      'outputMultInt32_2.csv']
+  # arithOutputNames = ['outputAddFP32_1.csv', 'outputAddFP64_1.csv', 'outputAddInt32_1.csv', \
+  #     'outputFMAFP32_1.csv', 'outputFMAFP64_1.csv', 'outputMultFP32_1.csv', \
+  #     'outputMultFP64_1.csv', 'outputMultInt32_1.csv', 'outputAddFP32_2.csv', \
+  #     'outputAddFP64_2.csv', 'outputAddInt32_2.csv', 'outputFMAFP32_2.csv', \
+  #     'outputFMAFP64_2.csv', 'outputMultFP32_2.csv', 'outputMultFP64_2.csv', \
+  #     'outputMultInt32_2.csv']
 
   
-  testSpreads = TestSpreadCalculator(arithOutputNames, rootPath, ignoreDirectories)
+  testSpreads = TestSpreadCalculator(analysisConfig.arithOutputFiles, rootPath, ignoreDirectories)
   testSpreads.findRuntimeSpreads()
   testSpreads.findPowerSpreads()
   testSpreads.findEnergySpreadsOfResults()
@@ -111,11 +112,11 @@ def makeTableColEntry(basePow, spreadObj, controlFile, testFile):
   marginalOps = testOpCount*testThreadCount - controlOpCount*controlThreadCount
   resultDict["marginalOps"] = "{:.3e}".format(marginalOps)
 
-  energyPerOp = marginalEnergy[0] / marginalOps
-  # energyPerOpVar = marginalEnergy[1] * (1/marginalOps)**2
-  energyPerOpVar =  (1/marginalOps)**2 * marginalEnergy[1]
+  #convert to picoJules
+  energyPerOp = (marginalEnergy[0] / marginalOps) *(10**12)
+  energyPerOpVar =  ((1/marginalOps)**2 * marginalEnergy[1]) *((10**12)**2)
 
-  resultDict["energyPerOp"] = tupleToStringsRounding((energyPerOp*10**12, energyPerOpVar))
+  resultDict["energyPerOp"] = tupleToStringsRounding((energyPerOp, energyPerOpVar))
 
   return resultDict
 
@@ -161,29 +162,15 @@ def analyzeData():
   # # saveDir = rootPath + "analysis/"
   # # dataDirs = glob.glob(rootPath + "run*/")
 
-  testSpreadsObj = arithmeticTestSpreads(rootPath)
-  # table = makeTableFromCols(col1, col2)
+  # testSpreadsObj = arithmeticTestSpreads(rootPath)
+  # # table = makeTableFromCols(col1, col2)
 
-  arithOutputNames = [('outputAddFP32_1.csv', 'outputAddFP32_2.csv'),  \
-                      ('outputAddFP64_1.csv', 'outputAddFP64_2.csv'), \
-                      ('outputAddInt32_1.csv', 'outputAddInt32_2.csv'), \
-                      ('outputFMAFP32_1.csv', 'outputFMAFP32_2.csv'), \
-                      ('outputFMAFP64_1.csv', 'outputFMAFP64_2.csv'),  \
-                      ('outputMultFP32_1.csv', 'outputMultFP32_2.csv'),\
-                      ('outputMultFP64_1.csv', 'outputMultFP64_2.csv'), \
-                      ('outputMultInt32_1.csv', 'outputMultInt32_2.csv')  \
-                     ]
+  # for control, test in analysisConfig.arithOutputPairs:
+  #   # print("Results for", control, test)
+  #   col = makeTableColEntry((36.5,0.02), testSpreadsObj, control, test)
+    # print(str(col["energyPerOp"]))
+    # print(makeTableFromCols(col, col))
 
-  for control, test in arithOutputNames:
-    print("Results for", control, test)
-    col = makeTableColEntry((36.5,0.02), testSpreadsObj, control, test)
-    # print(str(col["energyPerOp"]), "\n")
-    print(makeTableFromCols(col, col))
-
-  # # for a, b in col.items():
-  # #   print(str(a), str(b))
-
-  exit(0)
 
 
   if len(dataDirs) == 0:
@@ -191,8 +178,8 @@ def analyzeData():
 
 
   calculateBasePower(rootPath, saveDir, dataDirs)
-  graphBasePower(rootPath, saveDir, dataDirs)
-  graphArithmetic(rootPath, saveDir, dataDirs)
+  # graphBasePower(rootPath, saveDir, dataDirs)
+  # graphArithmetic(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":

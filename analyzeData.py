@@ -13,13 +13,13 @@ import math
 def calculateBasePower(rootPath, saveDir, dataDirs):
   savePath = saveDir + analysisConfig.basePowerAnalysisFilename
   print("Calculating base power from approach 1")
-  obj = BasePowVarCalculator(dataDirs, [1,2,3,4], analysisConfig.basePower1GenericName)
+  obj = BasePowVarCalculator(dataDirs, [1,2,3,4,5], analysisConfig.basePower1GenericName)
   obj.calcBasePow()
   # print("Results for basePow 1:")
   # obj.printBasePowers()
 
   print("Calculating base power from approach 2")
-  obj2 = BasePowVarCalculator(dataDirs, [2,3,4], analysisConfig.basePower2GenericName)
+  obj2 = BasePowVarCalculator(dataDirs, [3,4,5], analysisConfig.basePower2GenericName)
   obj2.calcBasePow()
   # print("Results for basePow 2:")
   # obj2.printBasePowers()
@@ -84,52 +84,54 @@ def makeTableColEntry(basePow, spreadObj, controlFile, testFile):
   powerDict = spreadObj.getPowerSpreadDict()
   energyDict = spreadObj.getEnergySpreadDict()
 
-  #store tuples in dict
-  resultDict["controlPow"] = tupleToStringsRounding(powerDict[controlFile])
-  resultDict["testPow"] = tupleToStringsRounding(powerDict[testFile])
-  
   controlTime = timeDict[controlFile]
   testTime = timeDict[testFile]
-  resultDict["controlTime"] = tupleToStringsRounding(controlTime)
-  resultDict["testTime"] = tupleToStringsRounding(testTime)
-
   controlEnergy = energyDict[controlFile]
   testEnergy = energyDict[testFile]
-  resultDict["controlEnergy"] = tupleToStringsRounding(controlEnergy)
-  resultDict["testEnergy"] = tupleToStringsRounding(testEnergy)
 
   controlBasePowEnergy = multiplyIndVar(controlTime, basePow)
   testBasePowEnergy = multiplyIndVar(testTime, basePow)
 
-  controlOpEnergy = controlEnergy[0] - controlBasePowEnergy[0], controlEnergy[1] - controlBasePowEnergy[1] #
-  testOpEnergy = testEnergy[0] - testBasePowEnergy[0], testEnergy[1] - testBasePowEnergy[1]#
-
-  marginalEnergy = testOpEnergy[0] - controlOpEnergy[0], testOpEnergy[1] + controlOpEnergy[1]#
-  resultDict["marginalEnergy"] = tupleToStringsRounding(marginalEnergy)
+  controlOpEnergy = subIndVar(controlEnergy, controlBasePowEnergy)
+  testOpEnergy = subIndVar(testEnergy, testBasePowEnergy)
+  marginalEnergy = subIndVar(testOpEnergy, controlOpEnergy)
 
   controlOpCount, controlThreadCount = dataLoader.getOpAndThreadCountFromFile(glob.glob(analysisConfig.pathDict["baseDir"]+"run*/"+controlFile)[0])
   testOpCount, testThreadCount = dataLoader.getOpAndThreadCountFromFile(glob.glob(analysisConfig.pathDict["baseDir"]+"run*/"+testFile)[0])
   marginalOps = testOpCount*testThreadCount - controlOpCount*controlThreadCount
-  resultDict["marginalOps"] = "{:.3e}".format(marginalOps)
 
+ 
+  energyPerOp, energyPerOpVar = multIndVarAndConst(marginalEnergy, float(1/marginalOps))
+  # energyPerOp = (marginalEnergy[0] / marginalOps)
+  # energyPerOpVar =  ((1/marginalOps)**2 * marginalEnergy[1])
+  # if (energyPerOp, energyPerOpVar) == multIndVarAndConst(marginalEnergy, float(1/marginalOps)):
+  #   print('laksdjf')
   #convert to picoJules
-  energyPerOp = (marginalEnergy[0] / marginalOps) *(10**12)
-  energyPerOpVar =  ((1/marginalOps)**2 * marginalEnergy[1]) *((10**12)**2)
+  # energyPerOp, energyPerOpVar = energyPerOp * (10**12), energyPerOpVar * ((10**12)**2)
+  energyPerOp, energyPerOpVar = multIndVarAndConst((energyPerOp, energyPerOpVar), float(10**12))
 
-  resultDict["energyPerOp"] = tupleToStringsRounding((energyPerOp, energyPerOpVar))
+  resultDict["controlPow"] = tupleToRoundedStrings(varToPercent(powerDict[controlFile]))
+  resultDict["controlTime"] = tupleToRoundedStrings(varToPercent(controlTime))
+  resultDict["controlEnergy"] = tupleToRoundedStrings(varToPercent(controlEnergy))
+  resultDict["testPow"] = tupleToRoundedStrings(varToPercent(powerDict[testFile]))
+  resultDict["testTime"] = tupleToRoundedStrings(varToPercent(testTime))
+  resultDict["testEnergy"] = tupleToRoundedStrings(varToPercent(testEnergy))
+  resultDict["marginalEnergy"] = tupleToRoundedStrings(varToPercent(marginalEnergy))
+  resultDict["marginalOps"] = "{:.3e}".format(marginalOps)
+  resultDict["energyPerOp"] = tupleToRoundedStrings(varToPercent((energyPerOp, energyPerOpVar)))
 
   return resultDict
 
 
 
 #given two populated column dictionaries, return a populated latex table.
-def makeTableFromCols(col1, col2):
+def makeTableFromCols(col1, col2, col1Name, col2Name):
   control = 'outputAddFP32_1.csv'
   test = 'outputAddFP32_2.csv'
 
   table = "\\begin{tabular}{|l|p{1.5in}|p{1.5in}|} \hline\n"
   
-  table+= "Measurement  & K20 & P100\\\ \hline\n"
+  table+= "Measurement  & "+col1Name+" & "+col2Name+"\\\ \hline\n"
   
   table+= "Control Kernel Power & " + col1["controlPow"][0] + "$\pm$" + col1["controlPow"][1] + "\% W & " + col1["controlPow"][0] + "$\pm$" + col1["controlPow"][1] + "\% W\\\ \hline\n"
   table+= "Control Kernel Time & "+ col1["controlTime"][0] + "$\pm$"+ col1["controlTime"][1]+"\% s & "+ col1["controlTime"][0] + "$\pm$"+ col1["controlTime"][1]+"\% s\\\ \hline\n"
@@ -163,13 +165,16 @@ def analyzeData():
   # # dataDirs = glob.glob(rootPath + "run*/")
 
   # testSpreadsObj = arithmeticTestSpreads(rootPath)
-  # # table = makeTableFromCols(col1, col2)
+  # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
-  # for control, test in analysisConfig.arithOutputPairs:
+  # for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
+  # # for control, test in analysisConfig.arithOutputPairs:
   #   # print("Results for", control, test)
-  #   col = makeTableColEntry((36.5,0.02), testSpreadsObj, control, test)
-    # print(str(col["energyPerOp"]))
-    # print(makeTableFromCols(col, col))
+  #   basePow = 36.0, 25
+  #   col = makeTableColEntry(basePow, testSpreadsObj, control, test)
+  #   col2 = makeTableColEntry(basePow, testSpreadsObj2, control, test)
+  #   # print(str(col["energyPerOp"]))
+  #   print("$"+name+"$\\\ \n"+makeTableFromCols(col, col2, "K20", "P6000"))
 
 
 
@@ -178,8 +183,8 @@ def analyzeData():
 
 
   calculateBasePower(rootPath, saveDir, dataDirs)
-  # graphBasePower(rootPath, saveDir, dataDirs)
-  # graphArithmetic(rootPath, saveDir, dataDirs)
+  graphBasePower(rootPath, saveDir, dataDirs)
+  graphArithmetic(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":

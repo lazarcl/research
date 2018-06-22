@@ -21,16 +21,6 @@ graphDict = dict(
   graphHeight = 80 #Max range of the y-axis
 )
 
-#given two tuples (mean,variance), output tuple of mean,var after multiplication
-import math
-def multiplyIndVar(a, b):
-  # m1, v1 = float(a[0]), float(a[1]) 
-  # m2, v2 = float(b[0]), float(b[1])
-  m1, v1 = a  
-  m2, v2 = b 
-  m3 = m1 * m2
-  v3_partial = math.sqrt((v1/m1)**2 + (v2/m2)**2)
-  return m3,  m3 * v3_partial
 
 
 #---------Expected data file names-----------

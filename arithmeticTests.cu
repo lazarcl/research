@@ -22,6 +22,23 @@ void addKernel1Volatile(int n, int iterateNum, T *x) {
   x[thread] = a;
 }
 
+template <typename T>
+__global__
+void multKernel1_nonVolitile(int n, int iterateNum, T *x) {
+  int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  T a = x[thread];
+  T b = 2, c = 2;
+  for (int i = 0; i < iterateNum; i++) {
+    b = a * i;
+    c = a * b;
+    a = c * a;
+    c = b * a;
+    b = c * a;
+    a = b * c;
+  }
+  x[thread] = a;
+}
+
 
 //------------ BASEPOW1: SET SHARED MEMORY KERNEL ---------
 template <typename T>
@@ -41,6 +58,24 @@ void addKernel1_DynamicSharedMem(int n, int iterateNum, T *x) {
   }
   x[thread] = a;
 }
+
+template <typename T>
+__global__
+void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
+  int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  T a = x[thread];
+  T b = 2, c = 2;
+  for (int i = 0; i < iterateNum; i++) {
+    b = a * i;
+    c = a * b;
+    a = c * a;
+    c = b * a;
+    b = c * a;
+    a = b * c;
+  }
+  x[thread] = a;
+}
+
 
 //------------ ADDITION KERNELS ---------
 template <typename T>
@@ -266,6 +301,37 @@ public:
   }
 };
 
+template <typename T>
+class MultKernel1TestSetSharedMem : public ArithmeticTestBase<T> {
+public:
+
+  unsigned int sharedMemRequest;
+  float sharedMemScale; 
+
+  MultKernel1TestSetSharedMem(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {this->opsPerIteration = 6;}
+  MultKernel1TestSetSharedMem(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {this->opsPerIteration = 6;}
+
+  //in addition to normal setup, figure out how much shared memory to request
+  void kernelSetup(cudaDeviceProp deviceProp) {
+    ArithmeticTestBase<T>::kernelSetup(deviceProp);
+
+    sharedMemRequest = (unsigned int) (deviceProp.sharedMemPerBlock*sharedMemScale);
+  }
+
+  void setSharedMem(float newScale) {
+    sharedMemScale = newScale;
+  }
+
+  void runKernel() {
+      multKernel_DynamicSharedMem<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>
+                      (this->n, this->iterNum, this->d_x);
+  }
+};
+
 //------------ TEST CASE FOR BASE POWER APPR 2 ---------
 template <typename T>
 class AddKernel1TestVolatile : public ArithmeticTestBase<T> {
@@ -279,6 +345,21 @@ public:
 
   void runKernel() {
       addKernel1Volatile<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+  }
+};
+
+template <typename T>
+class MultKernel1TestNonVolatile : public ArithmeticTestBase<T> {
+public:
+  MultKernel1TestNonVolatile(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {this->opsPerIteration = 6;}
+  MultKernel1TestNonVolatile(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {this->opsPerIteration = 6;}
+
+  void runKernel() {
+      multKernel1_nonVolitile<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };
 

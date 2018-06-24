@@ -15,10 +15,10 @@ template <typename T>
 void runSharedMemAddTest(int iterNum, int blockSize, float memRatio, 
             const char* outputName, float acceptableError) 
 {
-  AddKernel1TestSetSharedMem<T> test1(blockSize, iterNum);
+  MultKernel1TestSetSharedMem<T> test1(blockSize, iterNum);
   printf("  memRatio set to %f", memRatio);
   test1.setSharedMem(memRatio);
-  TestRunner<AddKernel1TestSetSharedMem<T>> tester1(&test1, outputName, acceptableError);
+  TestRunner<MultKernel1TestSetSharedMem<T>> tester1(&test1, outputName, acceptableError);
   tester1.getGoodSample();
   tester1.dataToFile();
 }

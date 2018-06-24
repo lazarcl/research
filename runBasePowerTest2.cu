@@ -15,8 +15,8 @@ template <typename T>
 void runAddTest(int iterNum, int blockSize, int blockSizeScalar, 
             const char* outputName, float acceptableError) 
 {
-  AddKernel1Test<T> test1(blockSize, iterNum, blockSizeScalar);
-  TestRunner<AddKernel1Test<T>> tester1(&test1, outputName, acceptableError);
+  MultKernel1TestNonVolatile<T> test1(blockSize, iterNum, blockSizeScalar);
+  TestRunner<MultKernel1TestNonVolatile<T>> tester1(&test1, outputName, acceptableError);
   tester1.getGoodSample();
   tester1.dataToFile();
 }

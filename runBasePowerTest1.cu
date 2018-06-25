@@ -65,7 +65,8 @@ vector< tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
   KernelClass<T> test1()
 }
 
-int main(int argc, char *argv[]) {
+
+void runClassicBPWithAddFP32() {
   int blockSize = 256;
   int addIter = config_t.basePow1_iter;
   float acceptableError = 1000; //set large so it has no affect 
@@ -90,6 +91,37 @@ int main(int argc, char *argv[]) {
 
   }
 
+}
+
+
+
+void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const char* fileName){
+  FILE *fp = fopen(fileName, "w+");
+  if (fp == NULL) {
+    printf("Attempt at opening '%s' failed. Error: ", fileName);
+    perror("");
+    printf("Terminating...");
+    exit(0);
+  }
+  fprintf(fp, "runID, avgPower, elapsedTime\n");
+  
+  for (int i = 0; i < vec.size(); i++){
+    std::tuple<int,float,float> tup = vec[i];
+    fprintf(fp, "%d, %.3lf, %.3lf\n", std::get<0>(tup), std::get<1>(tup), std::get<2>(tup)/1000.0);
+  }
+  fclose(fp);
+}
+
+
+void runBPWithAllKernels() {
+  vector< tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
+  basePowVectorToFile(powData, "testing/basePowData.csv");
+}
+
+
+int main(int argc, char *argv[]) {
+  runBPWithAllKernels();
+  
   return 0;
 }
 

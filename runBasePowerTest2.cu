@@ -15,6 +15,16 @@ template <typename T>
 void runAddTest(int iterNum, int blockSize, int blockSizeScalar, 
             const char* outputName, float acceptableError) 
 {
+  AddKernel1Test<T> test1(blockSize, iterNum, blockSizeScalar);
+  TestRunner<AddKernel1Test<T>> tester1(&test1, outputName, acceptableError);
+  tester1.getGoodSample();
+  tester1.dataToFile();
+}
+
+template <typename T>
+void runMultTest(int iterNum, int blockSize, int blockSizeScalar,
+		const char* outputName, float acceptableError)
+{
   MultKernel1TestNonVolatile<T> test1(blockSize, iterNum, blockSizeScalar);
   TestRunner<MultKernel1TestNonVolatile<T>> tester1(&test1, outputName, acceptableError);
   tester1.getGoodSample();
@@ -52,7 +62,7 @@ int main(int argc, char *argv[]) {
     std::string numStr = std::to_string(blckScalr);
     const char *outName= (pathName + numStr + fileType).c_str();
     printf("---- beginning run #%d ----\n", blckScalr); 
-    runAddTest<float>(addIter, blockSize, blckScalr,  
+    runMultTest<float>(addIter, blockSize, blckScalr,  
                        (pathName + numStr + fileType).c_str(), acceptableError);
     printf("---- test end ----\n");
 

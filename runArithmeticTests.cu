@@ -3,6 +3,10 @@
 #include <sys/stat.h>
 #include <string>
 #include "testHelpers.h"
+#include <vector>
+#include <tuple>
+#include "runBasePowerTest1.cu"
+
 
 /*run command
 nvcc runArithmeticTests.cu -lnvidia-ml
@@ -20,7 +24,7 @@ template <typename T>
 void runFMATest(int iterNum, int blockSize, const char* outputName1, 
               const char* outputName2);
 
-void basePowVectorToFile(const char* fileName);
+void basePowVectorToFile(std::vector<std::tuple<int,float,float>> fileName, const char* fileName);
 
 //optional argument to specify storage directory. Default is 'data/arithmeticTests'
 int main(int argc, char *argv[]) {
@@ -29,7 +33,7 @@ int main(int argc, char *argv[]) {
 
   int blockSize = 256;
   
-  typedef vector< tuple<int, float,float> > basePowVector;
+//  typedef std::vector< std::tuple<int, float,float> > basePowVector;
 
   std::string out1;
   std::string out2;
@@ -37,7 +41,7 @@ int main(int argc, char *argv[]) {
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
   // runAddTest<float>(config_t.AddFP32_iter, blockSize, out1.c_str(), out2.c_str());
-  vector< tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
+  std::vector< std::tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
   basePowVectorToFile(powData, "testing/basePowData.csv");
   printf("---- test end ----\n");
 
@@ -88,7 +92,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void basePowVectorToFile(basePowVector vec,  const char* fileName){
+void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const char* fileName){
   FILE *fp = fopen(fileName, "w+");
   if (fp == NULL) {
     printf("Attempt at opening '%s' failed. Error: ", fileName);
@@ -98,9 +102,9 @@ void basePowVectorToFile(basePowVector vec,  const char* fileName){
   }
   fprintf(fp, "runID, avgPower, elapsedTime\n");
   
-  for (int i = 0; i < vec.size(), i++){
-    tuple<int,float,float> tup = vec[i];
-    fprintf(fp, "%d, %.3lf, %.3lf\n", tup[0], tup[1], tup[2]/1000.0);
+  for (int i = 0; i < vec.size(); i++){
+	  std::tuple<int,float,float> tup = vec[i];
+    fprintf(fp, "%d, %.3lf, %.3lf\n", std::get<0>(tup), std::get<1>(tup), std::get<2>(tup)/1000.0);
   }
   fclose(fp);
 }

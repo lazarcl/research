@@ -236,6 +236,23 @@ bool setDevice() {
   }
 
   /*
+  find the avg power value by random sampling for all datapoints
+  */
+  double getPowerAvg() {
+    return getPowerAvg(0, (int) powerData.size() - 1);
+  }
+
+  float getElapsedTime() {
+    float elapsedT;
+    CUDA_ERROR( cudaEventElapsedTime(&elapsedT, gpuStart, gpuStop));
+    return elapsedT;
+  }
+
+  void getBasePower1() {
+    vector< tuple<int,float,float> > basePowerTest1_SpecifyKernel<K>();
+  }
+
+  /*
   write data to file
   file is .txt but organized as .csv
     first row: "Power(W), Temperature(ºC), Time(ms), elapsed time(ms), number of samples"

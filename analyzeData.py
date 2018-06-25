@@ -13,7 +13,7 @@ import math
 def calculateBasePower(rootPath, saveDir, dataDirs):
   savePath = saveDir + analysisConfig.basePowerAnalysisFilename
   print("Calculating base power from approach 1")
-  obj = BasePowVarCalculator(dataDirs, [1,2,3,4,5], analysisConfig.basePower1GenericName)
+  obj = BasePowVarCalculator(dataDirs, [1,2,3,4,5,6], analysisConfig.basePower1GenericName)
   obj.calcBasePow()
   # print("Results for basePow 1:")
   # obj.printBasePowers()
@@ -184,7 +184,7 @@ def analyzeData():
 
   calculateBasePower(rootPath, saveDir, dataDirs)
   graphBasePower(rootPath, saveDir, dataDirs)
-  graphArithmetic(rootPath, saveDir, dataDirs)
+  # graphArithmetic(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":

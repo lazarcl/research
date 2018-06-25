@@ -20,6 +20,7 @@ template <typename T>
 void runFMATest(int iterNum, int blockSize, const char* outputName1, 
               const char* outputName2);
 
+void basePowVectorToFile(const char* fileName);
 
 //optional argument to specify storage directory. Default is 'data/arithmeticTests'
 int main(int argc, char *argv[]) {
@@ -28,25 +29,29 @@ int main(int argc, char *argv[]) {
 
   int blockSize = 256;
   
+  typedef vector< tuple<int, float,float> > basePowVector;
+
   std::string out1;
   std::string out2;
-//  printf("---- beginning FP32 Add Testing ----\n"); 
-//  out1 = storagePath + std::string("outputAddFP32_1.csv");
-//  out2 = storagePath + std::string("outputAddFP32_2.csv");
-//  runAddTest<float>(config_t.AddFP32_iter, blockSize, out1.c_str(), out2.c_str());
-//  printf("---- test end ----\n");
-
-  printf("---- beginning FP64 Add Testing ----\n");
-  out1 = storagePath + std::string("outputAddFP64_1.csv");
-  out2 = storagePath + std::string("outputAddFP64_2.csv");
-  runAddTest<double>(config_t.AddFP64_iter, blockSize, out1.c_str(), out2.c_str());
+  printf("---- beginning FP32 Add Testing ----\n"); 
+  // out1 = storagePath + std::string("outputAddFP32_1.csv");
+  // out2 = storagePath + std::string("outputAddFP32_2.csv");
+  // runAddTest<float>(config_t.AddFP32_iter, blockSize, out1.c_str(), out2.c_str());
+  vector< tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
+  basePowVectorToFile(powData, "testing/basePowData.csv");
   printf("---- test end ----\n");
 
-  printf("---- beginning Int32 Add Testing ---\n");
-  out1 = storagePath + std::string("outputAddInt32_1.csv");
-  out2 = storagePath + std::string("outputAddInt32_2.csv");
-  runAddTest<int>(config_t.AddInt32_iter, blockSize, out1.c_str(), out2.c_str());
-  printf("---- test end ----\n");
+  // printf("---- beginning FP64 Add Testing ----\n");
+  // out1 = storagePath + std::string("outputAddFP64_1.csv");
+  // out2 = storagePath + std::string("outputAddFP64_2.csv");
+  // runAddTest<double>(config_t.AddFP64_iter, blockSize, out1.c_str(), out2.c_str());
+  // printf("---- test end ----\n");
+
+  // printf("---- beginning Int32 Add Testing ---\n");
+  // out1 = storagePath + std::string("outputAddInt32_1.csv");
+  // out2 = storagePath + std::string("outputAddInt32_2.csv");
+  // runAddTest<int>(config_t.AddInt32_iter, blockSize, out1.c_str(), out2.c_str());
+  // printf("---- test end ----\n");
 
 //  printf("\n");
 //  printf("---- beginning FP32 Mult Testing ----\n"); 
@@ -83,6 +88,22 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+void basePowVectorToFile(basePowVector vec,  const char* fileName){
+  FILE *fp = fopen(fileName, "w+");
+  if (fp == NULL) {
+    printf("Attempt at opening '%s' failed. Error: ", fileName);
+    perror("");
+    printf("Terminating...");
+    exit(0);
+  }
+  fprintf(fp, "runID, avgPower, elapsedTime\n");
+  
+  for (int i = 0; i < vec.size(), i++){
+    tuple<int,float,float> tup = vec[i];
+    fprintf(fp, "%d, %.3lf, %.3lf\n", tup[0], tup[1], tup[2]/1000.0);
+  }
+  fclose(fp);
+}
 
 
 template <typename T>

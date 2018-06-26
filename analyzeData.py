@@ -5,6 +5,7 @@ from testScripts.testSpreadCalculator import *
 import testScripts.dataLoader as dataLoader
 from testScripts.mathHelpers import *
 import testScripts.analysisConfig as analysisConfig
+from testScripts.basePowForKernels import *
 import pathlib
 import os
 import math
@@ -100,14 +101,7 @@ def makeTableColEntry(basePow, spreadObj, controlFile, testFile):
   testOpCount, testThreadCount = dataLoader.getOpAndThreadCountFromFile(glob.glob(analysisConfig.pathDict["baseDir"]+"run*/"+testFile)[0])
   marginalOps = testOpCount*testThreadCount - controlOpCount*controlThreadCount
 
- 
   energyPerOp, energyPerOpVar = multIndVarAndConst(marginalEnergy, float(1/marginalOps))
-  # energyPerOp = (marginalEnergy[0] / marginalOps)
-  # energyPerOpVar =  ((1/marginalOps)**2 * marginalEnergy[1])
-  # if (energyPerOp, energyPerOpVar) == multIndVarAndConst(marginalEnergy, float(1/marginalOps)):
-  #   print('laksdjf')
-  #convert to picoJules
-  # energyPerOp, energyPerOpVar = energyPerOp * (10**12), energyPerOpVar * ((10**12)**2)
   energyPerOp, energyPerOpVar = multIndVarAndConst((energyPerOp, energyPerOpVar), float(10**12))
 
   resultDict["controlPow"] = tupleToRoundedStrings(varToPercent(powerDict[controlFile]))
@@ -164,17 +158,24 @@ def analyzeData():
   # # saveDir = rootPath + "analysis/"
   # # dataDirs = glob.glob(rootPath + "run*/")
 
-  # testSpreadsObj = arithmeticTestSpreads(rootPath)
   # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
-  # for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
-  # # for control, test in analysisConfig.arithOutputPairs:
-  #   # print("Results for", control, test)
-  #   basePow = 36.0, 25
-  #   col = makeTableColEntry(basePow, testSpreadsObj, control, test)
-  #   col2 = makeTableColEntry(basePow, testSpreadsObj2, control, test)
-  #   # print(str(col["energyPerOp"]))
-  #   print("$"+name+"$\\\ \n"+makeTableFromCols(col, col2, "K20", "P6000"))
+  kernelBPAnalysis = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles)
+  kernelBPAnalysis.calcBasePows()
+  basePowResults = kernelBPAnalysis.getResults()
+  # print(basePowResults)
+  # quit(0)
+
+  testSpreadsObj = arithmeticTestSpreads(rootPath)
+  for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
+  # for control, test in analysisConfig.arithOutputPairs:
+    # print("Results for", control, test)
+    # basePow = 36.0, 25
+    col = makeTableColEntry(basePowResults[name][0][2:], testSpreadsObj, control, test)
+    # col2 = makeTableColEntry(basePow, testSpreadsObj2, control, test)
+    # print(str(col["energyPerOp"]))
+    print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
+    # print("$"+name+"$\\\ \n"+makeTableFromCols(col, col2, "K20", "P6000"))
 
 
 
@@ -182,13 +183,21 @@ def analyzeData():
     print("Can't plot arithmetic data. No data folders in", rootPath, "found" )
 
 
-  calculateBasePower(rootPath, saveDir, dataDirs)
-  graphBasePower(rootPath, saveDir, dataDirs)
+  # calculateBasePower(rootPath, saveDir, dataDirs)
+  # graphBasePower(rootPath, saveDir, dataDirs)
   # graphArithmetic(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":
   analyzeData()
+
+
+  # print("Calculating base power from approach 1")
+
+  # obj = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles)
+  # obj = BasePowForKernels("testing/bpTests/", [1,2,3,4,5,6], {"addFP32":"basePow1_fmaDouble.csv"})
+  # obj.calcBasePows()
+
 
 
 

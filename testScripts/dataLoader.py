@@ -26,6 +26,7 @@ def getTimesFromPandas(data):
   return time
 
 
+
 #get elapsed time of given run's data in seconds
 #elapsed time expeted to be in 4th column 2nd row (starting at 1)
 def getRuntimeFromFile(path):
@@ -34,6 +35,30 @@ def getRuntimeFromFile(path):
     return None
 
   return float(data.totalT[1]) / 1000
+
+
+#read each row of data from file and return a dictionary
+#key = the run's testID, value = a list of avgPowers and a list of elapsedTimes of all runs of the same test case
+def readBasePowData(filePath):
+  data = loadFile(filePath, analysisConfig.basePowColumnNames)
+  if data is None:
+    return None
+
+  runData = {}
+  for index, row in data.iterrows():
+    if index == 0:
+      continue
+    # print(row)
+    testID = int(row[analysisConfig.basePowColumnNames[0]])
+    if testID not in runData:
+      runData[testID] = ([],[]) #(powers, times)
+    runData[testID][0].append(float(row[analysisConfig.basePowColumnNames[1]]))
+    runData[testID][1].append(float(row[analysisConfig.basePowColumnNames[2]]))
+  # quit(0)
+  # print(filePath)
+  # print(runData)
+  return (runData)
+
 
 def getTotalTimeFromFile(filePath):
   data = loadFile(filePath, analysisConfig.arithColumnNames)

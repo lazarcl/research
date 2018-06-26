@@ -9,15 +9,15 @@ def multiplyIndVar(a, b):
   m1, v1 = a  
   m2, v2 = b 
   m3 = m1 * m2
-  v3_partial = (v1/m1) + (v2/m2)
-  return m3,  m3 * v3_partial
+  v3_partial = (v1/(m1**2)) + (v2/(m2**2))
+  return m3,  m3**2 * v3_partial
 
 
 def divIndVar(a,b):
   m1, v1 = a  
   m2, v2 = b 
-  m3 = m1 * m2
-  v3_partial = (v1/m1) + (v2/m2)
+  m3 = m1 / m2
+  v3_partial = (v1/(m1**2)) + (v2/(m2**2))
   return m3,  m3**2 * v3_partial
 
 def addIndVar(a,b):

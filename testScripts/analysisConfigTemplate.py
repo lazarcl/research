@@ -30,6 +30,19 @@ arithGenericGraphPdfName = "arithmeticGraphs_"
 basePower1GenericName = "outputBlksPerSM_"
 basePower2GenericName = "outputBlockScalar_"
 
+#csv files that contain the basepow1 run results for given kernel
+basePow1ResultFiles = dict(
+  AddFP32 =   "basePow1_addFloat.csv", 
+  AddFP64 =   "basePow1_addDouble.csv",
+  AddInt32 =  "basePow1_addInt.csv",
+  FMAFP32 =   "basePow1_fmaFloat.csv",
+  FMAFP64 =   "basePow1_fmaDouble.csv", 
+  MultFP32 =  "basePow1_multFloat.csv",
+  MultFP64 =  "basePow1_multDouble.csv",
+  MultInt32 = "basePow1_multInt.csv" 
+)
+
+
 arithTestNamesToFiles = dict(
   AddFP32 =   ('outputAddFP32_1.csv', 'outputAddFP32_2.csv'), 
   AddFP64 =   ('outputAddFP64_1.csv', 'outputAddFP64_2.csv'),
@@ -45,6 +58,6 @@ arithOutputPairs = [files for name, files in arithTestNamesToFiles.items()]
 arithOutputFiles = [x for t in arithOutputPairs for x in t]
 
 arithColumnNames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
-arithColumnNames = ['power', 'temp', 'time', 'totalT', 'totalSamples', 'numOfOps', 'numOfThreads']
+basePowColumnNames = ['runID', 'avgPower', 'totalT']
 
 

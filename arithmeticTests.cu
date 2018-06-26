@@ -63,6 +63,7 @@ template <typename T>
 __global__
 void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
   extern __shared__ int s[];
+
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b = 2, c = 2;

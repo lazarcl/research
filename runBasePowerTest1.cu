@@ -61,7 +61,7 @@ std::vector< std::tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
 }
 
 
-void runClassicBPWithAddFP32(int argc, char* argv[]) {
+void runClassicBP1WithAddFP32(int argc, char* argv[]) {
   int blockSize = 256;
   int addIter = config_t.basePow1_iter;
   float acceptableError = 1000; //set large so it has no affect 
@@ -108,7 +108,7 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
 }
 
 
-void runBPWithAllKernels() {
+void runBP1WithAllKernels() {
   std::vector< std::tuple<int,float,float> > powData;
   powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
   basePowVectorToFile(powData, "testing/basePow1_addFloat.csv");
@@ -132,7 +132,7 @@ void runBPWithAllKernels() {
 
 
 int main(int argc, char *argv[]) {
-  runBPWithAllKernels();
+  runBP1WithAllKernels();
   
   return 0;
 }

@@ -30,12 +30,12 @@ void runSharedMemAddTest(int iterNum, int blockSize, float memRatio,
 //KernelClass type already has the datatype of the class in it's own type: ex: AddFP32<float>
 //Tuples are (blocksPerSM, avgPower, elapsedTime) for each basePower run
 template <typename KernelClass>
-vector< tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
+std::vector< std::tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
   int blockSize = 256;
-  int addIter = config_t.basePow1_iter;
+  int iters = config_t.basePow1_iter;
   float acceptableError = 1000; //set large so it has no affect 
 
-  vector<tuple<int, float, float>> runsVector;
+  std::vector<std::tuple<int, float, float>> runsVector;
 
   printf("---- beginning kernel's runs of the 1st approach to base power measuring ----"); 
   for (int blckPerSM = 1; blckPerSM <= 8; blckPerSM++) {
@@ -43,30 +43,26 @@ vector< tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
     //what percent of shared mem for each thread to request
     float memRatio = 1.0f/((float)blckPerSM) - 0.02f;
 
-    //if foobar is a string obj. get const char* with: foobar.c_str()
-    std::string pathName = folderPath + std::string("/outputBlksPerSM_");
-    std::string fileType = ".csv";
-    std::string numStr = std::to_string(blckPerSM);
 
     printf("---- beginning run #%d ----\n", blckPerSM); 
-    KernelClass test1(blockSize, iterNum);
+    KernelClass test1(blockSize, iters);
     printf("  memRatio set to %f", memRatio);
     test1.setSharedMem(memRatio);
-    TestRunner<KernelClass> tester1(&test1, outputName, acceptableError);
+    TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
     tester1.getGoodSample();
     
-    runsVector.push_back( tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
+    runsVector.push_back( std::tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
     
     printf("---- test end ----\n");
     return runsVector;
   }
 
-
-  KernelClass<T> test1()
+  return std::vector<std::tuple<int,float,float>>();
+  //KernelClass<T> test1()
 }
 
 
-void runClassicBPWithAddFP32() {
+void runClassicBPWithAddFP32(int argc, char* argv[]) {
   int blockSize = 256;
   int addIter = config_t.basePow1_iter;
   float acceptableError = 1000; //set large so it has no affect 
@@ -114,7 +110,7 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
 
 
 void runBPWithAllKernels() {
-  vector< tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
+  std::vector< std::tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
   basePowVectorToFile(powData, "testing/basePowData.csv");
 }
 

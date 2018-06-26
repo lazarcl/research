@@ -248,9 +248,6 @@ bool setDevice() {
     return elapsedT;
   }
 
-  void getBasePower1() {
-    vector< tuple<int,float,float> > basePowerTest1_SpecifyKernel<K>();
-  }
 
   /*
   write data to file

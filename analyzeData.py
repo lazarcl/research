@@ -160,7 +160,7 @@ def analyzeData():
 
   # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
-  kernelBPAnalysis = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles)
+  kernelBPAnalysis = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles, 1)
   kernelBPAnalysis.calcBasePows()
   basePowResults = kernelBPAnalysis.getResults()
   # print(basePowResults)
@@ -194,8 +194,8 @@ if __name__ == "__main__":
 
   # print("Calculating base power from approach 1")
 
-  # obj = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles)
-  # obj = BasePowForKernels("testing/bpTests/", [1,2,3,4,5,6], {"addFP32":"basePow1_fmaDouble.csv"})
+  # obj = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles, 1)
+  # obj = BasePowForKernels("testing/bpTests/", [1,2,3,4,5,6], {"addFP32":"basePow1_fmaDouble.csv"}, 1)
   # obj.calcBasePows()
 
 

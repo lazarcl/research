@@ -70,38 +70,29 @@ void runClassicBP2WithAddFP32(int argc, char* argv[]) {
   }
 }
 
-
 template <typename KernelClass>
-std::vector< std::tuple<int,float,float> > basePowerTest2_SpecifyKernel() {
+void basePowerTest2_SpecifyKernel(int argc, char* argv[]) {
   int blockSize = 256;
-  int iters = config_t.basePow1_iter;
+  int iterNum = config_t.basePow2_iter;
   float acceptableError = 1000; //set large so it has no affect 
-
+  
   std::vector<std::tuple<int, float, float>> runsVector;
 
-  printf("---- beginning kernel's runs of the 2st approach to base power measuring ----\n"); 
-  for (int sampleDepth = 1; sampleDepth <= 1; sampleDepth++) {
-    for (int blckPerSM = 1; blckPerSM <= 2; blckPerSM++) {
+  printf("---- beginning runs of the 2nd approach to base power measuring. Storing at '%s' ----\n", folderPath.c_str()); 
+  for (int blckScalr = 1; blckScalr <= 8; blckScalr++) {
 
-      //what percent of shared mem for each thread to request
-      float memRatio = 1.0f/((float)blckPerSM) - 0.02f;
+    printf("---- beginning run #%d ----\n", blckScalr); 
+    KernelClass test1(blockSize, iterNum, blckScalr);
+    TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
+    tester1.getGoodSample();
 
+    runsVector.push_back( std::tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
 
-      printf("---- beginning run #%d ----\n", blckPerSM); 
-      KernelClass test1(blockSize, iters);
-      printf("  memRatio set to %f\n", memRatio);
-      test1.setSharedMem(memRatio);
-      TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
-      tester1.getGoodSample();
-      
-      runsVector.push_back( std::tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
-      
-      printf("---- test end ----\n");
-    }
+    printf("---- test end ----\n");
+
   }
   return runsVector;
 }
-
 
 
 void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const char* fileName){
@@ -123,23 +114,23 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
 
 void runBP2WithAllKernels() {
   std::vector< std::tuple<int,float,float> > powData;
-  powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
+  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<float>>();
   basePowVectorToFile(powData, "testing/basePow2_addFloat.csv");
-  powData = basePowerTest1_SpecifyKernel<AddKernel1Test<double>>();
+  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<double>>();
   basePowVectorToFile(powData, "testing/basePow2_addDouble.csv");
-  powData = basePowerTest1_SpecifyKernel<AddKernel1Test<int>>();
+  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<int>>();
   basePowVectorToFile(powData, "testing/basePow2_addInt.csv");
 
-  powData = basePowerTest1_SpecifyKernel<MultKernel1Test<int>>();
+  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<int>>();
   basePowVectorToFile(powData, "testing/basePow2_multInt.csv");
-  powData = basePowerTest1_SpecifyKernel<MultKernel1Test<float>>();
+  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<float>>();
   basePowVectorToFile(powData, "testing/basePow2_multFloat.csv");
-  powData = basePowerTest1_SpecifyKernel<MultKernel1Test<double>>();
+  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<double>>();
   basePowVectorToFile(powData, "testing/basePow2_multDouble.csv");
 
-  powData = basePowerTest1_SpecifyKernel<FMAKernel1Test<float>>();
+  powData = basePowerTest2_SpecifyKernel<FMAKernel1Test<float>>();
   basePowVectorToFile(powData, "testing/basePow2_fmaFloat.csv");
-  powData = basePowerTest1_SpecifyKernel<FMAKernel1Test<double>>();
+  powData = basePowerTest2_SpecifyKernel<FMAKernel1Test<double>>();
   basePowVectorToFile(powData, "testing/basePow2_fmaDouble.csv");
 }
 

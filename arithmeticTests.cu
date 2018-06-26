@@ -62,6 +62,7 @@ void addKernel1_DynamicSharedMem(int n, int iterateNum, T *x) {
 template <typename T>
 __global__
 void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
+  extern __shared__ int s[];
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   T b = 2, c = 2;
@@ -72,6 +73,28 @@ void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
     c = b * a;
     b = c * a;
     a = b * c;
+  }
+  x[thread] = a;
+}
+
+
+template <typename T>
+__global__
+void fmaKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
+  extern __shared__ int s[];
+  int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  T a = x[thread];
+  T b, c;
+  for (int i = 0; i < iterateNum; i++) {
+    b = a*i + i;
+    c = a*b + a;
+    a = c*b + a;
+    c = b*a + c;
+    b = a*b + b;
+    a = b*c + a;
+    c = b*a + c;
+    b = a*b + b;
+    a = b*c + a;
   }
   x[thread] = a;
 }
@@ -328,6 +351,37 @@ public:
 
   void runKernel() {
       multKernel_DynamicSharedMem<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>
+                      (this->n, this->iterNum, this->d_x);
+  }
+};
+
+template <typename T>
+class FMAKernel1TestSetSharedMem : public ArithmeticTestBase<T> {
+public:
+
+  unsigned int sharedMemRequest;
+  float sharedMemScale; 
+
+  FMAKernel1TestSetSharedMem(int blockSize, int iterNum) 
+      : ArithmeticTestBase<T>(blockSize, iterNum) 
+  {this->opsPerIteration = 6;}
+  FMAKernel1TestSetSharedMem(int blockSize, int iterNum, int numBlockScale) 
+      : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {this->opsPerIteration = 6;}
+
+  //in addition to normal setup, figure out how much shared memory to request
+  void kernelSetup(cudaDeviceProp deviceProp) {
+    ArithmeticTestBase<T>::kernelSetup(deviceProp);
+
+    sharedMemRequest = (unsigned int) (deviceProp.sharedMemPerBlock*sharedMemScale);
+  }
+
+  void setSharedMem(float newScale) {
+    sharedMemScale = newScale;
+  }
+
+  void runKernel() {
+      fmaKernel_DynamicSharedMem<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>
                       (this->n, this->iterNum, this->d_x);
   }
 };

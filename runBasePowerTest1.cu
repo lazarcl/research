@@ -110,7 +110,18 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
 
 
 void runBPWithAllKernels() {
-  std::vector< std::tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
+  std::vector< std::tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
+  basePowVectorToFile(powData, "testing/basePowData.csv");
+  
+  powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
+  basePowVectorToFile(powData, "testing/basePowData.csv");
+  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<int>>();
+  basePowVectorToFile(powData, "testing/basePowData.csv");
+  powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<float>>();
+  basePowVectorToFile(powData, "testing/basePowData.csv");
+  powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
+  basePowVectorToFile(powData, "testing/basePowData.csv");
+  powData = basePowerTest1_SpecifyKernel<MultKernel1TestNonVolatile<float>>();
   basePowVectorToFile(powData, "testing/basePowData.csv");
 }
 

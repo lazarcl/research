@@ -37,28 +37,27 @@ std::vector< std::tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
 
   std::vector<std::tuple<int, float, float>> runsVector;
 
-  printf("---- beginning kernel's runs of the 1st approach to base power measuring ----"); 
-  for (int blckPerSM = 1; blckPerSM <= 8; blckPerSM++) {
+  printf("---- beginning kernel's runs of the 1st approach to base power measuring ----\n"); 
+  for (int sampleDepth = 1; sampleDepth <= 4; sampleDepth++) {
+    for (int blckPerSM = 1; blckPerSM <= 6; blckPerSM++) {
 
-    //what percent of shared mem for each thread to request
-    float memRatio = 1.0f/((float)blckPerSM) - 0.02f;
+      //what percent of shared mem for each thread to request
+      float memRatio = 1.0f/((float)blckPerSM) - 0.02f;
 
 
-    printf("---- beginning run #%d ----\n", blckPerSM); 
-    KernelClass test1(blockSize, iters);
-    printf("  memRatio set to %f", memRatio);
-    test1.setSharedMem(memRatio);
-    TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
-    tester1.getGoodSample();
-    
-    runsVector.push_back( std::tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
-    
-    printf("---- test end ----\n");
-    return runsVector;
+      printf("---- beginning run #%d ----\n", blckPerSM); 
+      KernelClass test1(blockSize, iters);
+      printf("  memRatio set to %f\n", memRatio);
+      test1.setSharedMem(memRatio);
+      TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
+      tester1.getGoodSample();
+      
+      runsVector.push_back( std::tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
+      
+      printf("---- test end ----\n");
+    }
   }
-
-  return std::vector<std::tuple<int,float,float>>();
-  //KernelClass<T> test1()
+  return runsVector;
 }
 
 
@@ -70,7 +69,7 @@ void runClassicBPWithAddFP32(int argc, char* argv[]) {
   std::string folderPath = setupStoragePath(argc, argv);
 
   printf("---- beginning runs of the 1st approach to base power measuring. Storing at '%s' ----\n", folderPath.c_str()); 
-  for (int blckPerSM = 1; blckPerSM <= 8; blckPerSM++) {
+  for (int blckPerSM = 1; blckPerSM <= 7; blckPerSM++) {
 
     //what percent of shared mem for each thread to request
     float memRatio = 1.0f/((float)blckPerSM) - 0.02f;
@@ -103,26 +102,32 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
   
   for (int i = 0; i < vec.size(); i++){
     std::tuple<int,float,float> tup = vec[i];
-    fprintf(fp, "%d, %.3lf, %.3lf\n", std::get<0>(tup), std::get<1>(tup), std::get<2>(tup)/1000.0);
+    fprintf(fp, "%d, %.3lf, %.3lf\n", std::get<0>(tup), std::get<1>(tup)/1000.0, std::get<2>(tup)/1000.0);
   }
   fclose(fp);
 }
 
 
 void runBPWithAllKernels() {
-  std::vector< std::tuple<int,float,float> > powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
-  basePowVectorToFile(powData, "testing/basePowData.csv");
-  
+  std::vector< std::tuple<int,float,float> > powData;
   powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
-  basePowVectorToFile(powData, "testing/basePowData.csv");
-  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<int>>();
-  basePowVectorToFile(powData, "testing/basePowData.csv");
-  powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<float>>();
-  basePowVectorToFile(powData, "testing/basePowData.csv");
-  powData = basePowerTest1_SpecifyKernel<AddKernel1Test<float>>();
-  basePowVectorToFile(powData, "testing/basePowData.csv");
-  powData = basePowerTest1_SpecifyKernel<MultKernel1TestNonVolatile<float>>();
-  basePowVectorToFile(powData, "testing/basePowData.csv");
+  basePowVectorToFile(powData, "testing/basePow1_addFloat.csv");
+  powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<double>>();
+  basePowVectorToFile(powData, "testing/basePow1_addDouble.csv");
+  powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<int>>();
+  basePowVectorToFile(powData, "testing/basePow1_addInt.csv");
+//
+//  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<int>>();
+//  basePowVectorToFile(powData, "testing/basePow1_multInt.csv");
+//  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<float>>();
+//  basePowVectorToFile(powData, "testing/basePow1_multFloat.csv");
+//  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<double>>();
+//  basePowVectorToFile(powData, "testing/basePow1_multDouble.csv");
+
+//  powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<float>>();
+//  basePowVectorToFile(powData, "testing/basePow1_fmaFloat.csv");
+//  powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<double>>();
+//  basePowVectorToFile(powData, "testing/basePow1_fmaDouble.csv");
 }
 
 

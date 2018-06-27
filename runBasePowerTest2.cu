@@ -71,25 +71,27 @@ void runClassicBP2WithAddFP32(int argc, char* argv[]) {
 }
 
 template <typename KernelClass>
-void basePowerTest2_SpecifyKernel(int argc, char* argv[]) {
+std::vector< std::tuple<int, float, float> > basePowerTest2_SpecifyKernel() {
   int blockSize = 256;
   int iterNum = config_t.basePow2_iter;
   float acceptableError = 1000; //set large so it has no affect 
   
   std::vector<std::tuple<int, float, float>> runsVector;
 
-  printf("---- beginning runs of the 2nd approach to base power measuring. Storing at '%s' ----\n", folderPath.c_str()); 
-  for (int blckScalr = 1; blckScalr <= 8; blckScalr++) {
-
-    printf("---- beginning run #%d ----\n", blckScalr); 
-    KernelClass test1(blockSize, iterNum, blckScalr);
-    TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
-    tester1.getGoodSample();
-
-    runsVector.push_back( std::tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
-
-    printf("---- test end ----\n");
-
+  printf("---- beginning runs of the 2nd approach to base power measuring. ----\n"); 
+  for (int testDepth = 1; testDepth <=5; testDepth++) {
+    for (int blckScalr = 1; blckScalr <= 8; blckScalr++) {
+  
+      printf("---- beginning run #%d ----\n", blckScalr); 
+      KernelClass test1(blockSize, iterNum, blckScalr);
+      TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
+      tester1.getGoodSample();
+  
+      runsVector.push_back( std::tuple<int, float, float>(blckScalr, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
+  
+      printf("---- test end ----\n");
+  
+    }
   }
   return runsVector;
 }
@@ -128,9 +130,9 @@ void runBP2WithAllKernels() {
   powData = basePowerTest2_SpecifyKernel<MultKernel1Test<double>>();
   basePowVectorToFile(powData, "testing/basePow2_multDouble.csv");
 
-  powData = basePowerTest2_SpecifyKernel<FMAKernel1Test<float>>();
+  powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<float>>();
   basePowVectorToFile(powData, "testing/basePow2_fmaFloat.csv");
-  powData = basePowerTest2_SpecifyKernel<FMAKernel1Test<double>>();
+  powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<double>>();
   basePowVectorToFile(powData, "testing/basePow2_fmaDouble.csv");
 }
 

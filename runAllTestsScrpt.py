@@ -108,7 +108,7 @@ def runCommand(command):
 
 if __name__ == "__main__":
 
-  basePath = "testRuns/k20_fourth_run_multFP32_basePow/"
+  basePath = "testRuns/k20_fifth_set_for_fma_verify/"
 
   #dir is a list of directorys. 
   # Each directory gets its own run of the specified data
@@ -118,8 +118,8 @@ if __name__ == "__main__":
 
   runMakefile()
 
-  #tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
-  tests = ["runBasePowerTest1.cu", "runBasePowerTest2.cu"]
+  tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
+  #tests = ["runArithmeticTests.cu", "runBasePowerTest2.cu"]
   runTestsForDirs(tests, dirList)
 
 

@@ -27,7 +27,8 @@ __global__
 void multKernel1_nonVolitile(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 2, c = 2;
+  T b = 0, c = 0;
+  //T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a * b;
     c = a * b;
@@ -47,7 +48,8 @@ void addKernel1_DynamicSharedMem(int n, int iterateNum, T *x) {
   extern __shared__ int s[];
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 2, c = 2;
+  T b = 0, c = 0;
+  //T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a + b;
     c = a + b;
@@ -66,7 +68,8 @@ void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
 
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 2, c = 2;
+  T b = 0, c = 0;
+  //T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a * b;
     c = a * b;
@@ -107,7 +110,8 @@ __global__
 void addKernel1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 2, c = 2;
+  T b = 0, c = 0;
+  //T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a + b;
     c = a + b;
@@ -125,7 +129,8 @@ __global__
 void addKernel2(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 2, c = 2;
+  T b = 0, c = 0;
+  //T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a + b;
     c = a + b;
@@ -147,7 +152,8 @@ __global__
 void multKernel1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 2, c = 2;
+  T b = 0, c = 0;
+  // T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a * b;
     c = a * b;
@@ -165,7 +171,8 @@ __global__
 void multKernel2(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 2, c = 2;
+  T b = 0, c = 0;
+  // T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a * b;
     c = a * b;
@@ -238,7 +245,8 @@ void createData(int n, T *x) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
 //  T a = 1.175494351e-38f;
 //T a = 1.0e+38f;
-  T a = 1.0;
+//  T a = 1.0;
+  T a = 0;
   if (i < n) {
     x[i] = a;
   }

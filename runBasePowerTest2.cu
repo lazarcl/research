@@ -79,8 +79,8 @@ std::vector< std::tuple<int, float, float> > basePowerTest2_SpecifyKernel() {
   std::vector<std::tuple<int, float, float>> runsVector;
 
   printf("---- beginning runs of the 2nd approach to base power measuring. ----\n"); 
-  for (int testDepth = 1; testDepth <=5; testDepth++) {
-    for (int blckScalr = 1; blckScalr <= 8; blckScalr++) {
+  for (int blckScalr = 1; blckScalr <= 6; blckScalr++) {
+    for (int testDepth = 1; testDepth <=1; testDepth++) {
   
       printf("---- beginning run #%d ----\n", blckScalr); 
       KernelClass test1(blockSize, iterNum, blckScalr);

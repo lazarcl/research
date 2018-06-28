@@ -154,13 +154,10 @@ def analyzeData():
   print("Analyzing data from directory: '" + rootPath + "'")
   print("   Saving analysis output in: '" + saveDir + "'")
   print("   Looking in directories named like: '" + analysisConfig.pathDict["dataDirs"] + "'\n")
-  # # rootPath = "testRuns/k20_second_set/"
-  # # saveDir = rootPath + "analysis/"
-  # # dataDirs = glob.glob(rootPath + "run*/")
 
   # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
-  kernelBPAnalysis = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles, 1)
+  kernelBPAnalysis = BasePowForKernels("testRuns/k20_sixth_set_newKernels/basePow", [1,2], analysisConfig.basePow2ResultFiles, 2)
   kernelBPAnalysis.calcBasePows()
   basePowResults = kernelBPAnalysis.getResults()
   # print(basePowResults)
@@ -169,7 +166,6 @@ def analyzeData():
   testSpreadsObj = arithmeticTestSpreads(rootPath)
   for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
   # for control, test in analysisConfig.arithOutputPairs:
-    # print("Results for", control, test)
     # basePow = 36.0, 25
     col = makeTableColEntry(basePowResults[name][0][2:], testSpreadsObj, control, test)
     # col2 = makeTableColEntry(basePow, testSpreadsObj2, control, test)
@@ -193,9 +189,12 @@ if __name__ == "__main__":
 
 
   # print("Calculating base power from approach 1")
-
   # obj = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles, 1)
-  # obj = BasePowForKernels("testing/bpTests/", [1,2,3,4,5,6], {"addFP32":"basePow1_fmaDouble.csv"}, 1)
+  # obj = BasePowForKernels("testing/bpTests/", [1,2], {"addFP32":"basePow1_addFloat.csv"}, 1)
+
+  # print("Calculating base power from approach 2")
+  # obj = BasePowForKernels("testing/bpTests/", [1,2], analysisConfig.basePow2ResultFiles, 2)
+  # obj = BasePowForKernels("testing/bpTests/", [1,2], {"addFP32":"basePow2_addFloat.csv"}, 2)
   # obj.calcBasePows()
 
 

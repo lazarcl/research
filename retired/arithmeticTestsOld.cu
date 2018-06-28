@@ -12,7 +12,7 @@ void addKernel1Volatile(int n, int iterateNum, T *x) {
   volatile T b = 2;
   volatile T c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a + b;
+    b = a + i;
     c = a + b;
     a = c + a;
     c = b + a;
@@ -29,7 +29,7 @@ void multKernel1_nonVolitile(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a * b;
+    b = a * i;
     c = a * b;
     a = c * a;
     c = b * a;
@@ -49,7 +49,7 @@ void addKernel1_DynamicSharedMem(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a + b;
+    b = a + i;
     c = a + b;
     a = c + a;
     c = b + a;
@@ -68,7 +68,7 @@ void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a * b;
+    b = a * i;
     c = a * b;
     a = c * a;
     c = b * a;
@@ -85,9 +85,9 @@ void fmaKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
   extern __shared__ int s[];
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  T b = 0, c = 0;
+  T b, c;
   for (int i = 0; i < iterateNum; i++) {
-    b = a*b + c;
+    b = a*i + i;
     c = a*b + a;
     a = c*b + a;
     c = b*a + c;
@@ -109,7 +109,7 @@ void addKernel1(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a + b;
+    b = a + i;
     c = a + b;
     a = c + a;
     c = b + a;
@@ -127,7 +127,7 @@ void addKernel2(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a + b;
+    b = a + i;
     c = a + b;
     a = c + a;
     c = b + a;
@@ -149,7 +149,7 @@ void multKernel1(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a * b;
+    b = a * i;
     c = a * b;
     a = c * a;
     c = b * a;
@@ -167,7 +167,7 @@ void multKernel2(int n, int iterateNum, T *x) {
   T a = x[thread];
   T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
-    b = a * b;
+    b = a * i;
     c = a * b;
     a = c * a;
     c = b * a;
@@ -189,9 +189,9 @@ void fmaKernel1(int n, int iterateNum, T *x) {
   T a = x[thread];
   //float b = 1.175494351e+38f, c = 1.175494351e+38f;
   //float b=1f, c=1f;
-  T b = 0, c = 0;
+  T b, c;
   for (int i = 0; i < iterateNum; i++) {
-    b = a*b + c;
+    b = a*i + i;
     c = a*b + a;
     a = c*b + a;
     c = b*a + c;
@@ -211,9 +211,10 @@ void fmaKernel2(int n, int iterateNum, T *x) {
   T a = x[thread];
   //float b = 1.175494351e+38f, c = 1.175494351e+38f;
   //float b = 0.0, c = 0.0;
-  T b = 0, c = 0;
+  T b, c;
   for (int i = 0; i < iterateNum; i++) {
-    b = a*b + c;
+    //b = a*b + c;
+    b = a*i + i;
     c = a*b + a;
     a = c*b + a;
     c = b*a + c;
@@ -237,7 +238,8 @@ __global__
 void createData(int n, T *x) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
 //  T a = 1.175494351e-38f;
-//T a = 1.0e+38f;
+//  T a = 1.0e+38f;
+//  T a = 1f;
   T a = 1.0;
   if (i < n) {
     x[i] = a;

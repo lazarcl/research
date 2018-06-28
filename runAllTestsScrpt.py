@@ -108,18 +108,18 @@ def runCommand(command):
 
 if __name__ == "__main__":
 
-  basePath = "testRuns/k20_fifth_set_for_fma_verify/"
+  basePath = "testRuns/k20_sixth_set_newKernels/"
 
   #dir is a list of directorys. 
   # Each directory gets its own run of the specified data
   # ex: if dirList.size == 5, then complete all tests 5 times
-  dirList = [basePath + "run" + str(i) for i in range(1,3)]
+  dirList = [basePath + "run" + str(i) for i in range(1,2)]
   makeDirs(dirList)
 
   runMakefile()
 
-  tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
-  #tests = ["runArithmeticTests.cu", "runBasePowerTest2.cu"]
+  #tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
+  tests = ["runArithmeticTests.cu"]
   runTestsForDirs(tests, dirList)
 
 

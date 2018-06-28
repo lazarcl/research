@@ -255,7 +255,8 @@ void createData(int n, T *x) {
 //  T a = 1.175494351e-38f;
 //T a = 1.0e+38f;
 //  T a = 1.0;
-  T a = 0;
+  // T a = 0;
+  T a = 0x0.001p-1022;
   if (i < n) {
     x[i] = a;
   }

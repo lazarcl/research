@@ -110,6 +110,7 @@ def makeTableColEntry(basePow, spreadObj, controlFile, testFile):
   resultDict["testPow"] = tupleToRoundedStrings(varToPercent(powerDict[testFile]))
   resultDict["testTime"] = tupleToRoundedStrings(varToPercent(testTime))
   resultDict["testEnergy"] = tupleToRoundedStrings(varToPercent(testEnergy))
+  resultDict["basePow"] = tupleToRoundedStrings(varToPercent(basePow))
   resultDict["marginalEnergy"] = tupleToRoundedStrings(varToPercent(marginalEnergy))
   resultDict["marginalOps"] = "{:.3e}".format(marginalOps)
   resultDict["energyPerOp"] = tupleToRoundedStrings(varToPercent((energyPerOp, energyPerOpVar)))
@@ -134,6 +135,7 @@ def makeTableFromCols(col1, col2, col1Name, col2Name):
   table+= "Test Kernel Power & " + col1["testPow"][0] + "$\pm$" + col1["testPow"][1] + "\% W & " + col1["testPow"][0] + "$\pm$" + col1["testPow"][1] + "\% W\\\ \hline\n"
   table+= "Test Kernel Time & "+ col1["testTime"][0] + "$\pm$"+ col1["testTime"][1]+"\% s & "+ col1["testTime"][0] + "$\pm$"+ col1["testTime"][1]+"\% s\\\ \hline\n"
   table+= "Test Kernel Energy & "+ col1["testEnergy"][0] + "$\pm$"+ col1["testEnergy"][1]+"\% J & "+ col1["testEnergy"][0] + "$\pm$"+ col1["testEnergy"][1]+"\% J\\\ \hline\n"
+  table+= "Base Power & "+ col1["basePow"][0] + "$\pm$"+ col1["basePow"][1]+"\% J & "+ col1["basePow"][0] + "$\pm$"+ col1["basePow"][1]+"\% J\\\ \hline\n"
 
   table+= "Test Kernel Marginal Energy & " + col1["marginalEnergy"][0] + "$\pm$" + col1["marginalEnergy"][1] + "\% J & " + col1["marginalEnergy"][0] + "$\pm$" + col1["marginalEnergy"][1] + "\% J\\\ \hline\n"
 
@@ -157,7 +159,7 @@ def analyzeData():
 
   # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
-  kernelBPAnalysis = BasePowForKernels("testRuns/k20_sixth_set_newKernels/basePow", [1,2], analysisConfig.basePow2ResultFiles, 2)
+  kernelBPAnalysis = BasePowForKernels("testRuns/k20_sixth_set_newKernels/basePowMid", [1,2], analysisConfig.basePow2ResultFiles, 2)
   kernelBPAnalysis.calcBasePows()
   basePowResults = kernelBPAnalysis.getResults()
   # print(basePowResults)

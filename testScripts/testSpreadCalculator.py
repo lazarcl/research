@@ -73,11 +73,12 @@ class TestSpreadCalculator:
   def findPowersOfPaths(self, paths):
     powers = []
     for path in paths:
-      powers = dataLoader.getPowsFromFile(path)
-      if powers is not None:
-        avg, var = self.calcMeanAndVar(powers)
-        if avg != 0.0:
-          powers.append(avg) 
+      powerData = dataLoader.getPowsFromFile(path)
+      if powerData is not None:
+        powers+=powerData
+        # avg, var = self.calcMeanAndVar(powerData)
+        # if avg != 0.0:
+        #   powers.append(avg) 
     return powers
 
 
@@ -99,6 +100,7 @@ class TestSpreadCalculator:
       self.runtimeSpreadDict[fileName] = (mean, var)
 
   #for all input filenames, find mean,var for each filename's power across different tests
+  #average all power datapoints from all similar files into one mean and var
   def findPowerSpreads(self):
     for fileName, paths in self.filePathDict.items():
       powers = self.findPowersOfPaths(paths)

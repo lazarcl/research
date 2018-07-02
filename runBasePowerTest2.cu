@@ -118,8 +118,8 @@ void runBP2WithAllKernels() {
   std::vector< std::tuple<int,float,float> > powData;
   // powData = basePowerTest2_SpecifyKernel<AddKernel1Test<float>>();
   // basePowVectorToFile(powData, "testing/basePow2_addFloat.csv");
-  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<double>>();
-  basePowVectorToFile(powData, "testing/basePow2_addDouble.csv");
+  // powData = basePowerTest2_SpecifyKernel<AddKernel1Test<double>>();
+  // basePowVectorToFile(powData, "testing/basePow2_addDouble.csv");
   // powData = basePowerTest2_SpecifyKernel<AddKernel1Test<int>>();
   // basePowVectorToFile(powData, "testing/basePow2_addInt.csv");
 
@@ -127,13 +127,13 @@ void runBP2WithAllKernels() {
   // basePowVectorToFile(powData, "testing/basePow2_multInt.csv");
   // powData = basePowerTest2_SpecifyKernel<MultKernel1Test<float>>();
   // basePowVectorToFile(powData, "testing/basePow2_multFloat.csv");
-  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<double>>();
-  basePowVectorToFile(powData, "testing/basePow2_multDouble.csv");
+  // powData = basePowerTest2_SpecifyKernel<MultKernel1Test<double>>();
+  // basePowVectorToFile(powData, "testing/basePow2_multDouble.csv");
 
-  // powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<float>>();
-  // basePowVectorToFile(powData, "testing/basePow2_fmaFloat.csv");
-  powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<double>>();
-  basePowVectorToFile(powData, "testing/basePow2_fmaDouble.csv");
+  powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<float>>();
+  basePowVectorToFile(powData, "testing/basePow2_fmaFloat.csv");
+  // powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<double>>();
+  // basePowVectorToFile(powData, "testing/basePow2_fmaDouble.csv");
 }
 
 

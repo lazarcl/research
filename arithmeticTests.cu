@@ -9,8 +9,10 @@ __global__
 void addKernel1Volatile(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
-  volatile T b = 2;
-  volatile T c = 2;
+  // volatile T b = 2;
+  // volatile T c = 2;
+  volatile T b = 1;
+  volatile T c = 1;
   for (int i = 0; i < iterateNum; i++) {
     b = a + b;
     c = a + b;

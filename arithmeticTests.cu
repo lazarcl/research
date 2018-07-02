@@ -99,15 +99,24 @@ void fmaKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
   T b = 0.25, c = 0.25, d = 0.1875;
   // T b = 0, c = 0;
   for (int i = 0; i < iterateNum; i++) {
-    b = a*b + c;
-    c = a*b + a;
-    a = c*b + a;
-    c = b*a + c;
-    b = a*b + b;
-    a = b*c + a;
-    c = b*a + c;
-    b = a*b + b;
-    a = b*c + a;
+    // b = a*b + c;
+    // c = a*b + a;
+    // a = c*b + a;
+    // c = b*a + c;
+    // b = a*b + b;
+    // a = b*c + a;
+    // c = b*a + c;
+    // b = a*b + b;
+    // a = b*c + a;
+    b = a*b + d;
+    c = a*b + d;
+    a = c*b + d;
+    c = b*a + d;
+    b = a*c + d;
+    a = b*c + d;
+    c = b*a + d;
+    b = a*c + d;
+    a = b*c + d;
   }
   x[thread] = a;
 }

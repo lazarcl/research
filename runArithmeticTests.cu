@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   // printf("---- test end ----\n");
 
   printf("---- beginning FP64 Add Testing ----\n");
-  // out1 = storagePath + std::string("outputAddFP64_1.csv");
+  out1 = storagePath + std::string("outputAddFP64_1.csv");
   out2 = storagePath + std::string("outputAddFP64_2.csv");
   runAddTest<double>(config_t.AddFP64_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
   // printf("---- test end ----\n");
 
   printf("---- beginning FP64 Mult Testing ----\n");
-  // out1 = storagePath + std::string("outputMultFP64_1.csv");
+  out1 = storagePath + std::string("outputMultFP64_1.csv");
   out2 = storagePath + std::string("outputMultFP64_2.csv");
   runMultTest<double>(config_t.MultFP64_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   // printf("---- test end ----\n");
 
   printf("---- beginning FP64 FMA Testing ----\n");
-  // out1 = storagePath + std::string("outputFMAFP64_1.csv");
+  out1 = storagePath + std::string("outputFMAFP64_1.csv");
   out2 = storagePath + std::string("outputFMAFP64_2.csv");
   runFMATest<double>(config_t.FMAFP64_iter, blockSize, out1.c_str(), out2.c_str());
   printf("---- test end ----\n");

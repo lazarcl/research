@@ -82,7 +82,7 @@ public:
 	//CUDA timing events to clalculate test kernel's runtime
   cudaEvent_t gpuStart, gpuStop, kernelFinished;
 
-  //TODO: remove later. for development testing
+  //pointers to the arrays on the GPU device
   float *d_x, *d_y;
 
   /*
@@ -133,9 +133,7 @@ public:
 		CUDA_ERROR( cudaEventCreate(&kernelFinished) );
 		CUDA_ERROR( cudaEventRecord(kernelFinished) ); 
 
-		//TODO: may need to change stream above or just use gpuStart
 		while (cudaEventQuery(kernelFinished) != cudaSuccess) {
-		// while (cudaEventQuery(kernelFinished) != cudaSuccess) {
 			powerLevel = getPowerUseage();
 			tempLevel = getDeviceTemp();
 			powerData.push_back(powerLevel);

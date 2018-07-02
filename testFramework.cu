@@ -50,9 +50,6 @@ public:
   //CUDA timing events to clalculate test kernel's runtime
   cudaEvent_t gpuStart, gpuStop, kernelFinished;
 
-  //TODO: remove later. for development testing
-  float *d_x, *d_y;
-
   //class that holds the kernel to run
   K *testClass;
 

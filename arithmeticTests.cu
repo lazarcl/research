@@ -85,6 +85,9 @@ void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
     c = b * a;
     b = c * a;
     a = b * c;
+    a = a/1000000 +1;
+    b = b/1000000 +1;
+    c = c/1000000 +1;
   }
   x[thread] = a;
 }
@@ -187,6 +190,10 @@ void multKernel1(int n, int iterateNum, T *x) {
     c = b * a;
     b = c * a;
     a = b * c;
+    a = a/1000000 +1;
+    b = b/1000000 +1;
+    c = c/1000000 +1;
+
   }
   x[thread] = a;
 }
@@ -211,6 +218,10 @@ void multKernel2(int n, int iterateNum, T *x) {
     c = b * a;
     b = c * a;
     a = b * c;
+    a = a/1000000 +1;
+    b = b/1000000 +1;
+    c = c/1000000 +1;
+
   }
   x[thread] = a;
 }

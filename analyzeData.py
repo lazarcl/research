@@ -159,7 +159,7 @@ def analyzeData():
 
   # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
-  kernelBPAnalysis = BasePowForKernels("testRuns/k20_sixth_set_newKernels/run4", [1,2], analysisConfig.basePow2ResultFiles, 2)
+  kernelBPAnalysis = BasePowForKernels("testRuns/k20_sixth_set_newKernels/run4", [1,2], analysisConfig.basePow1ResultFiles, 1)
   kernelBPAnalysis.calcBasePows()
   basePowResults = kernelBPAnalysis.getResults()
   # print(basePowResults)

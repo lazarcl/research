@@ -118,9 +118,9 @@ if __name__ == "__main__":
 
   runMakefile()
 
-  tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
+  # tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu", "runBasePowerTest2.cu"]
   #tests = ["runBasePowerTest1.cu", "runBasePowerTest2.cu"]
-  #tests = ["runArithmeticTests.cu"]
+  tests = ["runArithmeticTests.cu", "runBasePowerTest1.cu"]
   runTestsForDirs(tests, dirList)
 
 

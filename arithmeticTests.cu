@@ -129,8 +129,7 @@ void addKernel1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   // T b = 2.22507e-308, c = 2.22507e-308;
-  // T b = 1, c = 1;
-  T b = 0.25, c = 0.25, d = 0.1875;
+  T b = 1, c = 1;
   // T b = 0, c = 0;
   //T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {

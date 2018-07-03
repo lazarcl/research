@@ -225,7 +225,7 @@ __global__
 void fmaKernel1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   volatile T aInit = x[thread];
-  T a = aInit
+  T a = aInit;
   //T a = x[thread];
   //float b = 1.175494351e+38f, c = 1.175494351e+38f;
   //float b=1f, c=1f;
@@ -262,7 +262,7 @@ __global__
 void fmaKernel2(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   volatile T aInit = x[thread];
-  T a = aInit
+  T a = aInit;
   // T a = x[thread];
   //float b = 1.175494351e+38f, c = 1.175494351e+38f;
   //T b = 2.22507e-308, c = 2.22507e-308;

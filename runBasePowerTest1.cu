@@ -117,15 +117,15 @@ void runBP1WithAllKernels() {
   // powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<int>>();
   // basePowVectorToFile(powData, "testing/basePow1_addInt.csv");
 
-  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<int>>();
-  basePowVectorToFile(powData, "testing/basePow1_multInt.csv");
-  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<float>>();
-  basePowVectorToFile(powData, "testing/basePow1_multFloat.csv");
-  powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<double>>();
-  basePowVectorToFile(powData, "testing/basePow1_multDouble.csv");
+  // powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<int>>();
+  // basePowVectorToFile(powData, "testing/basePow1_multInt.csv");
+  // powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<float>>();
+  // basePowVectorToFile(powData, "testing/basePow1_multFloat.csv");
+  // powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<double>>();
+  // basePowVectorToFile(powData, "testing/basePow1_multDouble.csv");
 
-  // powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<float>>();
-  // basePowVectorToFile(powData, "testing/basePow1_fmaFloat.csv");
+  powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<float>>();
+  basePowVectorToFile(powData, "testing/basePow1_fmaFloat.csv");
   // powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<double>>();
   // basePowVectorToFile(powData, "testing/basePow1_fmaDouble.csv");
 }

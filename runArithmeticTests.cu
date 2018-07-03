@@ -49,31 +49,31 @@ int main(int argc, char *argv[]) {
   // runAddTest<int>(config_t.AddInt32_iter, blockSize, out1.c_str(), out2.c_str());
   // printf("---- test end ----\n");
 
-  printf("\n");
-  printf("---- beginning FP32 Mult Testing ----\n"); 
-  out1 = storagePath + std::string("outputMultFP32_1.csv");
-  out2 = storagePath + std::string("outputMultFP32_2.csv");
-  runMultTest<float>(config_t.MultFP32_iter, blockSize, out1.c_str(), out2.c_str());
-  printf("---- test end ----\n");
-
-  printf("---- beginning FP64 Mult Testing ----\n");
-  out1 = storagePath + std::string("outputMultFP64_1.csv");
-  out2 = storagePath + std::string("outputMultFP64_2.csv");
-  runMultTest<double>(config_t.MultFP64_iter, blockSize, out1.c_str(), out2.c_str());
-  printf("---- test end ----\n");
-
-  printf("---- beginning Int32 Mult Testing ---\n");
-  out1 = storagePath + std::string("outputMultInt32_1.csv");
-  out2 = storagePath + std::string("outputMultInt32_2.csv");
-  runMultTest<int>(config_t.MultInt32_iter, blockSize, out1.c_str(), out2.c_str());
-  printf("---- test end ----\n");
-
   // printf("\n");
-  // printf("---- beginning FP32 FMA Testing ----\n"); 
-  // out1 = storagePath + std::string("outputFMAFP32_1.csv");
-  // out2 = storagePath + std::string("outputFMAFP32_2.csv");
-  // runFMATest<float>(config_t.FMAFP32_iter, blockSize, out1.c_str(), out2.c_str());
+  // printf("---- beginning FP32 Mult Testing ----\n"); 
+  // out1 = storagePath + std::string("outputMultFP32_1.csv");
+  // out2 = storagePath + std::string("outputMultFP32_2.csv");
+  // runMultTest<float>(config_t.MultFP32_iter, blockSize, out1.c_str(), out2.c_str());
   // printf("---- test end ----\n");
+
+  // printf("---- beginning FP64 Mult Testing ----\n");
+  // out1 = storagePath + std::string("outputMultFP64_1.csv");
+  // out2 = storagePath + std::string("outputMultFP64_2.csv");
+  // runMultTest<double>(config_t.MultFP64_iter, blockSize, out1.c_str(), out2.c_str());
+  // printf("---- test end ----\n");
+
+  // printf("---- beginning Int32 Mult Testing ---\n");
+  // out1 = storagePath + std::string("outputMultInt32_1.csv");
+  // out2 = storagePath + std::string("outputMultInt32_2.csv");
+  // runMultTest<int>(config_t.MultInt32_iter, blockSize, out1.c_str(), out2.c_str());
+  // printf("---- test end ----\n");
+
+  printf("\n");
+  printf("---- beginning FP32 FMA Testing ----\n"); 
+  out1 = storagePath + std::string("outputFMAFP32_1.csv");
+  out2 = storagePath + std::string("outputFMAFP32_2.csv");
+  runFMATest<float>(config_t.FMAFP32_iter, blockSize, out1.c_str(), out2.c_str());
+  printf("---- test end ----\n");
 
   // printf("---- beginning FP64 FMA Testing ----\n");
   // out1 = storagePath + std::string("outputFMAFP64_1.csv");

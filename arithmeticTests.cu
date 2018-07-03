@@ -190,9 +190,6 @@ void multKernel1(int n, int iterateNum, T *x) {
     c = b * a;
     b = c * a;
     a = b * c;
-    a = (a >> 10) + 2;
-    b = (b >> 10) + 2;
-    c = (c >> 10) + 2;
   }
   x[thread] = a;
 }
@@ -217,9 +214,6 @@ void multKernel2(int n, int iterateNum, T *x) {
     c = b * a;
     b = c * a;
     a = b * c;
-    a = (a >> 10) + 2;
-    b = (b >> 10) + 2;
-    c = (c >> 10) + 2;
   }
   x[thread] = a;
 }
@@ -230,7 +224,9 @@ template <typename T>
 __global__
 void fmaKernel1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
-  T a = x[thread];
+  volatile T aInit = x[thread];
+  T a = aInit
+  //T a = x[thread];
   //float b = 1.175494351e+38f, c = 1.175494351e+38f;
   //float b=1f, c=1f;
   // T b = 2.22507e-308, c = 2.22507e-308;
@@ -265,7 +261,9 @@ template <typename T>
 __global__
 void fmaKernel2(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
-  T a = x[thread];
+  volatile T aInit = x[thread];
+  T a = aInit
+  // T a = x[thread];
   //float b = 1.175494351e+38f, c = 1.175494351e+38f;
   //T b = 2.22507e-308, c = 2.22507e-308;
   T b = 0.25, c = 0.25, d = 0.1875;

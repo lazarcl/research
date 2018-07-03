@@ -183,7 +183,7 @@ def analyzeData():
 
   # calculateBasePower(rootPath, saveDir, dataDirs)
   # graphBasePower(rootPath, saveDir, dataDirs)
-  # graphArithmetic(rootPath, saveDir, dataDirs)
+  # graphArithmetic(ro otPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":

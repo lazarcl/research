@@ -73,7 +73,9 @@ void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
   extern __shared__ int s[];
 
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
-  T a = x[thread];
+  volatile T aInit = x[thread];
+  T a = aInit;
+  // T a = x[thread];
   // T b = 2.22507e-308, c = 2.22507e-308;
   T b = 1, c = 1;
   // T b = 0, c = 0;
@@ -85,9 +87,6 @@ void multKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
     c = b * a;
     b = c * a;
     a = b * c;
-    a = a/1000000 +1;
-    b = b/1000000 +1;
-    c = c/1000000 +1;
   }
   x[thread] = a;
 }
@@ -98,7 +97,9 @@ __global__
 void fmaKernel_DynamicSharedMem(int n, int iterateNum, T *x) {
   extern __shared__ int s[];
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
-  T a = x[thread];
+  volatile T aInit = x[thread];
+  T a = aInit;
+  // T a = x[thread];
   // T b = 2.22507e-308, c = 2.22507e-308;
   // T b = 1, c = 1;
   T b = 0.25, c = 0.25, d = 0.1875;

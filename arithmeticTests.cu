@@ -181,7 +181,7 @@ void multKernel1(int n, int iterateNum, T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
   T a = x[thread];
   // T b = 2.22507e-308, c = 2.22507e-308;
-  T b = 2, c = 2;
+  T b = 1, c = 1;
   // T b = 0, c = 0;
   // T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
@@ -203,7 +203,7 @@ void multKernel2(int n, int iterateNum, T *x) {
   T a = x[thread];
   // T b = 2.22507e-308, c = 2.22507e-308;
   // T b = 0, c = 0;
-  T b = 2, c = 2;
+  T b = 1, c = 1;
   // T b = 2, c = 2;
   for (int i = 0; i < iterateNum; i++) {
     b = a * b;
@@ -295,10 +295,10 @@ void createData(int n, T *x) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
 //  T a = 1.175494351e-38f;
 //T a = 1.0e+38f;
-//  T a = 1.0;
+ T a = 1.0;
   // T a = 0;
   // T a = 2.22507e-308;
-  T a = 0.25;
+  // T a = 0.25;
   if (i < n) {
     x[i] = a;
   }

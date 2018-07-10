@@ -11,8 +11,8 @@ template <typename T>
 void runGlobalTest(int, int, const char*, const char*);
 
 
-void main() {
-  std::string storagePath = setupStoragePath(argc, argv);
+int main() {
+//  std::string storagePath = setupStoragePath(argc, argv);
 
   int blockSize = 256;
   int iterations = 10;
@@ -25,6 +25,7 @@ void main() {
   runGlobalTest<float>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
   printf("---- test end ----\n");
 
+  return 0;
 }
 
 

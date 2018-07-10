@@ -1,4 +1,4 @@
-#include "arithmeticTests.cu"
+//#include "arithmeticTests.cu"
 
 template <typename T>
 __global__

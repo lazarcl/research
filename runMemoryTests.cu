@@ -24,7 +24,12 @@ int main() {
   printf("---- beginning FP32 Add Testing ----\n"); 
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
-  runGlobalTest<float>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runGlobalTest<float>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  printf("Starting Kernel1\n");
+  GlobalMemTest<float> test1(blockSize, iterNum);
+  TestRunner<GlobalMemTest<float>> tester1(&test1, outputName1);
+  tester1.getGoodSample();
+
   printf("---- test end ----\n");
 
   return 0;

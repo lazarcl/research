@@ -7,6 +7,12 @@ template <typename T>
 __global__
 void globalMemKernel(int n, int iterateNum, volatile T *x);
 
+
+template <typename T>
+__global__
+void createData(int n, T *x);
+
+
 template <typename T>
 class MemoryTestBase {
 public: 

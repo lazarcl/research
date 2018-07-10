@@ -1,4 +1,5 @@
-#include "arithmeticTests.h"
+// #include "arithmeticTests.h"
+#include <stdio.h>
 
 template <typename T>
 __global__
@@ -15,6 +16,15 @@ void globalMemKernel(int n, int iterateNum, volatile T *x) {
   x[thread] = a;
 }
 
+template <typename T>
+__global__
+void createData(int n, T *x) {
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  T a = 1.0;
+  if (i < n) {
+    x[i] = a;
+  }
+}
 
 template <typename T>
 class MemoryTestBase {

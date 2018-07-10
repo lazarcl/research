@@ -1,6 +1,27 @@
- #include "arithmeticTests.h"
+#include "arithmeticTests.h"
 #include <stdio.h>
 
+
+//------------------ L1 CACHE KERNEL -----------
+__global__
+void l1MemKernel(int n, int iterateNum, float *x) {
+  //TODO
+}
+
+//------------------ L2 CACHE KERNEL -----------
+
+__global__
+void l2MemKernel(int n, int iterateNum, float *x) {
+  for (int i = 0; i < iterateNum; i++) {
+    for (int k = 0; k < n; k++) {
+        x[(n-1)-k] = x[k];
+    }
+  }
+}
+
+
+
+//------------------ GLOBAL CACHE KERNELS -----------
 template <typename T>
 __global__
 void globalMemKernel(int n, int iterateNum, volatile T *x) {
@@ -16,13 +37,23 @@ void globalMemKernel(int n, int iterateNum, volatile T *x) {
   x[thread] = a;
 }
 
+
+//------------------ SHARED MEMORY KERNEL -----------
+__global__
+void sharedMemKernel(int n, int iterateNum, float *x) {
+  //TODO
+}
+
+
+
+
 template <typename T>
 __global__
 void createData(int n, T *x) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
-  T a = 1.0;
+  // T a = 1.0;
   if (i < n) {
-    x[i] = a;
+    x[i] = i;
   }
 }
 
@@ -81,6 +112,37 @@ public:
 
 
 template <typename T>
+class L1MemTest : public MemoryTestBase<T> {
+public:
+  L1MemTest(int blockSize, int iterNum) 
+      : MemoryTestBase<T>(blockSize, iterNum) 
+  {this->opsPerIteration = 6;}
+  L1MemTest(int blockSize, int iterNum, int numBlockScale) 
+      : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {this->opsPerIteration = 6;}
+
+  void runKernel() {
+      l1MemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+  }
+};
+
+
+template <typename T>
+class L2MemTest : public MemoryTestBase<T> {
+public:
+  L2MemTest(int blockSize, int iterNum) 
+      : MemoryTestBase<T>(blockSize, iterNum) 
+  {this->opsPerIteration = 6;}
+  L2MemTest(int blockSize, int iterNum, int numBlockScale) 
+      : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {this->opsPerIteration = 6;}
+
+  void runKernel() {
+      l2MemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+  }
+};
+
+template <typename T>
 class GlobalMemTest : public MemoryTestBase<T> {
 public:
   GlobalMemTest(int blockSize, int iterNum) 
@@ -92,5 +154,20 @@ public:
 
   void runKernel() {
       globalMemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+  }
+};
+
+template <typename T>
+class SharedMemTest : public MemoryTestBase<T> {
+public:
+  SharedMemTest(int blockSize, int iterNum) 
+      : MemoryTestBase<T>(blockSize, iterNum) 
+  {this->opsPerIteration = 6;}
+  SharedMemTest(int blockSize, int iterNum, int numBlockScale) 
+      : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
+  {this->opsPerIteration = 6;}
+
+  void runKernel() {
+      sharedMemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };

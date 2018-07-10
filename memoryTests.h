@@ -1,7 +1,7 @@
 #ifndef MEMORYTESTS_H
 #define MEMORYTESTS_H
 
-#include "arithmeticTests.h"
+//#include "arithmeticTests.h"
 
 template <typename T>
 __global__
@@ -53,7 +53,7 @@ class GlobalMemTest : public MemoryTestBase<T> {
 public:
   GlobalMemTest(int blockSize, int iterNum);
   GlobalMemTest(int blockSize, int iterNum, int numBlockScale);
-  void kernelSetup(cudaDeviceProp deviceProp);
+ // void kernelSetup(cudaDeviceProp deviceProp);
   void runKernel();
 };
 

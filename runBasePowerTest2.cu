@@ -1,6 +1,5 @@
 #include "testFramework.cu"
-// #include "arithmeticTests.cu"
-// #include "arithmeticTests.h"
+#include "arithmeticTests.cu"
 #include <string> 
 #include <sys/stat.h>
 #include "testHelpers.h"

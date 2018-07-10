@@ -1,8 +1,8 @@
 #include "testFramework.cu"
 // #include "arithmeticTests.cu"
 #include "arithmeticTests.h"
-// #include "memoryTests.cu"
-#include "memoryTests.h"
+ #include "memoryTests.cu"
+//#include "memoryTests.h"
 #include <string> 
 #include <sys/stat.h>
 #include "testHelpers.h"
@@ -17,7 +17,7 @@ int main() {
 //  std::string storagePath = setupStoragePath(argc, argv);
 
   int blockSize = 256;
-  int iterations = 10;
+  int iterations = 1;
   
   std::string out1;
   std::string out2;
@@ -26,8 +26,8 @@ int main() {
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
   // runGlobalTest<float>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
   printf("Starting Kernel1\n");
-  GlobalMemTest<float> test1(blockSize, iterNum);
-  TestRunner<GlobalMemTest<float>> tester1(&test1, outputName1);
+  GlobalMemTest<float> test1(blockSize, iterations);
+  TestRunner<GlobalMemTest<float>> tester1(&test1, "tmp1.csv", 1000);
   tester1.getGoodSample();
 
   printf("---- test end ----\n");

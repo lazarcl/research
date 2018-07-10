@@ -1,4 +1,4 @@
-// #include "arithmeticTests.h"
+ #include "arithmeticTests.h"
 #include <stdio.h>
 
 template <typename T>
@@ -90,12 +90,7 @@ public:
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 6;}
 
-  void kernelSetup(cudaDeviceProp deviceProp) {
-    MemoryTestBase<T>::kernelSetup(deviceProp);
-  }
-
   void runKernel() {
-      globalMemKernel<T><<<this->numBlocks, this->blockSize>>>
-                      (this->n, this->iterNum, this->d_x);
+      globalMemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };

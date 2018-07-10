@@ -2,6 +2,7 @@
 //mult, add and FMA Kernels work for FP32, FP64, and Int 
 //  without register limiting
 #include <stdio.h>
+//#include "arithmeticTests.h"
 
 //------------ EXPERIMENT VOLATILE KERNEL FOR BASEPOWER 2 ---------
 template <typename T>

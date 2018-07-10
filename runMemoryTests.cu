@@ -1,6 +1,8 @@
 #include "testFramework.cu"
-#include "arithmeticTests.cu"
-#include "memoryTests.cu"
+// #include "arithmeticTests.cu"
+#include "arithmeticTests.h"
+// #include "memoryTests.cu"
+#include "memoryTests.h"
 #include <string> 
 #include <sys/stat.h>
 #include "testHelpers.h"

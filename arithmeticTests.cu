@@ -292,16 +292,17 @@ void fmaKernel2(int n, int iterateNum, T *x) {
 
 template <typename T>
 __global__
-void createData(int n, T *x) {
+void createData(int n, T val, T *x) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
 //  T a = 1.175494351e-38f;
 //T a = 1.0e+38f;
- T a = 1.0;
   // T a = 0;
   // T a = 2.22507e-308;
   // T a = 0.25;
+
+ // T a = 1.0;
   if (i < n) {
-    x[i] = a;
+    x[i] = val;
   }
 }
 
@@ -313,6 +314,7 @@ public:
 
   T *d_x;
   int n;
+  T arrayInitVal;
   int iterNum;
   int numBlocks;
   int blockSize;
@@ -321,10 +323,16 @@ public:
 
   ArithmeticTestBase(int blockSize, int iterNum)
     : iterNum(iterNum), blockSize(blockSize), numBlockScale(360)
-  { opsPerIteration = 0;}
+  { 
+    opsPerIteration = 0;
+    arrayInitVal = (T) 1;
+  }
   ArithmeticTestBase(int blockSize, int iterNum, int numBlockScale)
     : iterNum(iterNum), blockSize(blockSize), numBlockScale(numBlockScale)
-  { opsPerIteration = 0;}
+  { 
+    opsPerIteration = 0;
+    arrayInitVal = (T) 1;
+  }
 
   ~ArithmeticTestBase() {
     CUDA_ERROR( cudaFree(d_x) );
@@ -334,7 +342,7 @@ public:
     numBlocks = deviceProp.multiProcessorCount * numBlockScale;
     n = numBlocks * blockSize;
     CUDA_ERROR( cudaMalloc(&d_x, n*sizeof(T)) ); 
-    createData<T><<<numBlocks, blockSize>>>(n, d_x);
+    createData<T><<<numBlocks, blockSize>>>(n, arrayInitVal, d_x);
   }
 
   //get the number of threads launched in the kernel. Must be 
@@ -432,15 +440,20 @@ public:
 
   FMAKernel1TestSetSharedMem(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 6;}
+  {
+    this->opsPerIteration = 9;
+    this->arrayInitVal = (T) 0.25;
+  }
   FMAKernel1TestSetSharedMem(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 6;}
+  {
+    this->opsPerIteration = 9;
+    this->arrayInitVal = (T) 0.25;
+  }
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {
     ArithmeticTestBase<T>::kernelSetup(deviceProp);
-
     sharedMemRequest = (unsigned int) (deviceProp.sharedMemPerBlock*sharedMemScale);
   }
 
@@ -557,10 +570,17 @@ class FmaKernel1Test : public ArithmeticTestBase<T> {
 public:
   FmaKernel1Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 9;}
+  {
+    this->opsPerIteration = 9;
+    this->addInitVal = (T) 0.25;
+  }
   FmaKernel1Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 9;}
+  {
+    this->opsPerIteration = 9;
+    this->addInitVal = (T) 0.25;
+  }
+
 
   void runKernel() {
       fmaKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -572,10 +592,16 @@ class FmaKernel2Test : public ArithmeticTestBase<T> {
 public:
   FmaKernel2Test(int blockSize, int iterNum) 
       : ArithmeticTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 12;}
+  {
+    this->opsPerIteration = 12;
+    this->addInitVal = (T) 0.25;
+  }
   FmaKernel2Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 12;}
+  {
+    this->opsPerIteration = 12;
+    this->addInitVal = (T) 0.25;
+  }
 
   void runKernel() {
       fmaKernel2<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);

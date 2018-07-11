@@ -572,13 +572,13 @@ public:
       : ArithmeticTestBase<T>(blockSize, iterNum) 
   {
     this->opsPerIteration = 9;
-    this->addInitVal = (T) 0.25;
+    this->arrayInitVal = (T) 0.25;
   }
   FmaKernel1Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
   {
     this->opsPerIteration = 9;
-    this->addInitVal = (T) 0.25;
+    this->arrayInitVal = (T) 0.25;
   }
 
 
@@ -594,13 +594,13 @@ public:
       : ArithmeticTestBase<T>(blockSize, iterNum) 
   {
     this->opsPerIteration = 12;
-    this->addInitVal = (T) 0.25;
+    this->arrayInitVal = (T) 0.25;
   }
   FmaKernel2Test(int blockSize, int iterNum, int numBlockScale) 
       : ArithmeticTestBase<T>(blockSize, iterNum, numBlockScale) 
   {
     this->opsPerIteration = 12;
-    this->addInitVal = (T) 0.25;
+    this->arrayInitVal = (T) 0.25;
   }
 
   void runKernel() {

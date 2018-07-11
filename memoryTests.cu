@@ -3,15 +3,16 @@
 
 
 //------------------ L1 CACHE KERNEL -----------
+template <typename T>
 __global__
-void l1MemKernel(int n, int iterateNum, float *x) {
-  //TODO
+void l1MemKernel(int n, int iterateNum, T *x) {
+  return;//TODO
 }
 
 //------------------ L2 CACHE KERNEL -----------
-
+template <typename T>
 __global__
-void l2MemKernel(int n, int iterateNum, float *x) {
+void l2MemKernel(int n, int iterateNum, T *x) {
   for (int i = 0; i < iterateNum; i++) {
     for (int k = 0; k < n; k++) {
         x[(n-1)-k] = x[k];
@@ -39,14 +40,15 @@ void globalMemKernel(int n, int iterateNum, volatile T *x) {
 
 
 //------------------ SHARED MEMORY KERNEL -----------
+template <typename T>
 __global__
-void sharedMemKernel(int n, int iterateNum, float *x) {
-  //TODO
+void sharedMemKernel(int n, int iterateNum, T *x) {
+  return; //TODO
 }
 
 
 
-
+//------------------ INITIALIZE ARRAY FOR KERNEL -----------
 template <typename T>
 __global__
 void createData(int n, T *x) {
@@ -56,6 +58,8 @@ void createData(int n, T *x) {
     x[i] = i;
   }
 }
+
+
 
 template <typename T>
 class MemoryTestBase {

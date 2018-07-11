@@ -7,7 +7,7 @@
 #include <tuple>
 #include <vector>
 
-template <typename kernel, T>
+template <typename kernel, typename T>
 void runTestGeneric(int, int, const char*, const char*);
 template <typename T>
 void runL1Test(int, int, const char*, const char*);
@@ -30,7 +30,7 @@ int main() {
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
   
-  runTestGeneric<L2MemTest, float>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runTestGeneric<L2MemTest, float>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
 
   // printf("---- beginning L1 Testing ----\n"); 
   // runL1Test<float>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
@@ -52,17 +52,17 @@ int main() {
 }
 
 
-template <typename kernel, T>
-void runTestGeneric(int iterNum, int blockSize, const char* outputName1, 
-              const char* outputName2) 
-{
-  printf("Starting Kernel1\n");
-  kernel<T> test1(blockSize, iterNum);
-  TestRunner<kernel<T>> tester1(&test1, outputName1);
-  tester1.getGoodSample();
-  // tester1.dataToFile();
-  printf("Kernel 1 finished\n");
-}
+// template <typename kernel, T>
+// void runTestGeneric(int iterNum, int blockSize, const char* outputName1, 
+//               const char* outputName2) 
+// {
+//   printf("Starting Kernel1\n");
+//   kernel<T> test1(blockSize, iterNum);
+//   TestRunner<kernel<T>> tester1(&test1, outputName1);
+//   tester1.getGoodSample();
+//   // tester1.dataToFile();
+//   printf("Kernel 1 finished\n");
+// }
 
 template <typename T>
 void runL1Test(int iterNum, int blockSize, const char* outputName1, 

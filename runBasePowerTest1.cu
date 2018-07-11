@@ -108,32 +108,35 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
 }
 
 
-void runBP1WithAllKernels() {
+void runBP1WithAllKernels(std::string storagePath) {
   std::vector< std::tuple<int,float,float> > powData;
   
-  // powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
-  // basePowVectorToFile(powData, "testing/basePow1_addFloat.csv");
-  // powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<double>>();
-  // basePowVectorToFile(powData, "testing/basePow1_addDouble.csv");
-  // powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<int>>();
-  // basePowVectorToFile(powData, "testing/basePow1_addInt.csv");
+  powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_addFloat.csv")).c_str());
+  powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<double>>();
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_addDouble.csv")).c_str());
+  powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<int>>();
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_addInt.csv")).c_str());
 
   powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<int>>();
-  basePowVectorToFile(powData, "testing/basePow1_multInt.csv");
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_multInt.csv")).c_str());
   powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<float>>();
-  basePowVectorToFile(powData, "testing/basePow1_multFloat.csv");
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_multFloat.csv")).c_str());
   powData = basePowerTest1_SpecifyKernel<MultKernel1TestSetSharedMem<double>>();
-  basePowVectorToFile(powData, "testing/basePow1_multDouble.csv");
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_multDouble.csv")).c_str());
 
-  // powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<float>>();
-  // basePowVectorToFile(powData, "testing/basePow1_fmaFloat.csv");
-  // powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<double>>();
-  // basePowVectorToFile(powData, "testing/basePow1_fmaDouble.csv");
+  powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<float>>();
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_fmaFloat.csv")).c_str());
+  powData = basePowerTest1_SpecifyKernel<FMAKernel1TestSetSharedMem<double>>();
+  basePowVectorToFile(powData, (storagePath+std::string("basePow1_fmaDouble.csv")).c_str());
 }
 
 
 int main(int argc, char *argv[]) {
-  runBP1WithAllKernels();
+
+  std::string storagePath = setupStoragePath(argc, argv);
+
+  runBP1WithAllKernels(storagePath);
   
   return 0;
 }

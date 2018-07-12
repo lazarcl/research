@@ -15,15 +15,24 @@ class BasePowForKernels(object):
   is stored, and the runs that should be examined.
   All result files should end with '<test_number>.csv'
   """
-  def __init__(self, pathToData, testIDs, dataNameDict, basePowMethod):
+  def __init__(self, rootPath, dataDirs, storagePath, testIDs, dataNameDict, basePowMethod):
 
     #dictionary: key = kernelName, value = fileName for kernel's basePow data
     self.dataNameDict = dataNameDict
  
     #path to folder where data to examine is held
-    self.pathToData = pathToData
-    if self.pathToData[-1] != "/":
-      self.pathToData+="/"
+    self.rootPath = rootPath #general directory that holds the root path of all the data
+    if self.rootPath[-1] != "/":
+      self.rootPath+="/"
+
+    self.dataDirs = dataDirs #generic name for the directories in rootPath that the data is stored in
+    for i in range(len(self.dataDirs)):
+      if self.dataDirs[i][-1] != "/":
+        self.dataDirs[i] += "/"
+
+    self.storagePath = storagePath #inside the rootPath, what folder should results be saved to
+    if self.storagePath[-1] != "/":
+      self.storagePath += "/"
 
     #list of ints representing the run numbers to inspect
     self.testIDs = testIDs
@@ -69,11 +78,13 @@ class BasePowForKernels(object):
       denom = subIndVar(multIndVarAndConst(times[j], k), multIndVarAndConst(times[k], j))
       mean, var = divIndVar(numer, denom)
       results.append( (j, k, abs(mean), var) )
+
     return results
 
 
   def getBasePow(self, dataFile):
-    runData = dataLoader.readBasePowData(self.pathToData + dataFile)
+    path = glob.glob(self.dataDirs[0] + dataFile)[0]
+    runData = dataLoader.readBasePowData(path)
     testEnergys = {}
     testTimes = {}
     for testID, (runPowers, runTimes) in runData.items():
@@ -82,6 +93,12 @@ class BasePowForKernels(object):
       energy = multiplyIndVar(power, time)
       testEnergys[testID] = energy
       testTimes[testID] = time
+    #   if "fmaDouble" in dataFile:
+    #     print("testID", testID, "   energy", str(energy), "power", power, "time", time)
+
+    # if "fmaDouble" in dataFile:
+    #   print("runTimes", runTimes)
+    #   print("runData", runData)
 
     try:
       if self.basePowMethod == 1:
@@ -98,9 +115,13 @@ class BasePowForKernels(object):
 
   def calcBasePows(self):
     self.results = {}
-    with open(self.pathToData+"basePowResults.txt", "w") as f:
+    with open(self.storagePath +"basePowResults.txt", "w") as f:
       for kernelName, dataFile in self.dataNameDict.items():
-        bps = self.getBasePow(dataFile)
+        try:
+          bps = self.getBasePow(dataFile)
+        except FileNotFoundError as err:
+          print("In base power calculator: File not found", str(err))
+          continue
 
         self.results[kernelName] = bps
 

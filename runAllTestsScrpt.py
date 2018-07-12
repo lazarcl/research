@@ -114,7 +114,7 @@ if __name__ == "__main__":
   #dir is a list of directorys. 
   # Each directory gets its own run of the specified data
   # ex: if dirList.size == 5, then complete all tests 5 times
-  dirList = [basePath + "run" + str(i) for i in range(1,3)]
+  dirList = [basePath + "run" + str(i) for i in range(3,4)]
   makeDirs(dirList)
 
   runMakefile()

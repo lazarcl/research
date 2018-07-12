@@ -83,15 +83,18 @@ bool setDevice() {
   std::string desiredDeviceName = config_t.deviceName;
 
   int devicesCount;
-  cudaGetDeviceCount(&devicesCount);
+  CUDA_ERROR( cudaGetDeviceCount(&devicesCount) );
+  
   for(int deviceIndex = 0; deviceIndex < devicesCount; ++deviceIndex)
   {
-      //cudaDeviceProp deviceProperties;
-      cudaGetDeviceProperties(&deviceProp, deviceIndex);
+      CUDA_ERROR( cudaGetDeviceProperties(&deviceProp, deviceIndex) );
       if (std::string(deviceProp.name) == desiredDeviceName)
       {
-          cudaSetDevice(deviceIndex);
+          CUDA_ERROR( cudaSetDevice(deviceIndex) );
           return true;
+      }
+      if (deviceIndex > 10) {
+          return false;
       }
   }
   return false;

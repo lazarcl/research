@@ -5,7 +5,7 @@
 //------------------ L1 CACHE KERNEL -----------
 template <typename T>
 __global__
-void l1MemKernel(int n, int iterateNum, const T *x, T *y) {
+void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   T tot = 0;
@@ -21,7 +21,7 @@ void l1MemKernel(int n, int iterateNum, const T *x, T *y) {
 //------------------ L2 CACHE KERNEL -----------
 template <typename T>
 __global__
-void l2MemKernel(int n, int iterateNum, T *x) {
+void l2MemKernel1(int n, int iterateNum, T *x) {
 
   for (int i = 0; i < iterateNum; i++) {
     for (int k = 0; k < n; k++) {
@@ -36,7 +36,7 @@ void l2MemKernel(int n, int iterateNum, T *x) {
 //------------------ GLOBAL CACHE KERNELS -----------
 template <typename T>
 __global__
-void globalMemKernel(int n, int iterateNum, volatile T *x) {
+void globalMemKernel1(int n, int iterateNum, volatile T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   volatile T a = 0;
@@ -53,7 +53,7 @@ void globalMemKernel(int n, int iterateNum, volatile T *x) {
 //------------------ SHARED MEMORY KERNEL -----------
 template <typename T>
 __global__
-void sharedMemKernel(int n, int iterateNum, T *x) {
+void sharedMemKernel1(int n, int iterateNum, T *x) {
   extern __shared__ T s[];
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
@@ -134,9 +134,10 @@ public:
 
 };
 
+//---------------------- MEMORY TEST IMPLEMENTATIONS -------------
 
 template <typename T>
-class L1MemTest : public MemoryTestBase<T> {
+class L1MemTest1 : public MemoryTestBase<T> {
 public:
 
   T *d_y;
@@ -148,6 +149,11 @@ public:
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 1;}
 
+  //should call base destructor after executing this destructor
+  ~L1MemTest() { 
+    this->CUDA_ERROR(cudaFree(d_y));
+  }
+
   void kernelSetup(cudaDeviceProp deviceProp) {
     ArithmeticTestBase<T>::kernelSetup(deviceProp);
     CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
@@ -155,13 +161,13 @@ public:
   }
 
   void runKernel() {
-      l1MemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x, d_y);
+      l1MemKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x, d_y);
   }
 };
 
 
 template <typename T>
-class L2MemTest : public MemoryTestBase<T> {
+class L2MemTest1 : public MemoryTestBase<T> {
 public:
   L2MemTest(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
@@ -171,12 +177,12 @@ public:
   {this->opsPerIteration = 2;}
 
   void runKernel() {
-      l2MemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+      l2MemKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };
 
 template <typename T>
-class GlobalMemTest : public MemoryTestBase<T> {
+class GlobalMemTest1 : public MemoryTestBase<T> {
 public:
   GlobalMemTest(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
@@ -186,12 +192,12 @@ public:
   {this->opsPerIteration = 2;}
 
   void runKernel() {
-      globalMemKernel<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+      globalMemKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };
 
 template <typename T>
-class SharedMemTest : public MemoryTestBase<T> {
+class SharedMemTest1 : public MemoryTestBase<T> {
 public:
 
   unsigned int sharedMemRequest;
@@ -211,6 +217,6 @@ public:
 
 
   void runKernel() {
-      sharedMemKernel<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>(this->n, this->iterNum, this->d_x);
+      sharedMemKernel1<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>(this->n, this->iterNum, this->d_x);
   }
 };

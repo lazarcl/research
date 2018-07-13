@@ -142,15 +142,15 @@ public:
 
   T *d_y;
 
-  L1MemTest(int blockSize, int iterNum) 
+  L1MemTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
   {this->opsPerIteration = 1;}
-  L1MemTest(int blockSize, int iterNum, int numBlockScale) 
+  L1MemTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 1;}
 
   //should call base destructor after executing this destructor
-  ~L1MemTest() { 
+  ~L1MemTest1() { 
     this->CUDA_ERROR(cudaFree(d_y));
   }
 
@@ -169,10 +169,10 @@ public:
 template <typename T>
 class L2MemTest1 : public MemoryTestBase<T> {
 public:
-  L2MemTest(int blockSize, int iterNum) 
+  L2MemTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
   {this->opsPerIteration = 2;}
-  L2MemTest(int blockSize, int iterNum, int numBlockScale) 
+  L2MemTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 2;}
 
@@ -184,10 +184,10 @@ public:
 template <typename T>
 class GlobalMemTest1 : public MemoryTestBase<T> {
 public:
-  GlobalMemTest(int blockSize, int iterNum) 
+  GlobalMemTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
   {this->opsPerIteration = 2;}
-  GlobalMemTest(int blockSize, int iterNum, int numBlockScale) 
+  GlobalMemTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 2;}
 
@@ -202,10 +202,10 @@ public:
 
   unsigned int sharedMemRequest;
 
-  SharedMemTest(int blockSize, int iterNum) 
+  SharedMemTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
   {this->opsPerIteration = 2;}
-  SharedMemTest(int blockSize, int iterNum, int numBlockScale) 
+  SharedMemTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 2;}
 

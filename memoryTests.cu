@@ -5,7 +5,7 @@
 //------------------ L1 CACHE KERNELS -----------
 template <typename T>
 __global__
-void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
+void l1MemKernel1(int n, int iterateNum, T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   const T * loc = &x[thread];
@@ -16,6 +16,8 @@ void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
     tot += __ldg(loc);
     tot += __ldg(loc);
     tot += 1;
+    tot += 1;
+    tot += 1;
   }
   y[thread] = tot;
   return;
@@ -23,13 +25,15 @@ void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
 
 template <typename T>
 __global__
-void l1MemKernel2(int n, int iterateNum, const T *x, T *y) {
+void l1MemKernel2(int n, int iterateNum, T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   const T * loc = &x[thread];
   T tot = 0;
 
   for (int i = 0; i < iterateNum; i++) {
+    tot += __ldg(loc);
+    tot += __ldg(loc);
     tot += __ldg(loc);
     tot += __ldg(loc);
     tot += __ldg(loc);
@@ -244,8 +248,8 @@ public:
   }
 
   void kernelSetup(cudaDeviceProp deviceProp) {
-    ArithmeticTestBase<T>::kernelSetup(deviceProp);
-    CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
+    MemoryTestBase<T>::kernelSetup(deviceProp);
+    this->CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
     createData<T><<<this->numBlocks, this->blockSize>>>(this->n, d_y);
   }
 
@@ -262,10 +266,10 @@ public:
 
   L1MemTest2(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 4;}
+  {this->opsPerIteration = 6;}
   L1MemTest2(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 4;}
+  {this->opsPerIteration = 6;}
 
   //should call base destructor after executing this destructor
   ~L1MemTest2() { 
@@ -273,8 +277,8 @@ public:
   }
 
   void kernelSetup(cudaDeviceProp deviceProp) {
-    ArithmeticTestBase<T>::kernelSetup(deviceProp);
-    CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
+    MemoryTestBase<T>::kernelSetup(deviceProp);
+    this->CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
     createData<T><<<this->numBlocks, this->blockSize>>>(this->n, d_y);
   }
 
@@ -364,7 +368,7 @@ public:
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {
-    ArithmeticTestBase<T>::kernelSetup(deviceProp);
+    MemoryTestBase<T>::kernelSetup(deviceProp);
     sharedMemRequest = (unsigned int) (this->n * sizeof(T));
   }
 
@@ -389,7 +393,7 @@ public:
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {
-    ArithmeticTestBase<T>::kernelSetup(deviceProp);
+    MemoryTestBase<T>::kernelSetup(deviceProp);
     sharedMemRequest = (unsigned int) (this->n * sizeof(T));
   }
 

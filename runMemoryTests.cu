@@ -8,7 +8,7 @@
 #include <vector>
 
 template <typename kernel>
-void runTestGeneric(int, int, const char*, const char*);
+void runTestGeneric(int, int, const char*);
 template <typename kernel>
 void runL1Test(int, int, const char*, const char*);
 template <typename kernel>
@@ -23,15 +23,19 @@ int main() {
 //  std::string storagePath = setupStoragePath(argc, argv);
 
   int blockSize = 256;
-  int iterations = 1000000;
+  int iterations = 2000000;
   
   std::string out1;
   std::string out2;
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
   
-  runTestGeneric<L2MemReadTest1<float>>(iterations, blockSize, "data/outputL2ReadTest_1.csv");
-  runTestGeneric<L2MemReadTest2<float>>(iterations, blockSize, "data/outputL2ReadTest_2.csv");
+  // runTestGeneric<L2MemReadTest1<float>>(iterations, blockSize, "data/outputL2ReadTest_1.csv");
+  // runTestGeneric<L2MemReadTest2<float>>(iterations, blockSize, "data/outputL2ReadTest_2.csv");
+
+  runTestGeneric<L1MemTest1<float>>(iterations, blockSize, "data/outputL1ReadTest_1.csv");
+  runTestGeneric<L1MemTest2<float>>(iterations, blockSize, "data/outputL1ReadTest_2.csv");
+
 
   // printf("---- beginning L1 Testing ----\n"); 
   // runL1Test<L1MemTest1<T>>(iterations, blockSize, "tmp1.csv");

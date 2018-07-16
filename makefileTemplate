@@ -15,5 +15,5 @@ basePowerTest2.out: runBasePowerTest2.cu $(FRAMEWORKFILES) $(HELPERFILES)
 	nvcc $< $(LIBS) -o $@ $(HELPERFILES)
 
 memoryTests.out: runMemoryTests.cu $(FRAMEWORKFILES) $(HELPERFILES)
-	nvcc $< $(LIBS) -o $@ $(HELPERFILES) memoryTests.cu
+	nvcc $< $(LIBS) -arch=sm_35 -o $@ $(HELPERFILES) memoryTests.cu
 

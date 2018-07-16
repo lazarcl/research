@@ -23,21 +23,21 @@ int main() {
 //  std::string storagePath = setupStoragePath(argc, argv);
 
   int blockSize = 256;
-  int iterations = 1;
+  int iterations = 1000000;
   
   std::string out1;
   std::string out2;
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
   
-  runTestGeneric<L2MemTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  runTestGeneric<L2MemReadTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
 
   // printf("---- beginning L1 Testing ----\n"); 
   // runL1Test<L1MemTest1<T>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
   // printf("---- test end ----\n");
   
   // printf("---- beginning L2 Testing ----\n"); 
-  // runL2Test<L2MemTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runL2Test<L2MemReadTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
   // printf("---- test end ----\n");
   
   // printf("---- beginning Global Memory Testing ----\n"); 
@@ -45,7 +45,7 @@ int main() {
   // printf("---- test end ----\n");
 
   // printf("---- beginning Shared Memory Testing ----\n"); 
-  // runSharedMemTest<SharedMemTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runSharedMemTest<SharedMemReadTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
   // printf("---- test end ----\n");
 
   return 0;

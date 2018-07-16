@@ -164,26 +164,26 @@ def analyzeData():
   # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
   # kernelBPAnalysis = BasePowForKernels("testRuns/k20_sixth_set_newKernels/run4", [1,2], analysisConfig.basePow2ResultFiles, 2)
-  kernelBPAnalysis = BasePowForKernels(rootPath, dataDirs, saveDir, [1,2,3,4], analysisConfig.basePow2ResultFiles, 2)
-  kernelBPAnalysis.calcBasePows()
-  basePowResults = kernelBPAnalysis.getResults()
-  # print(basePowResults)
-  # # quit(0)
+  # kernelBPAnalysis = BasePowForKernels(rootPath, dataDirs, saveDir, [1,2,3,4], analysisConfig.basePow2ResultFiles, 2)
+  # kernelBPAnalysis.calcBasePows()
+  # basePowResults = kernelBPAnalysis.getResults()
+  # # print(basePowResults)
+  # # # quit(0)
 
-  testSpreadsObj = arithmeticTestSpreads(rootPath)
-  for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
-  # for control, test in analysisConfig.arithOutputPairs:
-    # basePow = 36.0, 25
-    # col = makeTableColEntry(basePowResults[name][0][2:], testSpreadsObj, control, test)
-    col = makeTableColEntry((83.5,0), testSpreadsObj, control, test)
-    # col2 = makeTableColEntry(basePow, testSpreadsObj2, control, test)
-    # print(str(col["energyPerOp"]))
-    print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
+  # testSpreadsObj = arithmeticTestSpreads(rootPath)
+  # for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
+  # # for control, test in analysisConfig.arithOutputPairs:
+  #   # basePow = 36.0, 25
+  #   # col = makeTableColEntry(basePowResults[name][0][2:], testSpreadsObj, control, test)
+  #   col = makeTableColEntry((83.5,0), testSpreadsObj, control, test)
+  #   # col2 = makeTableColEntry(basePow, testSpreadsObj2, control, test)
+  #   # print(str(col["energyPerOp"]))
+  #   print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
     # print("$"+name+"$\\\ \n"+makeTableFromCols(col, col2, "K20", "P6000"))
 
   # # calculateBasePower(rootPath, saveDir, dataDirs)
   # # graphBasePower(rootPath, saveDir, dataDirs)
-  # graphArithmetic(rootPath, saveDir, dataDirs)
+  graphArithmetic(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":

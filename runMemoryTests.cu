@@ -30,22 +30,23 @@ int main() {
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
   
-  runTestGeneric<L2MemReadTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  runTestGeneric<L2MemReadTest1<float>>(iterations, blockSize, "data/outputL2ReadTest_1.csv");
+  runTestGeneric<L2MemReadTest2<float>>(iterations, blockSize, "data/outputL2ReadTest_2.csv");
 
   // printf("---- beginning L1 Testing ----\n"); 
-  // runL1Test<L1MemTest1<T>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runL1Test<L1MemTest1<T>>(iterations, blockSize, "tmp1.csv");
   // printf("---- test end ----\n");
   
   // printf("---- beginning L2 Testing ----\n"); 
-  // runL2Test<L2MemReadTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runL2Test<L2MemReadTest1<float>>(iterations, blockSize, "tmp1.csv");
   // printf("---- test end ----\n");
   
   // printf("---- beginning Global Memory Testing ----\n"); 
-  // runGlobalTest<GlobalMemTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runGlobalTest<GlobalMemTest1<float>>(iterations, blockSize, "tmp1.csv");
   // printf("---- test end ----\n");
 
   // printf("---- beginning Shared Memory Testing ----\n"); 
-  // runSharedMemTest<SharedMemReadTest1<float>>(iterations, blockSize, "tmp1.csv", "tmp2.csv");
+  // runSharedMemTest<SharedMemReadTest1<float>>(iterations, blockSize, "tmp1.csv");
   // printf("---- test end ----\n");
 
   return 0;
@@ -53,15 +54,14 @@ int main() {
 
 
 template <typename kernel>
-void runTestGeneric(int iterNum, int blockSize, const char* outputName1, 
-              const char* outputName2) 
+void runTestGeneric(int iterNum, int blockSize, const char* outputName) 
 {
-  printf("Starting Kernel1\n");
+  printf("Starting Kernel: '%s'\n", outputName);
   kernel test1(blockSize, iterNum);
-  TestRunner<kernel> tester1(&test1, outputName1);
+  TestRunner<kernel> tester1(&test1, outputName);
   tester1.getGoodSample();
   tester1.dataToFile();
-  printf("Kernel 1 finished\n");
+  printf("Kernel '%s' finished\n", outputName);
 }
 
 

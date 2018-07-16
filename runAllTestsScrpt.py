@@ -18,7 +18,8 @@ MAKE SURE ALL RUNS TAKE AN OPTIONAL DIRECTORY PATH
 
 testExecutableNames = {"runArithmeticTests.cu":"arithmeticTest.out", \
                        "runBasePowerTest1.cu":"basePowerTest1.out", \
-                       "runBasePowerTest2.cu":"basePowerTest2.out"}
+                       "runBasePowerTest2.cu":"basePowerTest2.out",
+                       "runMemoryTests.cu":"memoryTests.out"}
 
 
 

@@ -23,7 +23,7 @@ void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
 
 template <typename T>
 __global__
-void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
+void l1MemKernel2(int n, int iterateNum, const T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   const T * loc = &x[thread];

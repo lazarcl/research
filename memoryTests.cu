@@ -354,15 +354,15 @@ public:
 
 //---------------------- SHARED MEMORY TESTING CLASSES -------------
 template <typename T>
-class SharedMemTest1 : public MemoryTestBase<T> {
+class SharedMemReadTest1 : public MemoryTestBase<T> {
 public:
 
   unsigned int sharedMemRequest;
 
-  SharedMemTest1(int blockSize, int iterNum) 
+  SharedMemReadTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
   {this->opsPerIteration = 3;}
-  SharedMemTest1(int blockSize, int iterNum, int numBlockScale) 
+  SharedMemReadTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 3;}
 
@@ -379,15 +379,15 @@ public:
 };
 
 template <typename T>
-class SharedMemTest2 : public MemoryTestBase<T> {
+class SharedMemReadTest2 : public MemoryTestBase<T> {
 public:
 
   unsigned int sharedMemRequest;
 
-  SharedMemTest2(int blockSize, int iterNum) 
+  SharedMemReadTest2(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
   {this->opsPerIteration = 5;}
-  SharedMemTest2(int blockSize, int iterNum, int numBlockScale) 
+  SharedMemReadTest2(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
   {this->opsPerIteration = 5;}
 

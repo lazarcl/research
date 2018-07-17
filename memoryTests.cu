@@ -122,11 +122,13 @@ void sharedMemReadKernel1(int n, int iterateNum, volatile T *x) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   s[thread] = x[thread];
-  volatile T val = 0;
+  T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
+    val += s[thread];
+    val += s[thread];
+    val += s[thread];
+    val += 1;
+    val += 1;
   }
 
   x[thread] = val;
@@ -142,13 +144,14 @@ void sharedMemReadKernel2(int n, int iterateNum, volatile T *x) {
 
   s[thread] = x[thread];
 
-  volatile T val = 0;
+
+  T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
+    val += s[thread];
+    val += s[thread];
+    val += s[thread];
+    val += s[thread];
+    val += s[thread];
   }
 
   x[thread] = val;

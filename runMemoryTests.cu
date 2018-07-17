@@ -23,7 +23,7 @@ int main() {
 //  std::string storagePath = setupStoragePath(argc, argv);
 
   int blockSize = 256;
-  int iterations = 2000000;
+  int iterations = 20000000;
   
   std::string out1;
   std::string out2;
@@ -33,11 +33,11 @@ int main() {
   // runTestGeneric<L2MemReadTest1<float>>(iterations, blockSize, "data/outputL2ReadTest_1.csv");
   // runTestGeneric<L2MemReadTest2<float>>(iterations, blockSize, "data/outputL2ReadTest_2.csv");
 
-  // runTestGeneric<L1MemTest1<float>>(iterations, blockSize, "data/outputL1ReadTest_1.csv");
-  // runTestGeneric<L1MemTest2<float>>(iterations, blockSize, "data/outputL1ReadTest_2.csv");
+  runTestGeneric<L1MemTest1<float>>(iterations, blockSize, "data/outputL1ReadTest_1.csv");
+  runTestGeneric<L1MemTest2<float>>(iterations, blockSize, "data/outputL1ReadTest_2.csv");
 
-  runTestGeneric<SharedMemReadTest1<float>>(iterations, blockSize, "data/outputSharedReadTest_1.csv");
-  runTestGeneric<SharedMemReadTest2<float>>(iterations, blockSize, "data/outputSharedReadTest_2.csv");
+  // runTestGeneric<SharedMemReadTest1<float>>(iterations, blockSize, "data/outputSharedReadTest_1.csv");
+  // runTestGeneric<SharedMemReadTest2<float>>(iterations, blockSize, "data/outputSharedReadTest_2.csv");
 
 
   // printf("---- beginning L1 Testing ----\n"); 

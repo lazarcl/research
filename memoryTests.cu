@@ -117,12 +117,12 @@ void globalMemKernel2(int n, int iterateNum, volatile T *x) {
 //------------------ SHARED MEMORY KERNEL -----------
 template <typename T>
 __global__
-void sharedMemReadKernel1(int n, int iterateNum, T *x) {
+void sharedMemReadKernel1(int n, int iterateNum, volatile T *x) {
   extern __shared__ volatile T s[]; //volatile to prevent optimization
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   s[thread] = x[thread];
-  T val = 0;
+  volatile T val = 0;
   for (int i = 0; i < iterateNum; i++) {
     val = s[thread];
     val = s[thread];
@@ -136,13 +136,13 @@ void sharedMemReadKernel1(int n, int iterateNum, T *x) {
 
 template <typename T>
 __global__
-void sharedMemReadKernel2(int n, int iterateNum, T *x) {
+void sharedMemReadKernel2(int n, int iterateNum, volatile T *x) {
   extern __shared__ volatile T s[]; 
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   s[thread] = x[thread];
 
-  T val = 0;
+  volatile T val = 0;
   for (int i = 0; i < iterateNum; i++) {
     val = s[thread];
     val = s[thread];
@@ -395,6 +395,8 @@ public:
   void kernelSetup(cudaDeviceProp deviceProp) {
     MemoryTestBase<T>::kernelSetup(deviceProp);
     sharedMemRequest = (unsigned int) (this->n * sizeof(T));
+    printf("numBlocks %d, n %d \n", this->numBlocks, this->n);
+    printf("sharedMemRequest %d\n", sharedMemRequest);
   }
 
 

@@ -40,7 +40,7 @@ int main() {
   // runTestGeneric<L1MemTest2<float>>(iterations, blockSize, "data/outputL1ReadTest_2.csv");
 
   runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterations, blockSize, "data/outputSharedReadTest_1.csv", 1);
-  // runTestGeneric_setBlockScale<SharedMemReadTest2<int>>(iterations, blockSize, "data/outputSharedReadTest_2.csv", 1);
+  runTestGeneric_setBlockScale<SharedMemReadTest2<float>>(iterations, blockSize, "data/outputSharedReadTest_2.csv", 1);
 
 
   // printf("---- beginning L1 Testing ----\n"); 
@@ -79,7 +79,7 @@ void runTestGeneric_setBlockScale(int iterNum, int blockSize, const char* output
 {
   printf("Starting Kernel: '%s'\n", outputName);
   kernel test1(blockSize, iterNum, blockScale);
-  TestRunner<kernel> tester1(&test1, outputName);
+  TestRunner<kernel> tester1(&test1, outputName, 0.1);
   tester1.getGoodSample();
   tester1.dataToFile();
   printf("Kernel '%s' finished\n", outputName);

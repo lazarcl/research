@@ -124,11 +124,10 @@ void sharedMemReadKernel1(int n, int iterateNum, volatile T *x) {
   s[thread] = x[thread];
   T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val += s[thread];
-    val += s[thread];
-    val += s[thread];
-    val += 1;
-    val += 1;
+    val = s[thread];
+    val = s[thread];
+    val = s[thread];
+    val = s[thread];
   }
 
   x[thread] = val;
@@ -146,11 +145,12 @@ void sharedMemReadKernel2(int n, int iterateNum, volatile T *x) {
 
   T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val += s[thread];
-    val += s[thread];
-    val += s[thread];
-    val += s[thread];
-    val += s[thread];
+    val = s[thread];
+    val = s[thread];
+    val = s[thread];
+    val = s[thread];
+    val = s[thread];
+    val = s[thread];
   }
 
   if (thread == 1) {
@@ -366,10 +366,10 @@ public:
 
   SharedMemReadTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 3;}
+  {this->opsPerIteration = 4;}
   SharedMemReadTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 3;}
+  {this->opsPerIteration = 4;}
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {
@@ -391,10 +391,10 @@ public:
 
   SharedMemReadTest2(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 5;}
+  {this->opsPerIteration = 6;}
   SharedMemReadTest2(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 5;}
+  {this->opsPerIteration = 6;}
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {

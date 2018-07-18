@@ -144,7 +144,6 @@ void sharedMemReadKernel2(int n, int iterateNum, volatile T *x) {
 
   s[thread] = x[thread];
 
-
   T val = 0;
   for (int i = 0; i < iterateNum; i++) {
     val += s[thread];
@@ -154,6 +153,9 @@ void sharedMemReadKernel2(int n, int iterateNum, volatile T *x) {
     val += s[thread];
   }
 
+  if (thread == 1) {
+    printf("val in thread 1: %d\n", thread);
+  }
   x[thread] = val;
 
   return; 
@@ -405,5 +407,9 @@ public:
 
   void runKernel() {
       sharedMemReadKernel2<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>(this->n, this->iterNum, this->d_x);
+      cudaError_t err = cudaGetLastError();
+      if (err != cudaSuccess)
+        printf("Error: %s\n", cudaGetErrorString(err));
+
   }
 };

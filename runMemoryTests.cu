@@ -10,6 +10,9 @@
 template <typename kernel>
 void runTestGeneric(int, int, const char*);
 template <typename kernel>
+void runTestGeneric_setBlockScale(int, int, const char*, int);
+
+template <typename kernel>
 void runL1Test(int, int, const char*, const char*);
 template <typename kernel>
 void runL2Test(int, int, const char*, const char*);
@@ -23,7 +26,7 @@ int main() {
 //  std::string storagePath = setupStoragePath(argc, argv);
 
   int blockSize = 256;
-  int iterations = 20000000;
+  int iterations = 200000000;
   
   std::string out1;
   std::string out2;
@@ -36,8 +39,8 @@ int main() {
   // runTestGeneric<L1MemTest1<float>>(iterations, blockSize, "data/outputL1ReadTest_1.csv");
   // runTestGeneric<L1MemTest2<float>>(iterations, blockSize, "data/outputL1ReadTest_2.csv");
 
-  // runTestGeneric<SharedMemReadTest1<float>>(iterations, blockSize, "data/outputSharedReadTest_1.csv");
-  runTestGeneric<SharedMemReadTest2<int>>(iterations, blockSize, "data/outputSharedReadTest_2.csv");
+  runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterations, blockSize, "data/outputSharedReadTest_1.csv", 1);
+  // runTestGeneric_setBlockScale<SharedMemReadTest2<int>>(iterations, blockSize, "data/outputSharedReadTest_2.csv", 1);
 
 
   // printf("---- beginning L1 Testing ----\n"); 
@@ -71,6 +74,16 @@ void runTestGeneric(int iterNum, int blockSize, const char* outputName)
   printf("Kernel '%s' finished\n", outputName);
 }
 
+template <typename kernel>
+void runTestGeneric_setBlockScale(int iterNum, int blockSize, const char* outputName, int blockScale)
+{
+  printf("Starting Kernel: '%s'\n", outputName);
+  kernel test1(blockSize, iterNum, blockScale);
+  TestRunner<kernel> tester1(&test1, outputName);
+  tester1.getGoodSample();
+  tester1.dataToFile();
+  printf("Kernel '%s' finished\n", outputName);
+}
 
 
 // template <typename kernel>

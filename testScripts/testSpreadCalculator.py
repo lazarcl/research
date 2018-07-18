@@ -64,7 +64,9 @@ class TestSpreadCalculator:
     for path in paths:
       runtime = dataLoader.getRuntimeFromFile(path)
       if runtime is not None:
-        times.append(runtime) 
+        times.append(runtime)
+      else:
+        print("couldn't load time from:", path) 
     return times
 
 
@@ -75,7 +77,9 @@ class TestSpreadCalculator:
     for path in paths:
       powerData = dataLoader.getPowsFromFile(path)
       if powerData is not None:
-        powers+=powerData
+        powers.append(statistics.mean(powerData))
+      else:
+        print("couldn't load power data from:", path)
         # avg, var = self.calcMeanAndVar(powerData)
         # if avg != 0.0:
         #   powers.append(avg) 
@@ -100,11 +104,11 @@ class TestSpreadCalculator:
       self.runtimeSpreadDict[fileName] = (mean, var)
 
   #for all input filenames, find mean,var for each filename's power across different tests
-  #average all power datapoints from all similar files into one mean and var
+  #find variance between the runs avg powers
   def findPowerSpreads(self):
     for fileName, paths in self.filePathDict.items():
-      powers = self.findPowersOfPaths(paths)
-      mean, var = self.calcMeanAndVar(powers)
+      avgPowers = self.findPowersOfPaths(paths)
+      mean, var = self.calcMeanAndVar(avgPowers)
       self.powerSpreadDict[fileName] = (mean, var)
 
   #must be called AFTER findPowerSpreads and findRuntimeSpreads in order to 

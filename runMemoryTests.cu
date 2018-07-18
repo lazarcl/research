@@ -26,21 +26,22 @@ int main() {
 //  std::string storagePath = setupStoragePath(argc, argv);
 
   int blockSize = 256;
-  int iterations = 200000000;
+  int iterationsSmall = 200000;
+  int iterationsBig = 200000000;
   
   std::string out1;
   std::string out2;
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
-  
-  // runTestGeneric<L2MemReadTest1<float>>(iterations, blockSize, "data/outputL2ReadTest_1.csv");
-  // runTestGeneric<L2MemReadTest2<float>>(iterations, blockSize, "data/outputL2ReadTest_2.csv");
+ 
+  //runTestGeneric<L1MemTest1<float>>(iterationsSmall*4, blockSize, "data/outputL1ReadTest_1.csv");
+  //runTestGeneric<L1MemTest2<float>>(iterationsSmall*4, blockSize, "data/outputL1ReadTest_2.csv");  
 
-  // runTestGeneric<L1MemTest1<float>>(iterations, blockSize, "data/outputL1ReadTest_1.csv");
-  // runTestGeneric<L1MemTest2<float>>(iterations, blockSize, "data/outputL1ReadTest_2.csv");
+  runTestGeneric<L2MemReadTest1<float>>(iterationsSmall, blockSize, "data/outputL2ReadTest_1.csv");
+  runTestGeneric<L2MemReadTest2<float>>(iterationsSmall, blockSize, "data/outputL2ReadTest_2.csv");
 
-  runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterations, blockSize, "data/outputSharedReadTest_1.csv", 1);
-  // runTestGeneric_setBlockScale<SharedMemReadTest2<int>>(iterations, blockSize, "data/outputSharedReadTest_2.csv", 1);
+  //runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterationsBig, blockSize, "data/outputSharedReadTest_1.csv", 1);
+  //runTestGeneric_setBlockScale<SharedMemReadTest2<float>>(iterationsBig, blockSize, "data/outputSharedReadTest_2.csv", 1);
 
 
   // printf("---- beginning L1 Testing ----\n"); 
@@ -68,7 +69,7 @@ void runTestGeneric(int iterNum, int blockSize, const char* outputName)
 {
   printf("Starting Kernel: '%s'\n", outputName);
   kernel test1(blockSize, iterNum);
-  TestRunner<kernel> tester1(&test1, outputName);
+  TestRunner<kernel> tester1(&test1, outputName, 0.1);
   tester1.getGoodSample();
   tester1.dataToFile();
   printf("Kernel '%s' finished\n", outputName);
@@ -79,7 +80,7 @@ void runTestGeneric_setBlockScale(int iterNum, int blockSize, const char* output
 {
   printf("Starting Kernel: '%s'\n", outputName);
   kernel test1(blockSize, iterNum, blockScale);
-  TestRunner<kernel> tester1(&test1, outputName);
+  TestRunner<kernel> tester1(&test1, outputName, 0.1);
   tester1.getGoodSample();
   tester1.dataToFile();
   printf("Kernel '%s' finished\n", outputName);

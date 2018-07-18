@@ -258,7 +258,7 @@ bool setDevice() {
   void dataToFile() {
     float elapsedT;
     CUDA_ERROR( cudaEventElapsedTime(&elapsedT, gpuStart, gpuStop));
-    printf("elapsedT %f\n", elapsedT);
+    printf("  elapsedTime: %f\n", elapsedT);
     float timeBetweenSample = elapsedT / powerData.size();
     
     FILE *fp = fopen(outputName, "w+");

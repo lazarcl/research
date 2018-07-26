@@ -9,13 +9,15 @@ void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   const T * loc = &x[thread];
-  T tot = 0;
+  volatile T tot = 0;
 
   for (int i = 0; i < iterateNum; i++) {
-    tot += __ldg(loc) + __ldg(loc) + __ldg(loc) + 3.0 + 3.0;
+    tot = __ldg(loc) + __ldg(loc) + __ldg(loc) + __ldg(loc) + 1.0;
    // tot = __ldg(loc);
    // tot = __ldg(loc);
    // tot = __ldg(loc);
+   // tot = __ldg(loc);
+   // tot = 1.0;
   }
   y[thread] = tot;
   return;
@@ -27,10 +29,10 @@ void l1MemKernel2(int n, int iterateNum, const T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
   const T * loc = &x[thread];
-  T tot = 0;
+  volatile T tot = 0;
 
   for (int i = 0; i < iterateNum; i++) {
-    tot += __ldg(loc) + __ldg(loc) + __ldg(loc) + __ldg(loc) + __ldg(loc);
+    tot = __ldg(loc) + __ldg(loc) + __ldg(loc) + __ldg(loc) + __ldg(loc);
    // tot = __ldg(loc);
    // tot = __ldg(loc);
    // tot = __ldg(loc);
@@ -237,10 +239,10 @@ public:
 
   L1MemTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 3;}
+  {this->opsPerIteration = 4;}
   L1MemTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 3;}
+  {this->opsPerIteration = 4;}
 
   //should call base destructor after executing this destructor
   ~L1MemTest1() { 
@@ -251,6 +253,7 @@ public:
     MemoryTestBase<T>::kernelSetup(deviceProp);
     this->CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
     createData<T><<<this->numBlocks, this->blockSize>>>(this->n, d_y);
+    printf("numblocks %d, blockSize %d, n %d, iterNum %d\n",this->numBlocks, this->blockSize, this->n, this->iterNum);
   }
 
   void runKernel() {
@@ -266,10 +269,10 @@ public:
 
   L1MemTest2(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 6;}
+  {this->opsPerIteration = 5;}
   L1MemTest2(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 6;}
+  {this->opsPerIteration = 5;}
 
   //should call base destructor after executing this destructor
   ~L1MemTest2() { 
@@ -280,6 +283,7 @@ public:
     MemoryTestBase<T>::kernelSetup(deviceProp);
     this->CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
     createData<T><<<this->numBlocks, this->blockSize>>>(this->n, d_y);
+    printf("numblocks %d, blockSize %d, n %d, iterNum %d\n",this->numBlocks, this->blockSize, this->n, this->iterNum);
   }
 
   void runKernel() {

@@ -10,8 +10,6 @@
 #include <string>
 #include "config.cpp"
 
-//run command: 
-  //nvcc testFramework.cu -L/usr/lib64/nvidia -lnvidia-ml -I/usr/local/cuda-7.0/samples/common/inc/ -I/nvmlPower.cpp
 
 template <class K>
 class TestRunner {
@@ -90,6 +88,7 @@ bool setDevice() {
       CUDA_ERROR( cudaGetDeviceProperties(&deviceProp, deviceIndex) );
       if (std::string(deviceProp.name) == desiredDeviceName)
       {
+	  printf("total const mem: %d\n",(int) deviceProp.totalConstMem);
           CUDA_ERROR( cudaSetDevice(deviceIndex) );
           return true;
       }
@@ -164,13 +163,14 @@ bool setDevice() {
       }
       printf("  beginning test run %d\n", curRun);
       fflush(stdout);
-      //take temp measurement again here?
       setupSampling();
       testClass->runKernel();
       runSampling();
 
       prevTemp = curTemp;
       curTemp = getDeviceTemp();
+
+     // break; //for profiling runs on kernels
 
       if (std::abs((int)(curTemp-prevTemp)) >= 1) {
         printf("    temp still changing\n");

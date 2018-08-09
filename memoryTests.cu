@@ -2,20 +2,24 @@
 #include <stdio.h>
 
 
+
 //------------------ L1 CACHE KERNELS -----------
 template <typename T>
 __global__
 void l1MemKernel1(int n, int iterateNum, const T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
-  const T * loc = &x[thread];
+  __shared__ volatile int index[256];
+  index[threadIdx.x] = thread;
+
   T tot = 0;
+  T var;
 
   for (int i = 0; i < iterateNum; i++) {
-    tot += __ldg(loc) + __ldg(loc) + __ldg(loc) + 3.0 + 3.0;
-   // tot = __ldg(loc);
-   // tot = __ldg(loc);
-   // tot = __ldg(loc);
+    const T *loc = &x[index[threadIdx.x]];
+    var = __ldg(loc+n);
+    var += var;
+    tot += var;
   }
   y[thread] = tot;
   return;
@@ -26,16 +30,17 @@ __global__
 void l1MemKernel2(int n, int iterateNum, const T *x, T *y) {
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
-  const T * loc = &x[thread];
+  __shared__ volatile int index[256];
+  index[threadIdx.x] = thread;
+
   T tot = 0;
+  T var;
 
   for (int i = 0; i < iterateNum; i++) {
-    tot += __ldg(loc) + __ldg(loc) + __ldg(loc) + __ldg(loc) + __ldg(loc);
-   // tot = __ldg(loc);
-   // tot = __ldg(loc);
-   // tot = __ldg(loc);
-   // tot = __ldg(loc);
-   // tot = __ldg(loc);
+    const T *loc = &x[index[threadIdx.x]];
+    var = __ldg(loc+n);
+    var += __ldg(loc);
+    tot += var;
   }
   y[thread] = tot;
   return;
@@ -49,9 +54,9 @@ void l2MemReadKernel1(int n, int iterateNum, volatile T *x) {
 
   T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val = x[thread];
-    val = x[thread];
-    val = x[thread];
+    val += x[thread];
+    val += x[thread];
+    val += val;
   }
 
   x[thread] = val;
@@ -66,16 +71,13 @@ void l2MemReadKernel2(int n, int iterateNum, volatile T *x) {
 
   T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val = x[thread];
-    val = x[thread];
-    val = x[thread];
-    val = x[thread];
-    val = x[thread];
+    val += x[thread];
+    val += x[thread];
+    val += x[thread];
   }
 
   x[thread] = val;
   return;
-
 }
 
 
@@ -116,16 +118,18 @@ void globalMemKernel2(int n, int iterateNum, volatile T *x) {
 template <typename T>
 __global__
 void sharedMemReadKernel1(int n, int iterateNum, volatile T *x) {
-  extern __shared__ volatile T s[]; //volatile to prevent optimization
+  //extern __shared__ volatile T s[]; //volatile to prevent optimization
+  __shared__ volatile T s[1024];
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
 
-  s[thread] = x[thread];
-  T val = 0;
+  s[threadIdx.x] = x[thread];
+
+  volatile T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
+    val += s[threadIdx.x];
+    val += s[threadIdx.x];
+    val += s[threadIdx.x];
+    val += val;
   }
 
   x[thread] = val;
@@ -136,19 +140,18 @@ void sharedMemReadKernel1(int n, int iterateNum, volatile T *x) {
 template <typename T>
 __global__
 void sharedMemReadKernel2(int n, int iterateNum, volatile T *x) {
-  extern __shared__ volatile T s[]; 
+  //extern __shared__ volatile T s[];
+  __shared__ volatile T s[1024];
   int thread = blockIdx.x*blockDim.x + threadIdx.x;
+  
+  s[threadIdx.x] = x[thread];
 
-  s[thread] = x[thread];
-
-  T val = 0;
+  volatile T val = 0;
   for (int i = 0; i < iterateNum; i++) {
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
-    val = s[thread];
+    val += s[threadIdx.x];
+    val += s[threadIdx.x];
+    val += s[threadIdx.x];
+    val += s[threadIdx.x];
   }
 
   x[thread] = val;
@@ -164,7 +167,8 @@ void createData(int n, T *x) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   // T a = 1.0;
   if (i < n) {
-    x[i] = i;
+    //x[i] = i;
+    x[i] = 0.0f;
   }
 }
 
@@ -196,8 +200,9 @@ public:
   void kernelSetup(cudaDeviceProp deviceProp) {
     numBlocks = deviceProp.multiProcessorCount * numBlockScale;
     n = numBlocks * blockSize;
-    CUDA_ERROR( cudaMalloc(&d_x, n*sizeof(T)) ); 
-    createData<T><<<numBlocks, blockSize>>>(n, d_x);
+    printf("n: %d\n", n);
+    CUDA_ERROR( cudaMalloc(&d_x, 2*n*sizeof(T)) ); 
+    createData<T><<<numBlocks, blockSize>>>(2*n, d_x);
   }
 
   //get the number of threads launched in the kernel. Must be 
@@ -237,10 +242,10 @@ public:
 
   L1MemTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 3;}
+  {this->opsPerIteration = 1;}
   L1MemTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 3;}
+  {this->opsPerIteration = 1;}
 
   //should call base destructor after executing this destructor
   ~L1MemTest1() { 
@@ -251,6 +256,7 @@ public:
     MemoryTestBase<T>::kernelSetup(deviceProp);
     this->CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
     createData<T><<<this->numBlocks, this->blockSize>>>(this->n, d_y);
+    printf("numblocks %d, blockSize %d, n %d, iterNum %d\n",this->numBlocks, this->blockSize, this->n, this->iterNum);
   }
 
   void runKernel() {
@@ -266,10 +272,10 @@ public:
 
   L1MemTest2(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 6;}
+  {this->opsPerIteration = 2;}
   L1MemTest2(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 6;}
+  {this->opsPerIteration = 2;}
 
   //should call base destructor after executing this destructor
   ~L1MemTest2() { 
@@ -280,6 +286,7 @@ public:
     MemoryTestBase<T>::kernelSetup(deviceProp);
     this->CUDA_ERROR( cudaMalloc(&d_y, this->n*sizeof(T)) ); 
     createData<T><<<this->numBlocks, this->blockSize>>>(this->n, d_y);
+    printf("numblocks %d, blockSize %d, n %d, iterNum %d\n",this->numBlocks, this->blockSize, this->n, this->iterNum);
   }
 
   void runKernel() {
@@ -294,10 +301,10 @@ class L2MemReadTest1 : public MemoryTestBase<T> {
 public:
   L2MemReadTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 3;} //half are reads, and half are writes
+  {this->opsPerIteration = 2;}
   L2MemReadTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 3;}
+  {this->opsPerIteration = 2;}
 
   void runKernel() {
       l2MemReadKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -309,10 +316,10 @@ class L2MemReadTest2 : public MemoryTestBase<T> {
 public:
   L2MemReadTest2(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 5;}
+  {this->opsPerIteration = 3;}
   L2MemReadTest2(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 5;}
+  {this->opsPerIteration = 3;}
 
   void runKernel() {
       l2MemReadKernel2<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
@@ -361,10 +368,10 @@ public:
 
   SharedMemReadTest1(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 4;}
+  {this->opsPerIteration = 3;}
   SharedMemReadTest1(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 4;}
+  {this->opsPerIteration = 3;}
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {
@@ -374,7 +381,7 @@ public:
 
 
   void runKernel() {
-      sharedMemReadKernel1<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>(this->n, this->iterNum, this->d_x);
+    sharedMemReadKernel1<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
   }
 };
 
@@ -386,10 +393,10 @@ public:
 
   SharedMemReadTest2(int blockSize, int iterNum) 
       : MemoryTestBase<T>(blockSize, iterNum) 
-  {this->opsPerIteration = 6;}
+  {this->opsPerIteration = 4;}
   SharedMemReadTest2(int blockSize, int iterNum, int numBlockScale) 
       : MemoryTestBase<T>(blockSize, iterNum, numBlockScale) 
-  {this->opsPerIteration = 6;}
+  {this->opsPerIteration = 4;}
 
   //in addition to normal setup, figure out how much shared memory to request
   void kernelSetup(cudaDeviceProp deviceProp) {
@@ -401,10 +408,10 @@ public:
 
 
   void runKernel() {
-      sharedMemReadKernel2<T><<<this->numBlocks, this->blockSize, sharedMemRequest>>>(this->n, this->iterNum, this->d_x);
-      cudaError_t err = cudaGetLastError();
-      if (err != cudaSuccess)
-        printf("  Error: %s\n", cudaGetErrorString(err));
+    sharedMemReadKernel2<T><<<this->numBlocks, this->blockSize>>>(this->n, this->iterNum, this->d_x);
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess)
+      printf("  Error: %s\n", cudaGetErrorString(err));
 
   }
 };

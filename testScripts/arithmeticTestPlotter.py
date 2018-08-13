@@ -74,8 +74,8 @@ class ArithmeticTestPlotter:
     plotList = []
     for test in self.testNames:
       try:
-        file1 = dataDir + "output" + test + "_1.csv"
-        file2 = dataDir + "output" + test + "_2.csv"
+        file1 = dataDir + "output" + test.replace('Cache', '') + "Test_1.csv"
+        file2 = dataDir + "output" + test.replace('Cache','') + "Test_2.csv"
         fig = self.makeFigure(file1, file2, test)
         plotList.append(fig)
       except FileNotFoundError as err:

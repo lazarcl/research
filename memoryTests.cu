@@ -82,7 +82,7 @@ void l2MemReadKernel2(int n, int iterateNum, volatile T *x) {
 
 
 
-//------------------ GLOBAL CACHE KERNELS -----------
+//------------------ GLOBAL MEMORY KERNELS -----------
 __host__ __device__ unsigned reverse(unsigned nbits, unsigned val) {
   //From the bit twiddling hacks page http://graphics.stanford.edu/~seander/bithacks.html
   //Assuming unsigned is a 32-bit type, the most straightforward way is to flip the 32-bit value, 
@@ -97,24 +97,24 @@ __host__ __device__ unsigned reverse(unsigned nbits, unsigned val) {
 
 template <typename T>
 __global__
-void globalMemKernel1(unsigned log2nblocksX, unsigned memblocksize, T *C, T *A, T x) {
+void globalMemKernel1(unsigned log2nblocksX, unsigned memblockelems, T *C, T *A, T x) {
   unsigned memblockIdx = blockIdx.x ^ reverse(log2nblocksX, blockIdx.y);
-  unsigned idx = memblockIdx * memblocksize + threadIdx.x;
+  unsigned idx = memblockIdx * memblockelems + threadIdx.x;
   float sum = 0.0f;
-  for (unsigned i = 0; i < memblocksize/blockDim.x; i++) {
+  for (unsigned i = 0; i < memblockelems/blockDim.x; i++) {
     sum = A[idx] * x + sum;
     idx += blockDim.x;
-  }
+  } 
   C[blockIdx.x*blockDim.x+threadIdx.x] = sum;
 }
 
 template <typename T>
 __global__
-void globalMemKernel2(unsigned log2nblocksX, unsigned memblocksize, T *C, T *A, T *B) {
+void globalMemKernel2(unsigned log2nblocksX, unsigned memblockelems, T *C, T *A, T *B) {
   unsigned memblockIdx = blockIdx.x ^ reverse(log2nblocksX, blockIdx.y);
-  unsigned idx = memblockIdx * memblocksize + threadIdx.x;
+  unsigned idx = memblockIdx * memblockelems + threadIdx.x;
   float sum = 0.0f;
-  for (unsigned i = 0; i < memblocksize/blockDim.x; i++) {
+  for (unsigned i = 0; i < memblockelems/blockDim.x; i++) {
     sum = A[idx] * B[idx] + sum;
     idx += blockDim.x;
   }
@@ -339,8 +339,10 @@ public:
 template <typename T>
 class GlobalMemTest1 : public MemoryTestBase<T> {
 public:
+  unsigned nblocksX;
   unsigned memblocksize;
   unsigned log2nblocksX;
+  unsigned memblockelems;
   T *A;
   T *B;
   T *C;
@@ -357,9 +359,9 @@ public:
     MemoryTestBase<T>::kernelSetup(deviceProp);
 
     size_t memcapacity = deviceProp.totalGlobalMem;
-    unsigned memblockelems = this->blockSize*this->iterNum;
+    memblockelems = this->blockSize*this->iterNum;
     memblocksize = memblockelems * sizeof(T);
-    unsigned nblocksX = memcapacity / (4*memblocksize);
+    nblocksX = memcapacity / (4*memblocksize);
     //Round number of blocks down to next power of two
     log2nblocksX = 1;
     while ( (nblocksX >> (log2nblocksX+1)) > 0 ) {
@@ -368,22 +370,23 @@ public:
     nblocksX = 1 << log2nblocksX;
     size_t in_buffer_size = nblocksX*memblocksize;
 
-    T *A;
     this->CUDA_ERROR(cudaMalloc(&A, in_buffer_size));
     this->CUDA_ERROR(cudaMemset(A, 0, in_buffer_size));
-   
-    T *B;
+    
     this->CUDA_ERROR(cudaMalloc(&B, in_buffer_size));
     this->CUDA_ERROR(cudaMemset(B, 0, in_buffer_size));
 
-    T *C;
     this->CUDA_ERROR(cudaMalloc(&C, this->blockSize * nblocksX * sizeof(T)));
     this->CUDA_ERROR(cudaMemset(C, 0, this->blockSize * nblocksX * sizeof(T)));
-
+    printf("elems %d\n", memblockelems);
   }
 
   void runKernel() {
-      globalMemKernel1<T><<<this->numBlocks, this->blockSize>>>(log2nblocksX, memblocksize, C, A, x);
+    //printf("blockSize %d, log2nblocksX %d, memblocksize %d, C %p, A %p, x %f\n", this->blockSize,log2nblocksX, memblocksize, C, A, x);
+    globalMemKernel1<T><<<dim3(nblocksX, nblocksX), this->blockSize>>>(log2nblocksX, memblockelems, C, A, x);
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess)
+      printf("  Starting kernel failed. Error: %s\n", cudaGetErrorString(err));
   }
 };
 
@@ -392,6 +395,8 @@ class GlobalMemTest2 : public MemoryTestBase<T> {
 public:
   unsigned memblocksize;
   unsigned log2nblocksX;
+  unsigned memblockelems;
+  unsigned nblocksX;
   T *A;
   T *B;
   T *C;
@@ -407,9 +412,9 @@ public:
     MemoryTestBase<T>::kernelSetup(deviceProp);
 
     size_t memcapacity = deviceProp.totalGlobalMem;
-    unsigned memblockelems = this->blockSize*this->iterNum;
+    memblockelems = this->blockSize*this->iterNum;
     memblocksize = memblockelems * sizeof(T);
-    unsigned nblocksX = memcapacity / (4*memblocksize);
+    nblocksX = memcapacity / (4*memblocksize);
     //Round number of blocks down to next power of two
     log2nblocksX = 1;
     while ( (nblocksX >> (log2nblocksX+1)) > 0 ) {
@@ -418,22 +423,19 @@ public:
     nblocksX = 1 << log2nblocksX;
     size_t in_buffer_size = nblocksX*memblocksize;
 
-    T *A;
     this->CUDA_ERROR(cudaMalloc(&A, in_buffer_size));
     this->CUDA_ERROR(cudaMemset(A, 0, in_buffer_size));
    
-    T *B;
     this->CUDA_ERROR(cudaMalloc(&B, in_buffer_size));
     this->CUDA_ERROR(cudaMemset(B, 0, in_buffer_size));
 
-    T *C;
     this->CUDA_ERROR(cudaMalloc(&C, this->blockSize * nblocksX * sizeof(T)));
     this->CUDA_ERROR(cudaMemset(C, 0, this->blockSize * nblocksX * sizeof(T)));
-
+    printf("elems %d\n", memblockelems);
   }
 
   void runKernel() {
-      globalMemKernel2<T><<<this->numBlocks, this->blockSize>>>(log2nblocksX, memblocksize, C, A, B);
+      globalMemKernel2<T><<<dim3(nblocksX, nblocksX), this->blockSize>>>(log2nblocksX, memblockelems, C, A, B);
   }
 };
 

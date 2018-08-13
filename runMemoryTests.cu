@@ -16,8 +16,10 @@ template <typename kernel>
 void runL1Test(int, int, const char*, const char*);
 template <typename kernel>
 void runL2Test(int, int, const char*, const char*);
-template <typename kernel>
+
+template <typename T>
 void runGlobalTest(int, int, const char*, const char*);
+
 template <typename kernel>
 void runSharedMemTest(int, int, const char*, const char*);
 
@@ -43,7 +45,8 @@ int main() {
   //runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_1.csv", 100);
   //runTestGeneric_setBlockScale<SharedMemReadTest2<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_2.csv", 100);
 
-  runGlobalTest(iterationsSmall, blockSize, "data/outputGlobalReadTest_1.csv", "data/outputGlobalReadTest_2.csv")
+
+  runGlobalTest<float>(1000, blockSize, "data/outputGlobalReadTest_1.csv", "data/outputGlobalReadTest_2.csv");
 
   // printf("---- beginning L1 Testing ----\n"); 
   // runL1Test<L1MemTest1<T>>(iterations, blockSize, "tmp1.csv");
@@ -69,7 +72,7 @@ template <typename kernel>
 void runTestGeneric(int iterNum, int blockSize, const char* outputName) 
 {
   printf("Starting Kernel: '%s'\n", outputName);
-  kernel test1(blockSize, iterNum, 1);
+  kernel test1(blockSize, iterNum);
   TestRunner<kernel> tester1(&test1, outputName, 0.1);
   tester1.getGoodSample();
   tester1.dataToFile();
@@ -114,7 +117,7 @@ void runTestGeneric_setBlockScale(int iterNum, int blockSize, const char* output
 // 
 // 
 // 
-template <typename kernel>
+template <typename T>
 void runGlobalTest(int iterNum, int blockSize, const char* outputName1, 
               const char* outputName2) 
 {
@@ -124,12 +127,12 @@ void runGlobalTest(int iterNum, int blockSize, const char* outputName1,
   tester1.getGoodSample();
   tester1.dataToFile();
   printf("Kernel 1 finished\n");
-  
+
   printf("Starting Global Kernel2\n");
-  GlobalMemTest1<T> test1(blockSize, iterNum);
-  TestRunner<GlobalMemTest1<T>> tester1(&test1, outputName1);
-  tester1.getGoodSample();
-  tester1.dataToFile();
+  GlobalMemTest2<T> test2(blockSize, iterNum);
+  TestRunner<GlobalMemTest2<T>> tester2(&test2, outputName2);
+  tester2.getGoodSample();
+  tester2.dataToFile();
   printf("Kernel 2 finished\n");
 }
 // 

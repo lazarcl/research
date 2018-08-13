@@ -83,34 +83,19 @@ void l2MemReadKernel2(int n, int iterateNum, volatile T *x) {
 
 
 //------------------ GLOBAL CACHE KERNELS -----------
+
+
+
+
+
 template <typename T>
 __global__
 void globalMemKernel1(int n, int iterateNum, volatile T *x) {
-  int thread = blockIdx.x*blockDim.x + threadIdx.x;
-
-  volatile T a = 0;
-
-  for (int i = 0; i < iterateNum; i++) {
-    for (int j = 0; j < n; j++) {
-      a = x[j];
-    }
-  }
-  x[thread] = a;
 }
 
 template <typename T>
 __global__
 void globalMemKernel2(int n, int iterateNum, volatile T *x) {
-  int thread = blockIdx.x*blockDim.x + threadIdx.x;
-
-  volatile T a = 0;
-
-  for (int i = 0; i < iterateNum; i++) {
-    for (int j = 0; j < n; j++) {
-      a = x[j];
-    }
-  }
-  x[thread] = a;
 }
 
 

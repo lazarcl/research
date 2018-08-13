@@ -37,11 +37,11 @@ int main() {
   runTestGeneric_setBlockScale<L1MemTest1<float>>(iterationsSmall*3, blockSize, "data/outputL1ReadTest_1.csv", 100);
   runTestGeneric_setBlockScale<L1MemTest2<float>>(iterationsSmall*3, blockSize, "data/outputL1ReadTest_2.csv", 100);
 
-  runTestGeneric_setBlockScale<L2MemReadTest1<float>>(iterationsSmall*3, blockSize, "data/outputL2ReadTest_1.csv", 100);
-  runTestGeneric_setBlockScale<L2MemReadTest2<float>>(iterationsSmall*3, blockSize, "data/outputL2ReadTest_2.csv", 100);
+  //runTestGeneric_setBlockScale<L2MemReadTest1<float>>(iterationsSmall*3, blockSize, "data/outputL2ReadTest_1.csv", 100);
+  //runTestGeneric_setBlockScale<L2MemReadTest2<float>>(iterationsSmall*3, blockSize, "data/outputL2ReadTest_2.csv", 100);
 
-  runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_1.csv", 100);
-  runTestGeneric_setBlockScale<SharedMemReadTest2<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_2.csv", 100);
+  //runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_1.csv", 100);
+  //runTestGeneric_setBlockScale<SharedMemReadTest2<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_2.csv", 100);
 
 
   // printf("---- beginning L1 Testing ----\n"); 

@@ -168,7 +168,7 @@ public:
 template <typename T>
 class MultKernel1TestNonVolatile : public ArithmeticTestBase<T> {
 public:
-  MultKernel1TestNonVolatile(int blockSize, int iterNum);;
+  MultKernel1TestNonVolatile(int blockSize, int iterNum);
   MultKernel1TestNonVolatile(int blockSize, int iterNum, int numBlockScale);
 
   void runKernel();

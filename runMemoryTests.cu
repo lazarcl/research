@@ -31,10 +31,10 @@ int main() {
   int iterationsSmall = 200000;
   int iterationsBig = 200000000;
   
-  std::string out1;
-  std::string out2;
-  out1 = storagePath + std::string("outputAddFP32_1.csv");
-  out2 = storagePath + std::string("outputAddFP32_2.csv");
+  // std::string out1;
+  // std::string out2;
+  // out1 = storagePath + std::string("outputAddFP32_1.csv");
+  // out2 = storagePath + std::string("outputAddFP32_2.csv");
  
   runTestGeneric_setBlockScale<L1MemTest1<float>>(iterationsSmall*3, blockSize, "data/outputL1ReadTest_1.csv", 100);
   runTestGeneric_setBlockScale<L1MemTest2<float>>(iterationsSmall*3, blockSize, "data/outputL1ReadTest_2.csv", 100);

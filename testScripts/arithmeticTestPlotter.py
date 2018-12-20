@@ -49,17 +49,17 @@ class ArithmeticTestPlotter:
 
     f = pylab.figure()
     ax = pylab.subplot(111)    
-    ax.spines["top"].set_visible(False)    
+    # ax.spines["top"].set_visible(False)    
     # ax.spines["bottom"].set_visible(False)    
-    ax.spines["right"].set_visible(False)    
+    # ax.spines["right"].set_visible(False)    
     # ax.spines["left"].set_visible(False)    
 
     pylab.plot(time1, power1, "-b", label="Control Kernel", lw=self.LINE_WIDTH)
     pylab.plot(time2, power2, "-r", label="Test Kernel", lw=self.LINE_WIDTH)
 
 
-    pylab.xlabel('time(ms)')
-    pylab.ylabel('power(W)')
+    pylab.xlabel('time (ms)')
+    pylab.ylabel('power (W)')
     pylab.title(testName + " Kernel Runs")
 
     pylab.legend(loc="lower right")
@@ -74,8 +74,8 @@ class ArithmeticTestPlotter:
     plotList = []
     for test in self.testNames:
       try:
-        file1 = dataDir + "output" + test.replace('Cache', '') + "Test_1.csv"
-        file2 = dataDir + "output" + test.replace('Cache','') + "Test_2.csv"
+        file1 = dataDir + "output" + test.replace('Cache', '') + "_1.csv"
+        file2 = dataDir + "output" + test.replace('Cache','') + "_2.csv"
         fig = self.makeFigure(file1, file2, test)
         plotList.append(fig)
       except FileNotFoundError as err:
@@ -97,7 +97,7 @@ class ArithmeticTestPlotter:
   def saveFigures(self, figs, pdfNameNum):
     pdf = PdfPages(self.savePath + self.pdfName + str(pdfNameNum) + ".pdf")
     for fig in figs:
-      pdf.savefig(fig, dpi=self.SAVE_DPI)
+      pdf.savefig(fig, dpi=self.SAVE_DPI, bbox_inches='tight')
     pdf.close()
 
   def saveFigureLists(self, listsOfFigs):

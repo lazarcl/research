@@ -39,20 +39,26 @@ class BasePowTestPlotter:
     powerLists = []
     for path in testPaths:
       #append (powerData, timeData)
-      powerLists.append(dataLoader.getPowerAndTimeFromFile(path))
+      powerLists.append(list(dataLoader.getPowerAndTimeFromFile(path)) + [path[-5]] )
 
     fig = pylab.figure()
     ax = pylab.subplot(111)    
-    ax.spines["top"].set_visible(False)    
-    ax.spines["right"].set_visible(False)    
-    
-    for i in range(len(powerLists)):
-      pylab.plot(powerLists[i][1], powerLists[i][0], self.colors[i], label="workload of "+str(i+1)+"x", lw=self.LINE_WIDTH)
 
-    pylab.xlabel('time(ms)')
-    pylab.ylabel('power(W)')
-    pylab.suptitle(supTitle)
-    pylab.title(subTitle, fontsize=6)
+    # ax.spines["top"].set_visible(False)    
+    # ax.spines["right"].set_visible(False)    
+
+    powerLists.sort(key=lambda x: int(x[2]))
+    for i in range(len(powerLists)):
+      # pylab.plot(powerLists[i][1], powerLists[i][0], self.colors[i], label="workload of "+str(i+1)+"x", lw=self.LINE_WIDTH)
+      pylab.plot(powerLists[i][1], powerLists[i][0], self.colors[i], label="workload of "+powerLists[i][2]+"x", lw=self.LINE_WIDTH)
+
+    pylab.xlabel('time (ms)')
+    pylab.ylabel('power (W)')
+    if subTitle is not "":
+      pylab.suptitle(supTitle)
+      pylab.title(subTitle, fontsize=6)
+    else:
+      pylab.title(supTitle)
 
     pylab.legend(loc="lower right")
     pylab.ylim(0, self.MAX_Y)
@@ -80,7 +86,7 @@ class BasePowTestPlotter:
   def savePlotList(self, figs, filePath):
     pp = PdfPages(filePath)
     for fig in figs:
-      pp.savefig(fig, dpi=self.SAVE_DPI)
+      pp.savefig(fig, dpi=self.SAVE_DPI, bbox_inches='tight')
     pp.close()
 
 
@@ -106,19 +112,23 @@ class BasePowTestPlotter:
   def makeBasePow1Graphs(self):
     generalFileName = "outputBlksPerSM_*.csv"
     saveAs = "resultsGraphBP1.pdf"
-    supTitle = "Base Power 1st Approach Run"
-    subTitle = "Changing number of concurrent blocks per SM"
+    # supTitle = "Base Power 1st Approach Run"
+    # subTitle = "Changing number of concurrent blocks per SM"
+    supTitle = "Identical Workloads with Changing Block Concurrency"
 
-    self.makeBasePowGraphsGeneral(supTitle, subTitle, generalFileName, saveAs)
+    self.makeBasePowGraphsGeneral(supTitle, '', generalFileName, saveAs)
+    # self.makeBasePowGraphsGeneral(supTitle, subTitle, generalFileName, saveAs)
 
 
   def makeBasePow2Graphs(self):
     generalFileName = "outputBlockScalar_*.csv"
     saveAs = "resultsGraphBP2.pdf"
-    supTitle = "Base Power 2nd Approach Run"
-    subTitle = "Linearly changing number of blocks per run"
+    # supTitle = "Base Power 2nd Approach Run"
+    # subTitle = "Linearly changing number of blocks per run"
+    supTitle= "Linearly Increasing Workloads"
 
-    self.makeBasePowGraphsGeneral(supTitle, subTitle, generalFileName, saveAs)
+    self.makeBasePowGraphsGeneral(supTitle, '', generalFileName, saveAs)
+    # self.makeBasePowGraphsGeneral(supTitle, subTitle, generalFileName, saveAs)
 
 
 

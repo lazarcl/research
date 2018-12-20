@@ -58,7 +58,7 @@ void l2MemReadKernel1(int n, int iterateNum, volatile T *x) {
     val += x[thread];
     val += val;
   }
-
+  
   x[thread] = val;
   return;
 

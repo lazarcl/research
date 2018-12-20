@@ -16,11 +16,12 @@ def calculateBasePower(rootPath, saveDir, dataDirs):
   print("Calculating base power from approach 1")
   obj = BasePowVarCalculator(dataDirs, [1,2,3,4,5,6], analysisConfig.basePower1GenericName)
   obj.calcBasePow()
+
   # print("Results for basePow 1:")
   # obj.printBasePowers()
 
   print("Calculating base power from approach 2")
-  obj2 = BasePowVarCalculator(dataDirs, [3,4,5], analysisConfig.basePower2GenericName)
+  obj2 = BasePowVarCalculator(dataDirs, [1,2,3,4,5,6], analysisConfig.basePower2GenericName)
   obj2.calcBasePow()
   # print("Results for basePow 2:")
   # obj2.printBasePowers()
@@ -134,7 +135,7 @@ def makeTableFromCols(col1, col2, col1Name, col2Name):
   # control = 'outputAddFP32_1.csv'
   # test = 'outputAddFP32_2.csv'
 
-  table = "\\begin{tabular}{|l|p{1.5in}|p{1.5in}|} \hline\n"
+  table = "\\begin{tabular}{|l|p{0.8in}|p{0.8in}|} \hline\n"
   
   table+= "Measurement  & "+col1Name+" & "+col2Name+"\\\ \hline\n"
   
@@ -171,7 +172,7 @@ def analyzeData():
     print("Can't plot arithmetic data. No data folders in", rootPath, "found" )
     exit(1)
 
-  # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
+  testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
 
   # kernelBPAnalysis = BasePowForKernels(rootPath, dataDirs, saveDir, [1,2,3,4], analysisConfig.basePow2ResultFiles, 2)
   # kernelBPAnalysis.calcBasePows()
@@ -185,29 +186,29 @@ def analyzeData():
   #   # col = makeTableColEntry(basePowResults[name][0][2:], arithTestSpreadsObj, control, test)
   #   try:
   #     col = makeTableColEntry((40.0,0), arithTestSpreadsObj, control, test)
-  #     # col2 = makeTableColEntry(basePow, testSpreadsObj2, control, test)
+  #     # col2 = makeTableColEntry((135.0,0), testSpreadsObj2, control, test)
   #     print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
   #   except IndexError as err:
   #     print("IndexError: failed creating table for: '"+str(err)+"'")
   #   except KeyError as err:
   #     print("KeyError: failed creating table for: '"+str(err)+"'")
 
-  memoryTestSpreadsObj = memoryTestSpreads(rootPath)
-  for name, (control, test) in analysisConfig.memoryTestNamesToFiles.items():
-    try:
-      col = makeTableColEntry((35.0,0), memoryTestSpreadsObj, control, test)
-      col2 = makeTableColEntry((40.0,0), memoryTestSpreadsObj, control, test)
-      print("$"+name+"$\\\ \n"+makeTableFromCols(col, col2, "K20_35", "K20_40"))
-    except IndexError as err:
-      print("IndexError: failed creating table for: '"+str(err)+"'")
-    except KeyError as err:
-      print("KeyError: failed creating table for: '"+str(err)+"'")
+  # memoryTestSpreadsObj = memoryTestSpreads(rootPath)
+  # for name, (control, test) in analysisConfig.memoryTestNamesToFiles.items():
+  #   try:
+  #     col = makeTableColEntry((35.0,0), memoryTestSpreadsObj, control, test)
+  #     col2 = makeTableColEntry((40.0,0), memoryTestSpreadsObj, control, test)
+  #     print("$"+name+"$\\\ \n"+makeTableFromCols(col, col2, "K20_35", "K20_40"))
+  #   except IndexError as err:
+  #     print("IndexError: failed creating table for: '"+str(err)+"'")
+  #   except KeyError as err:
+  #     print("KeyError: failed creating table for: '"+str(err)+"'")
 
 
-  # # calculateBasePower(rootPath, saveDir, dataDirs)
-  # # graphBasePower(rootPath, saveDir, dataDirs)
+  calculateBasePower(rootPath, saveDir, dataDirs)
+  # graphBasePower(rootPath, saveDir, dataDirs)
   # graphArithmetic(rootPath, saveDir, dataDirs)
-  graphMemory(rootPath, saveDir, dataDirs)
+  # graphMemory(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":

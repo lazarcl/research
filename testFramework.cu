@@ -157,6 +157,11 @@ bool setDevice() {
 
     testClass->kernelSetup(deviceProp);
 
+    /*
+    save start of testing in global variable
+    make sure it's warmed up before allowing finish loop
+     */
+
     while( badSampleData || std::abs((int)(curTemp - prevTemp)) >= 1) {  
      if (curRun > maxTestRuns ) {
         break;

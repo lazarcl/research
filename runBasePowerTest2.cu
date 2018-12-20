@@ -117,22 +117,22 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
 
 void runBP2WithAllKernels(std::string storagePath) {
   std::vector< std::tuple<int,float,float> > powData;
-//  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<float>>();
-//  basePowVectorToFile(powData, (storagePath + std::string("basePow2_addFloat.csv")).c_str());
+  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<float>>();
+  basePowVectorToFile(powData, (storagePath + std::string("basePow2_addFloat.csv")).c_str());
   powData = basePowerTest2_SpecifyKernel<AddKernel1Test<double>>();
   basePowVectorToFile(powData, (storagePath + std::string("basePow2_addDouble.csv")).c_str());
-//  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<int>>();
-//  basePowVectorToFile(powData, (storagePath + std::string("basePow2_addInt.csv")).c_str());
+  powData = basePowerTest2_SpecifyKernel<AddKernel1Test<int>>();
+  basePowVectorToFile(powData, (storagePath + std::string("basePow2_addInt.csv")).c_str());
 
-//  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<int>>();
-//  basePowVectorToFile(powData, (storagePath + std::string("basePow2_multInt.csv")).c_str());
-//  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<float>>();
-//  basePowVectorToFile(powData, (storagePath + std::string("basePow2_multFloat.csv")).c_str());
+  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<int>>();
+  basePowVectorToFile(powData, (storagePath + std::string("basePow2_multInt.csv")).c_str());
+  powData = basePowerTest2_SpecifyKernel<MultKernel1Test<float>>();
+  basePowVectorToFile(powData, (storagePath + std::string("basePow2_multFloat.csv")).c_str());
   powData = basePowerTest2_SpecifyKernel<MultKernel1Test<double>>();
   basePowVectorToFile(powData, (storagePath + std::string("basePow2_multDouble.csv")).c_str());
 
-//  powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<float>>();
-//  basePowVectorToFile(powData, (storagePath + std::string("basePow2_fmaFloat.csv")).c_str());
+  powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<float>>();
+  basePowVectorToFile(powData, (storagePath + std::string("basePow2_fmaFloat.csv")).c_str());
   powData = basePowerTest2_SpecifyKernel<FmaKernel1Test<double>>();
   basePowVectorToFile(powData, (storagePath + std::string("basePow2_fmaDouble.csv")).c_str());
 }

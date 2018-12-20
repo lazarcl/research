@@ -91,29 +91,29 @@ void runTestGeneric_setBlockScale(int iterNum, int blockSize, const char* output
 }
 
 
-template <typename kernel>
-void runL1Test(int iterNum, int blockSize, const char* outputName1, 
-              const char* outputName2) 
-{
-  printf("Starting Kernel1\n");
-  L1MemTest1<T> test1(blockSize, iterNum);
-  TestRunner<L1MemTest1<T>> tester1(&test1, outputName1);
-  tester1.getGoodSample();
-  // tester1.dataToFile();
-  printf("Kernel 1 finished\n");
-}
+// template <typename kernel>
+// void runL1Test(int iterNum, int blockSize, const char* outputName1, 
+//               const char* outputName2) 
+// {
+//   printf("Starting Kernel1\n");
+//   L1MemTest1<T> test1(blockSize, iterNum);
+//   TestRunner<L1MemTest1<T>> tester1(&test1, outputName1);
+//   tester1.getGoodSample();
+//   // tester1.dataToFile();
+//   printf("Kernel 1 finished\n");
+// }
 
-template <typename kernel>
-void runL2Test(int iterNum, int blockSize, const char* outputName1, 
-              const char* outputName2) 
-{
-  printf("Starting Kernel1\n");
-  L2MemTest1<T> test1(blockSize, iterNum);
-  TestRunner<L2MemTest1<T>> tester1(&test1, outputName1);
-  tester1.getGoodSample();
-  // tester1.dataToFile();
-  printf("Kernel 1 finished\n");
-}
+// template <typename kernel>
+// void runL2Test(int iterNum, int blockSize, const char* outputName1, 
+//               const char* outputName2) 
+// {
+//   printf("Starting Kernel1\n");
+//   L2MemTest1<T> test1(blockSize, iterNum);
+//   TestRunner<L2MemTest1<T>> tester1(&test1, outputName1);
+//   tester1.getGoodSample();
+//   // tester1.dataToFile();
+//   printf("Kernel 1 finished\n");
+// }
 
 
 
@@ -137,14 +137,14 @@ void runGlobalTest(int iterNum, int blockSize, const char* outputName1,
 }
 
 
-template <typename kernel>
-void runSharedMemTest(int iterNum, int blockSize, const char* outputName1, 
-              const char* outputName2) 
-{
-  printf("Starting Kernel1\n");
-  SharedMemTest1<T> test1(blockSize, iterNum);
-  TestRunner<SharedMemTest1<T>> tester1(&test1, outputName1);
-  tester1.getGoodSample();
-  // tester1.dataToFile();
-  printf("Kernel 1 finished\n");
-}
+// template <typename kernel>
+// void runSharedMemTest(int iterNum, int blockSize, const char* outputName1, 
+//               const char* outputName2) 
+// {
+//   printf("Starting Kernel1\n");
+//   SharedMemTest1<T> test1(blockSize, iterNum);
+//   TestRunner<SharedMemTest1<T>> tester1(&test1, outputName1);
+//   tester1.getGoodSample();
+//   // tester1.dataToFile();
+//   printf("Kernel 1 finished\n");
+// }

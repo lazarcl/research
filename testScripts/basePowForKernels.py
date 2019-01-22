@@ -83,7 +83,7 @@ class BasePowForKernels(object):
 
 
   def getBasePow(self, dataFile):
-    path = glob.glob(self.dataDirs[0] + dataFile)[0]
+    path = glob.glob(self.rootPath + self.dataDirs[0] + dataFile)[0]
     runData = dataLoader.readBasePowData(path)
     testEnergys = {}
     testTimes = {}
@@ -115,7 +115,7 @@ class BasePowForKernels(object):
 
   def calcBasePows(self):
     self.results = {}
-    with open(self.storagePath +"basePowResults.txt", "w") as f:
+    with open(self.rootPath + self.storagePath +"basePowResults.txt", "w") as f:
       for kernelName, dataFile in self.dataNameDict.items():
         try:
           bps = self.getBasePow(dataFile)
@@ -124,7 +124,6 @@ class BasePowForKernels(object):
           continue
 
         self.results[kernelName] = bps
-
         self.writeBasePowers(f, kernelName)
         for bp in bps:
           self.writeBasePowers(f, bp)

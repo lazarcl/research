@@ -12,16 +12,21 @@ import math
 
 
 def calculateBasePower(rootPath, saveDir, dataDirs):
+  # runIDsToUse = [1,2,3,4,5,6]
+  runIDsToUse = [1,2,3,4,5]
+
   savePath = saveDir + analysisConfig.basePowerAnalysisFilename
   print("Calculating base power from approach 1")
-  obj = BasePowVarCalculator(dataDirs, [1,2,3,4,5,6], analysisConfig.basePower1GenericName)
+  # obj = BasePowVarCalculator(dataDirs, runIDsToUse, analysisConfig.basePower1GenericName)
+  obj = BasePowVarCalculator(dataDirs, runIDsToUse, analysisConfig.basePow2ResultFiles["AddFP32"])
   obj.calcBasePow()
 
   # print("Results for basePow 1:")
   # obj.printBasePowers()
 
   print("Calculating base power from approach 2")
-  obj2 = BasePowVarCalculator(dataDirs, [1,2,3,4,5,6], analysisConfig.basePower2GenericName)
+  # obj2 = BasePowVarCalculator(dataDirs, runIDsToUse, analysisConfig.basePower2GenericName)
+  obj2 = BasePowVarCalculator(dataDirs, runIDsToUse, analysisConfig.basePow1ResultFiles["AddFP32"])
   obj2.calcBasePow()
   # print("Results for basePow 2:")
   # obj2.printBasePowers()
@@ -157,6 +162,37 @@ def makeTableFromCols(col1, col2, col1Name, col2Name):
 
   return table
 
+def makeAbreviatedTable(results, deviceNames):
+  table = {} #key = name of test, value = string representing row of that test in file
+
+  #setup result saving to table
+  for i, name in enumerate(analysisConfig.arithTestNames): 
+    table[name] = name.replace("FP32", "SP").replace("FP64", "DP") #this makes names more readable
+  table["beg"] = "\\begin{tabular}{|l|"
+  table["header"] = " "
+
+  #put res into table
+  for i, name in enumerate(deviceNames):
+    deviceRes = results[name]
+    table["header"] += " & " + name
+    table["beg"] += "p{0.8in}|" #make header wider
+    for test, col in deviceRes.items():
+      table[test] += " & " + col["energyPerOp"][0] + "$\pm$" + col["energyPerOp"][1] + "\% pJ"
+
+  #finishup
+  res = ""
+  table["beg"] += "} \hline\n"
+  table["header"] += "\\\ \hline\n"
+  res += table["beg"]
+  res += table["header"]
+  for i, test in enumerate(analysisConfig.arithTestNames):
+    table[test] += "\\\ \hline\n"
+    res += table[test]
+  table["end"] = "\end{tabular}\n"
+  res += table["end"]
+
+  return res
+
 
 def analyzeData():
   rootPath = analysisConfig.pathDict["baseDir"]
@@ -172,7 +208,8 @@ def analyzeData():
     print("Can't plot arithmetic data. No data folders in", rootPath, "found" )
     exit(1)
 
-  testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_second_set/")
+  # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_eigth_set/")
+  # testSpreadsObj2 = arithmeticTestSpreads("testRuns/k20_eigth_set/")
 
   # kernelBPAnalysis = BasePowForKernels(rootPath, dataDirs, saveDir, [1,2,3,4], analysisConfig.basePow2ResultFiles, 2)
   # kernelBPAnalysis.calcBasePows()
@@ -180,18 +217,31 @@ def analyzeData():
   # print(basePowResults)
   # # quit(0)
 
-  # arithTestSpreadsObj = arithmeticTestSpreads(rootPath)
-  # for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
-  # # for control, test in analysisConfig.arithOutputPairs:
-  #   # col = makeTableColEntry(basePowResults[name][0][2:], arithTestSpreadsObj, control, test)
-  #   try:
-  #     col = makeTableColEntry((40.0,0), arithTestSpreadsObj, control, test)
-  #     # col2 = makeTableColEntry((135.0,0), testSpreadsObj2, control, test)
-  #     print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
-  #   except IndexError as err:
-  #     print("IndexError: failed creating table for: '"+str(err)+"'")
-  #   except KeyError as err:
-  #     print("KeyError: failed creating table for: '"+str(err)+"'")
+  '''
+  arithResults = {} #key = device name, value = dict of arith results
+  arithResults["k20"] = {} #key = test name, value = results as a dict
+  arithResults["p6000"] = {}
+  arithTestSpreadsObj = arithmeticTestSpreads(rootPath)
+  for name, (control, test) in analysisConfig.arithTestNamesToFiles.items():
+  # for control, test in analysisConfig.arithOutputPairs:
+    # col = makeTableColEntry(basePowResults[name][0][2:], arithTestSpreadsObj, control, test)
+    try:
+      col = makeTableColEntry((80.0,0), arithTestSpreadsObj, control, test)
+      arithResults["k20"][name] = col
+      # col2 = makeTableColEntry((95.0,0), testSpreadsObj2, control, test)
+      # arithResults["p6000"][name] = col2
+      # cols.append(col2)
+      # names.append("p6000")
+      # print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
+    except IndexError as err:
+      print("IndexError: failed creating table for: '"+str(err)+"'")
+    except KeyError as err:
+      print("KeyError: failed creating table for: '"+str(err)+"'")
+  a = arithResults["k20"]
+  arithResults["p6000"] = a
+  print(makeAbreviatedTable(arithResults, ["k20", "p6000"]))
+  '''
+
 
   # memoryTestSpreadsObj = memoryTestSpreads(rootPath)
   # for name, (control, test) in analysisConfig.memoryTestNamesToFiles.items():
@@ -205,14 +255,14 @@ def analyzeData():
   #     print("KeyError: failed creating table for: '"+str(err)+"'")
 
 
-  calculateBasePower(rootPath, saveDir, dataDirs)
+  calculateBasePower(rootPath, saveDir, dataDirs) #this hasn't been updated for newer file names with different kernels
   # graphBasePower(rootPath, saveDir, dataDirs)
   # graphArithmetic(rootPath, saveDir, dataDirs)
   # graphMemory(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":
-  analyzeData()
+  # analyzeData()
 
 
   # print("Calculating base power from approach 1")
@@ -223,6 +273,16 @@ if __name__ == "__main__":
   # obj = BasePowForKernels("testing/bpTests/", [1,2], analysisConfig.basePow2ResultFiles, 2)
   # obj = BasePowForKernels("testing/bpTests/", [1,2], {"addFP32":"basePow2_addFloat.csv"}, 2)
   # obj.calcBasePows()
+  # def __init__(self, rootPath, dataDirs, storagePath, testIDs, dataNameDict, basePowMethod):
+
+  print("Calculating base power from approach 1")
+  obj = BasePowForKernels("testRuns/p6000_eigth_set/", ["run1/"], "analysis/", [1,2], analysisConfig.basePow1ResultFiles, 1)
+  # obj = BasePowForKernels("testRuns/p6000_eigth_set/", "run1/", "analysis/output.txt",[1,2], {"addFP32":"basePow1_addFloat.csv"}, 1)
+
+  # print("Calculating base power from approach 2")
+  # obj = BasePowForKernels("testRuns/p6000_eigth_set/", "run1/", "analysis/output.txt",[1,2], analysisConfig.basePow2ResultFiles, 2)
+  # obj = BasePowForKernels("testRuns/p6000_eigth_set/", "run1/", "analysis/output.txt",[1,2], {"addFP32":"basePow2_addFloat.csv"}, 2)
+  obj.calcBasePows()
 
 
 

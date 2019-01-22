@@ -45,6 +45,7 @@ class BasePowVarCalculator(object):
     runTimes = {}
     dataPath = self.pathsToData[folderIdx]
     for runID in self.runIDs:
+      print(dataPath+self.testName+str(runID)+".csv")
       fileName = glob.glob(dataPath+self.testName+str(runID)+".csv")
       if len(fileName) == 0:
         print("run '"+str(runID)+"' not found in path '"+dataPath+"'. Ignoring for calculations")

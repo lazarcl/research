@@ -54,11 +54,11 @@ class BasePowTestPlotter:
 
     pylab.xlabel('time (ms)')
     pylab.ylabel('power (W)')
-    if subTitle is not "":
-      pylab.suptitle(supTitle)
-      pylab.title(subTitle, fontsize=6)
-    else:
-      pylab.title(supTitle)
+    # if subTitle is not "":
+    #   pylab.suptitle(supTitle)
+    #   pylab.title(subTitle, fontsize=6)
+    # else:
+    #   pylab.title(supTitle)
 
     pylab.legend(loc="lower right")
     pylab.ylim(0, self.MAX_Y)

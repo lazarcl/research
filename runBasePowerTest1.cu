@@ -3,7 +3,7 @@
 #include <string> 
 #include <sys/stat.h>
 #include "testHelpers.h"
-#include <tuple>
+// #include <tuple>
 #include <vector>
 
 
@@ -30,12 +30,12 @@ void runSharedMemAddTest(int iterNum, int blockSize, float memRatio,
 //KernelClass type already has the datatype of the class in it's own type: ex: AddFP32<float>
 //Tuples are (blocksPerSM, avgPower, elapsedTime) for each basePower run
 template <typename KernelClass>
-std::vector< std::tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
+std::vector<float> basePowerTest1_SpecifyKernel() {
   int blockSize = 256;
   int iters = config_t.basePow1_iter;
   float acceptableError = 1000; //set large so it has no affect 
 
-  std::vector<std::tuple<int, float, float>> runsVector;
+  std::vector<float> runsVector;
 
   printf("---- beginning kernel's runs of the 1st approach to base power measuring ----\n"); 
   for (int blckPerSM = 1; blckPerSM <= 5; blckPerSM++) {
@@ -51,8 +51,10 @@ std::vector< std::tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
       test1.setSharedMem(memRatio);
       TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
       tester1.getGoodSample();
-      std::tuple<int,float,float> tup(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime());
-      runsVector.push_back(tup);
+      // std::tuple<int,float,float> tup(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime());
+      runsVector.push_back((float)blckPerSM);
+      runsVector.push_back((float)tester1.getPowerAvg());
+      runsVector.push_back((float)tester1.getElapsedTime());
       
       printf("---- test end ----\n");
     }
@@ -90,7 +92,7 @@ void runClassicBP1WithAddFP32(int argc, char* argv[]) {
 
 
 
-void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const char* fileName){
+void basePowVectorToFile(std::vector<float> vec,  const char* fileName){
   FILE *fp = fopen(fileName, "w+");
   if (fp == NULL) {
     printf("Attempt at opening '%s' failed. Error: ", fileName);
@@ -100,16 +102,16 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
   }
   fprintf(fp, "runID, avgPower, elapsedTime\n");
   
-  for (int i = 0; i < vec.size(); i++){
-    std::tuple<int,float,float> tup = make_tuple(vec[i]);
-    fprintf(fp, "%d, %.3lf, %.3lf\n", std::get<0>(tup), std::get<1>(tup)/1000.0, std::get<2>(tup)/1000.0);
+  for (int i = 0; i < vec.size(); i+=3){
+    // std::tuple<int,float,float> tup = vec[i];
+    fprintf(fp, "%d, %.3lf, %.3lf\n", (int)vec[i], tup[i+1]/1000.0, tup[i+2]/1000.0);
   }
   fclose(fp);
 }
 
 
 void runBP1WithAllKernels(std::string storagePath) {
-  std::vector< std::tuple<int,float,float> > powData;
+  std::vector<float> powData;
   
   powData = basePowerTest1_SpecifyKernel<AddKernel1TestSetSharedMem<float>>();
   basePowVectorToFile(powData, (storagePath+std::string("basePow1_addFloat.csv")).c_str());

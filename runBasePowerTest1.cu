@@ -51,8 +51,8 @@ std::vector< std::tuple<int,float,float> > basePowerTest1_SpecifyKernel() {
       test1.setSharedMem(memRatio);
       TestRunner<KernelClass> tester1(&test1, "deleteMe.csv", acceptableError);
       tester1.getGoodSample();
-      
-      runsVector.push_back( std::tuple<int, float, float>(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime()));
+      std::tuple<int,float,float> tup(blckPerSM, (float)tester1.getPowerAvg(), tester1.getElapsedTime());
+      runsVector.push_back(tup);
       
       printf("---- test end ----\n");
     }
@@ -101,7 +101,7 @@ void basePowVectorToFile(std::vector< std::tuple<int,float,float> > vec,  const 
   fprintf(fp, "runID, avgPower, elapsedTime\n");
   
   for (int i = 0; i < vec.size(); i++){
-    std::tuple<int,float,float> tup = vec[i];
+    std::tuple<int,float,float> tup = make_tuple(vec[i]);
     fprintf(fp, "%d, %.3lf, %.3lf\n", std::get<0>(tup), std::get<1>(tup)/1000.0, std::get<2>(tup)/1000.0);
   }
   fclose(fp);

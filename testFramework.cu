@@ -17,10 +17,10 @@ public:
 
 
   //max number of times to attempt getting a good sample
-  const int maxTestRuns = 15;
+  const int maxTestRuns = 9;
 
   //number of samples to igore from beg and end while analyzing data
-  const int ignoreSampleCount = 50;
+  const int ignoreSampleCount = 80;
   
   //int deviceIDNum: GPU device to do all work/sampling on
   int deviceIDNum;

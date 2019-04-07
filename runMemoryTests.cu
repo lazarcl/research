@@ -36,17 +36,17 @@ int main() {
   // out1 = storagePath + std::string("outputAddFP32_1.csv");
   // out2 = storagePath + std::string("outputAddFP32_2.csv");
  
-  runTestGeneric_setBlockScale<L1MemTest1<float>>(iterationsSmall*3, blockSize, "data/outputL1ReadTest_1.csv", 100);
-  runTestGeneric_setBlockScale<L1MemTest2<float>>(iterationsSmall*3, blockSize, "data/outputL1ReadTest_2.csv", 100);
+  runTestGeneric_setBlockScale<L1MemTest1<float>>(iterationsSmall*40, blockSize, "data/outputL1ReadTest_1.csv", 100);
+  runTestGeneric_setBlockScale<L1MemTest2<float>>(iterationsSmall*40, blockSize, "data/outputL1ReadTest_2.csv", 100);
 
-  runTestGeneric_setBlockScale<L2MemReadTest1<float>>(iterationsSmall*3, blockSize, "data/outputL2ReadTest_1.csv", 100);
-  runTestGeneric_setBlockScale<L2MemReadTest2<float>>(iterationsSmall*3, blockSize, "data/outputL2ReadTest_2.csv", 100);
+  runTestGeneric_setBlockScale<L2MemReadTest1<float>>(iterationsSmall*15, blockSize, "data/outputL2ReadTest_1.csv", 100);
+  runTestGeneric_setBlockScale<L2MemReadTest2<float>>(iterationsSmall*15, blockSize, "data/outputL2ReadTest_2.csv", 100);
 
-  runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_1.csv", 100);
-  runTestGeneric_setBlockScale<SharedMemReadTest2<float>>(iterationsSmall*4, blockSize, "data/outputSharedReadTest_2.csv", 100);
+  runTestGeneric_setBlockScale<SharedMemReadTest1<float>>(iterationsSmall*5, blockSize, "data/outputSharedReadTest_1.csv", 100);
+  runTestGeneric_setBlockScale<SharedMemReadTest2<float>>(iterationsSmall*5, blockSize, "data/outputSharedReadTest_2.csv", 100);
 
 
-  runGlobalTest<float>(1000, blockSize, "data/outputGlobalReadTest_1.csv", "data/outputGlobalReadTest_2.csv");
+  runGlobalTest<float>(250, blockSize, "data/outputGlobalReadTest_1.csv", "data/outputGlobalReadTest_2.csv");
 
   // printf("---- beginning L1 Testing ----\n"); 
   // runL1Test<L1MemTest1<T>>(iterations, blockSize, "tmp1.csv");

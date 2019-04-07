@@ -38,7 +38,7 @@ std::vector<float> basePowerTest1_SpecifyKernel() {
   std::vector<float> runsVector;
 
   printf("---- beginning kernel's runs of the 1st approach to base power measuring ----\n"); 
-  for (int blckPerSM = 1; blckPerSM <= 5; blckPerSM++) {
+  for (int blckPerSM = 1; blckPerSM <= 4; blckPerSM++) {
     for (int sampleDepth = 1; sampleDepth <= 1; sampleDepth++) {
 
       //what percent of shared mem for each thread to request
@@ -104,7 +104,7 @@ void basePowVectorToFile(std::vector<float> vec,  const char* fileName){
   
   for (int i = 0; i < vec.size(); i+=3){
     // std::tuple<int,float,float> tup = vec[i];
-    fprintf(fp, "%d, %.3lf, %.3lf\n", (int)vec[i], tup[i+1]/1000.0, tup[i+2]/1000.0);
+    fprintf(fp, "%d, %.3lf, %.3lf\n", (int)vec[i], vec[i+1]/1000.0, vec[i+2]/1000.0);
   }
   fclose(fp);
 }

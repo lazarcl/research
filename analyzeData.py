@@ -69,9 +69,9 @@ def graphMemory(rootPath, saveDir, dataDirs):
 #if there are directories to not search in, then add that directory
 #  as a string to ignoreDirectories param
 #Return: TestSpreadCalculator object to grab result dictionaries from
-def arithmeticTestSpreads(rootPath, ignoreDirectories=[]):
+def arithmeticTestSpreads(rootPathh, ignoreDirectories=[]):
   
-  testSpreads = TestSpreadCalculator(analysisConfig.arithOutputFiles, rootPath, ignoreDirectories)
+  testSpreads = TestSpreadCalculator(analysisConfig.arithOutputFiles, rootPathh, ignoreDirectories)
   testSpreads.findRuntimeSpreads()
   testSpreads.findPowerSpreads()
   testSpreads.findEnergySpreadsOfResults()
@@ -198,6 +198,7 @@ def analyzeData():
   rootPath = analysisConfig.pathDict["baseDir"]
   saveDir = rootPath + analysisConfig.pathDict["saveDir"]
   dataDirs = glob.glob(rootPath + analysisConfig.pathDict["dataDirs"])
+  dataDirs.sort() #make analysis filenames match the order of 'run_NUM's
 
   pathlib.Path(saveDir).mkdir(parents=True, exist_ok=True) 
   print("Analyzing data from directory: '" + rootPath + "'")
@@ -208,7 +209,7 @@ def analyzeData():
     print("Can't plot arithmetic data. No data folders in", rootPath, "found" )
     exit(1)
 
-  # testSpreadsObj2 = arithmeticTestSpreads("testRuns/p6000_eigth_set/")
+  # testSpreadsObj2 = arithmeticTestSpreads("testRuns/simbench/p6000_first_set/")
   # testSpreadsObj2 = arithmeticTestSpreads("testRuns/k20_eigth_set/")
 
   # kernelBPAnalysis = BasePowForKernels(rootPath, dataDirs, saveDir, [1,2,3,4], analysisConfig.basePow2ResultFiles, 2)
@@ -217,7 +218,7 @@ def analyzeData():
   # print(basePowResults)
   # # quit(0)
 
-  '''
+
   arithResults = {} #key = device name, value = dict of arith results
   arithResults["k20"] = {} #key = test name, value = results as a dict
   arithResults["p6000"] = {}
@@ -226,21 +227,22 @@ def analyzeData():
   # for control, test in analysisConfig.arithOutputPairs:
     # col = makeTableColEntry(basePowResults[name][0][2:], arithTestSpreadsObj, control, test)
     try:
-      col = makeTableColEntry((80.0,0), arithTestSpreadsObj, control, test)
+      col = makeTableColEntry((85.0,0.0), arithTestSpreadsObj, control, test)
       arithResults["k20"][name] = col
-      # col2 = makeTableColEntry((95.0,0), testSpreadsObj2, control, test)
+      # col2 = makeTableColEntry((85.0,0), testSpreadsObj2, control, test)
       # arithResults["p6000"][name] = col2
       # cols.append(col2)
       # names.append("p6000")
-      # print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
+      print("$"+name+"$\\\ \n"+makeTableFromCols(col, col, "K20", "K20"))
     except IndexError as err:
       print("IndexError: failed creating table for: '"+str(err)+"'")
     except KeyError as err:
       print("KeyError: failed creating table for: '"+str(err)+"'")
-  a = arithResults["k20"]
-  arithResults["p6000"] = a
-  print(makeAbreviatedTable(arithResults, ["k20", "p6000"]))
-  '''
+  # a = arithResults["k20"]
+  # arithResults["p6000"] = a
+  # print(arithResults)
+  print(makeAbreviatedTable(arithResults, ["k20"]))
+
 
 
   # memoryTestSpreadsObj = memoryTestSpreads(rootPath)
@@ -255,15 +257,15 @@ def analyzeData():
   #     print("KeyError: failed creating table for: '"+str(err)+"'")
 
 
-  calculateBasePower(rootPath, saveDir, dataDirs) #this hasn't been updated for newer file names with different kernels
+  # calculateBasePower(rootPath, saveDir, dataDirs) #this hasn't been updated for newer file names with different kernels
   # graphBasePower(rootPath, saveDir, dataDirs)
-  # graphArithmetic(rootPath, saveDir, dataDirs)
+  graphArithmetic(rootPath, saveDir, dataDirs)
   # graphMemory(rootPath, saveDir, dataDirs)
 
 
 if __name__ == "__main__":
-  # analyzeData()
-
+  analyzeData()
+  quit()
 
   # print("Calculating base power from approach 1")
   # obj = BasePowForKernels("testing/bpTests", [1,2], analysisConfig.basePow1ResultFiles, 1)
@@ -275,16 +277,14 @@ if __name__ == "__main__":
   # obj.calcBasePows()
   # def __init__(self, rootPath, dataDirs, storagePath, testIDs, dataNameDict, basePowMethod):
 
-  print("Calculating base power from approach 1")
-  obj = BasePowForKernels("testRuns/p6000_eigth_set/", ["run1/"], "analysis/", [1,2], analysisConfig.basePow1ResultFiles, 1)
+  # print("Calculating base power from approach 1")
+  # obj = BasePowForKernels("testRuns/p6000_eigth_set/", ["run1/"], "analysis/", [1,2], analysisConfig.basePow1ResultFiles, 1)
   # obj = BasePowForKernels("testRuns/p6000_eigth_set/", "run1/", "analysis/output.txt",[1,2], {"addFP32":"basePow1_addFloat.csv"}, 1)
 
   # print("Calculating base power from approach 2")
   # obj = BasePowForKernels("testRuns/p6000_eigth_set/", "run1/", "analysis/output.txt",[1,2], analysisConfig.basePow2ResultFiles, 2)
   # obj = BasePowForKernels("testRuns/p6000_eigth_set/", "run1/", "analysis/output.txt",[1,2], {"addFP32":"basePow2_addFloat.csv"}, 2)
-  obj.calcBasePows()
-
-
+  # obj.calcBasePows()
 
 
 

@@ -64,6 +64,8 @@ class ArithmeticTestPlotter:
 
     pylab.legend(loc="lower right")
     pylab.ylim(0, self.MAX_Y)
+    # pylab.ylim(40, self.MAX_Y)
+    # f.set_size_inches(7.0, 2.5)
 
     #save to seperate file
     # f.savefig("data/"+ testStr + ".pdf", bbox_inches='tight')

@@ -103,8 +103,7 @@ void basePowVectorToFile(std::vector<float> vec,  const char* fileName){
   fprintf(fp, "runID, avgPower, elapsedTime\n");
   
   for (int i = 0; i < vec.size(); i+=3){
-    // std::tuple<int,float,float> tup = vec[i];
-    fprintf(fp, "%d, %.3lf, %.3lf\n", (int)vec[i], tup[i+1]/1000.0, tup[i+2]/1000.0);
+    fprintf(fp, "%d, %.3lf, %.3lf\n", (int)vec[i], vec[i+1]/1000.0, vec[i+2]/1000.0);
   }
   fclose(fp);
 }

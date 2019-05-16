@@ -72,8 +72,11 @@ def getOpAndThreadCountFromFile(filePath):
   data = loadFile(filePath, analysisConfig.arithColumnNames)
   if data is None:
     return None, None
-
-  numOfOps = int(data.numOfOps.tolist()[1])
+  try: 
+    numOfOps = int(data.numOfOps.tolist()[1])
+  except ValueError as e:
+    print(filePath, e)
+    throw(e)
   numOfThreads = int(data.numOfThreads.tolist()[1])
 
   return numOfOps, numOfThreads

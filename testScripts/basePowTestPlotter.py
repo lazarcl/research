@@ -60,8 +60,11 @@ class BasePowTestPlotter:
     # else:
     #   pylab.title(supTitle)
 
-    pylab.legend(loc="lower right")
+    # pylab.legend(loc="lower right")
     pylab.ylim(0, self.MAX_Y)
+    # pylab.ylim(0, 65)
+    # fig.set_size_inches(7.0, 3.8)
+
 
     #display path to folder of graph's dataset
     try:

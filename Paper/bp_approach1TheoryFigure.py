@@ -1,7 +1,8 @@
 import pylab
 import pandas
 from matplotlib.backends.backend_pdf import PdfPages
-
+#changing font size: https://stackoverflow.com/questions/3899980/how-to-change-the-font-size-on-a-matplotlib-plot
+#answer by binaryfunt
 LINE_WIDTH = 1
 SAVE_DPI = 1000
 MAX_Y = 180
